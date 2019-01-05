@@ -81,7 +81,7 @@ task.strRequestArg = "your save dir";
 > 
 
 ```CPP
-NetworkReply *pReply = NetworkManager::instance()->addRequest(task);
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
 	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
@@ -93,16 +93,16 @@ if (nullptr != pReply)
 ### How to download a batch of files by using Qt multi-threaded network module (such as updating application)
 
 ```cpp
-connect(NetworkManager::instance(), &NetworkManager::downloadProgress,
+connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress,
 	this, &NetworkTool::onDownloadProgress);
 	
-connect(NetworkManager::instance(), &NetworkManager::uploadProgress,
+connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress,
 	this, &NetworkTool::onUploadProgress);
 	
-connect(NetworkManager::instance(), &NetworkManager::batchDownloadProgress,
+connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress,
 	this, &NetworkTool::onBatchDownloadProgress);
 	
-connect(NetworkManager::instance(), &NetworkManager::batchUploadProgress,
+connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress,
 	this, &NetworkTool::onBatchUploadProgress);
 
 RequestTasks tasks;
@@ -122,7 +122,7 @@ foreach (const QString& strUrl, strlstUrl)
 
 ```cpp
 quint64 uiBatchId = 0;
-NetworkReply *pReply = NetworkManager::instance()->addBatchRequest(tasks, uiBatchId);
+NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(tasks, uiBatchId);
 qDebug() << "uiBatchId: " << uiBatchId;
 if (nullptr != pReply)
 {
