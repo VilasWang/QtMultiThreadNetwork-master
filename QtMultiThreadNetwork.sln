@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkTool", "test\NetworkTool\networktool.vcxproj", "{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508} = {D869D753-7C3E-4EAC-B0FD-DBC8680CC508}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QMultiThreadNetwork", "src\QMultiThreadNetwork.vcxproj", "{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|Win32.Build.0 = Debug|Win32
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|Win32.ActiveCfg = Release|Win32
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|Win32.Build.0 = Release|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|Win32.Build.0 = Debug|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|Win32.ActiveCfg = Release|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		Qt5Version = Qt5.5.1
+	EndGlobalSection
+EndGlobal
