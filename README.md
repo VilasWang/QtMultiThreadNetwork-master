@@ -1,9 +1,9 @@
 Qt multi-threaded network module
 ==============================================================================================================================
-@version:		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0.0.2<br/>
-@Author:		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vilas Wang<br/>
-@Contact:		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ451930733<br/>
-@Email:			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vilas900420@gmail.com / 451930733@qq.com
+@version:	2.0.0.2
+@Author:	Vilas Wang
+@Contact:	QQ451930733
+@Email:		vilas900420@gmail.com / 451930733@qq.com
 
 
 
@@ -23,7 +23,7 @@ The Qt multi-threaded network module is a wrapper of `Qt Network module`, and co
 - Both single request and batch request mode are supported.
 - Big file `multi-thread downloading` supported. (The thread here refers to the download channel. Download speed is faster)
 - `HTTP(S)`/`FTP` protocol supported.
-- Multiple request methods supported. (`GET`/`POST`/`PUT`/`DELETE`/`HEAD`/`OPTIONS`)
+- Multiple request methods supported. (`GET`/`POST`/`PUT`/`DELETE`/`HEAD`)
 - Asynchronous API.
 - Thread-safe.
 
@@ -36,7 +36,7 @@ Qt多线程网络模块是对Qt Network的封装，并且结合线程池以实�
 - 支持单请求任务或批处理请求两种请求模式
 - 支持大文件`多线程下载`模式（这里的线程是指下载的通道。多个通道同时下载, 下载速度更快）
 - 支持`HTTP(S)`/`FTP`协议
-- 支持多种请求方式（`GET`/`POST`/`PUT`/`DELETE`/`HEAD`/`OPTIONS`）
+- 支持多种请求方式（`GET`/`POST`/`PUT`/`DELETE`/`HEAD`）
 - 异步调用
 - 所有方法线程安全
 
