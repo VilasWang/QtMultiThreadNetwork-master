@@ -154,7 +154,7 @@ class ReplyResultEvent : public QEvent
 {
 public:
 	ReplyResultEvent() : QEvent(QEvent::Type(NetworkEvent::ReplyResult)), bDestroyed(true){}
-public:
+
 	RequestTask request;
 	bool bDestroyed;
 };
@@ -169,7 +169,7 @@ public:
 	, uiBatchId(0)
 	, iBtyes(0)
 	, iTotalBtyes(0){}
-public:
+
 	bool bDownload;
 	quint64 uiId;
 	quint64 uiBatchId;
