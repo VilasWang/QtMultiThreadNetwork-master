@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QListView>
 #include <QMessageBox>
+#include <QButtonGroup>
 #include <QStandardPaths>
 #include "networktool.h"
 #include "NetworkManager.h"
