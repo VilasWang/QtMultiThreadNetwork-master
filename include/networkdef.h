@@ -41,14 +41,13 @@ struct RequestTask
 	RequestType eType;
 
 	// url
-	// 注意: 上传的url需指定文件名.如"ftp://10.0.200.47:2121/incoming/test.zip", 将被保存为test.zip.
+	// 注意: ftp上传的url需指定文件名.如"ftp://10.0.200.47:2121/incoming/test.zip", 将被保存为test.zip.
 	QUrl url;
 
 	// case eTypeDownload:	下载的文件存放的本地目录. (绝对路径 or 相对路径)
 	// case eTypeUpload：	待上传的文件路径. (绝对路径 or 相对路径)
 	// case eTypePost：		post的参数. 如："a=b&c=d".
 	// case eTypePut：		put的数据流.
-	// case eTypeOptions：	QNetworkAccessManager::sendCustomRequest()的verb参数.
 	QString strRequestArg;
 
 	// case eTypeDownload: 若指定了strSaveFileName，则保存的文件名是strSaveFileName;否则，根据url.
