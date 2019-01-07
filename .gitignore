@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /test/networktool/GeneratedFiles/qrc_networktool.cpp
 /test/networktool/GeneratedFiles/ui_networktool.h
+*.bak
