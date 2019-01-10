@@ -44,7 +44,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 	, m_batchId(0)
 {
 	ui.setupUi(this);
-	setFixedSize(700, 700);
+	setFixedSize(700, 620);
 	setWindowTitle(QStringLiteral("Qt Network Tool"));
 
 	ui.progressBar_d->setFormat("%p%(%v / %m)");

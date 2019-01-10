@@ -1,6 +1,6 @@
 Qt multi-threaded network module
 ==============================================================================================================================
-@version:	2.0.0.2  
+@version:	2.0.1.0  
 @Author:	Vilas Wang  
 @Contact:	QQ451930733  
 @Email:		vilas900420@gmail.com / 451930733@qq.com  
