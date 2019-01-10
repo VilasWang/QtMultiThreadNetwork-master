@@ -2,6 +2,7 @@
 #define NETWORKREQUEST_H
 
 #include <QObject>
+#include <memory>
 #include "NetworkDef.h"
 
 /*//////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ class NetworkRequestFactory
 {
 public:
 	///根据task类型创建request对象。若parent不为null，request对象由parent管理；否则，需要用户自己去销毁
-	static NetworkRequest *createRequestInstance(const RequestType& type, bool bMultiDownloadMode = false, QObject *parent = nullptr);
+	static std::unique_ptr<NetworkRequest> createRequestInstance(const RequestType& type, bool bMultiDownloadMode = false, QObject *parent = nullptr);
 };
 
 inline bool isHttpProxy(const QString& strScheme) {return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0);}

@@ -41,7 +41,7 @@ struct RequestTask
 	RequestType eType;
 
 	// url
-	// 注意: ftp上传的url需指定文件名.如"ftp://10.0.200.47:2121/incoming/test.zip", 将被保存为test.zip.
+	// 注意: ftp上传的url需指定文件名.如"ftp://10.0.192.47:21/upload/test.zip", 文件将被保存为test.zip.
 	QUrl url;
 
 	// case eTypeDownload:	下载的文件存放的本地目录. (绝对路径 or 相对路径)
@@ -100,12 +100,6 @@ struct RequestTask
 		bAbortBatchWhileOneFailed = true;
 		bMultiDownloadMode = false;
 		nDownloadThreadCount = 5;
-	}
-
-	~RequestTask()
-	{
-		uiId = 0;
-		uiBatchId = 0;
 	}
 };
 Q_DECLARE_METATYPE(RequestTask);

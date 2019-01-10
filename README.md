@@ -19,7 +19,7 @@ If you use QtMultiThreadNetwork or its constituent libraries, you must adhere to
 ## Detailed Description
 
 The Qt multi-threaded network module is a wrapper of `Qt Network module`, and combine with `thread-pool` to realize multi-threaded networking.
-- Multitask concurrent(One request corresponding to one thread).
+- Multitask concurrent(Each request task is executed in different threads).
 - Both single request and batch request mode are supported.
 - Big file `multi-thread downloading` supported. (The thread here refers to the download channel. Download speed is faster)
 - `HTTP(S)`/`FTP` protocol supported.
@@ -32,7 +32,7 @@ Note:	You must call `NetworkManager::initialize()` before use, and call `Network
 
 
 Qt多线程网络模块是对Qt Network的封装，并且结合线程池以实现多线程网络请求，
-- 多任务并发执行（一个请求任务对应一个线程）
+- 多任务并发执行（每个请求任务在不同的线程中执行）
 - 支持单请求任务或批处理请求两种请求模式
 - 支持大文件`多线程下载`模式（这里的线程是指下载的通道。多个通道同时下载, 下载速度更快）
 - 支持`HTTP(S)`/`FTP`协议

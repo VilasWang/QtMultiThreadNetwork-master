@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QNetworkReply>
 #include <QMutex>
+#include <QPointer>
 #include "NetworkRequest.h"
 
 class QFile;
@@ -37,11 +38,11 @@ private:
 	void startMTDownload();
 
 private:
-	QFile *m_pFile;
+	std::shared_ptr<QFile> m_pFile;
 	QNetworkAccessManager *m_pNetworkManager;
 	QNetworkReply *m_pReply;
 
-	QMap<int, Downloader *> m_mapDownloader;
+	QMap<int, std::shared_ptr<Downloader>> m_mapDownloader;
 	int m_nThreadCount;//分割成多少段下载
 
 	QUrl m_url;
@@ -76,7 +77,7 @@ public:
 	~Downloader();
 
 	bool startDownload(const QUrl &url, 
-		QFile *file, 
+		QFile* file,
 		QNetworkAccessManager* pNetworkManager,
 		qint64 startPoint	= 0, 
 		qint64 endPoint		= -1,
@@ -94,10 +95,10 @@ Q_SIGNALS:
 		void onError(QNetworkReply::NetworkError code);
 
 private:
-	QNetworkAccessManager* m_pNetworkManager;
+	QPointer<QNetworkAccessManager> m_pNetworkManager;
 	QNetworkReply *m_pNetworkReply;
+	QPointer <QFile> m_pFile;
 	QUrl m_url;
-	QFile *m_pFile;
 	mutable QMutex m_mutex;
 
 	bool m_bAbortManual;

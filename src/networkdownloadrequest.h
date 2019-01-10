@@ -33,7 +33,7 @@ private:
 	bool removeFile(QFile *file);
 
 private:
-	QFile *m_pFile;
+	std::shared_ptr<QFile> m_pFile;
 	QNetworkAccessManager *m_pNetworkManager;
 	QNetworkReply *m_pNetworkReply;
 };
