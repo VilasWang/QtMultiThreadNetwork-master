@@ -6,6 +6,7 @@
 #include <QDomElement>
 #include <QTextCodec>
 #include <QFileDialog>
+#include <QButtonGroup>
 #include <QListView>
 #include <QMessageBox>
 #include <QButtonGroup>

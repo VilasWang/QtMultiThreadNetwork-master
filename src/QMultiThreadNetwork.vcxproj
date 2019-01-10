@@ -93,6 +93,9 @@
       <Version>
       </Version>
     </Link>
+    <PostBuildEvent>
+      <Command>copy  ..\include .\inc</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -154,8 +157,8 @@
     <ClCompile Include="networkuploadrequest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Log4cplusWrapper.h" />
     <ClInclude Include="..\include\networkdef.h" />
+    <ClInclude Include="inc\Log4cplusWrapper.h" />
     <ClInclude Include="resource.h" />
     <CustomBuild Include="..\include\networkmanager.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
