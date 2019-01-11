@@ -592,7 +592,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <string>同时进行的最大任务数：</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="cmb_maxTaskNum">
+   <widget class="QComboBox" name="cmb_concurrentTask">
     <property name="geometry">
      <rect>
       <x>290</x>
@@ -769,7 +769,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    <zorder>label_8</zorder>
    <zorder>lineEdit_filename</zorder>
    <zorder>label_9</zorder>
-   <zorder>cmb_maxTaskNum</zorder>
+   <zorder>cmb_concurrentTask</zorder>
    <zorder>label_10</zorder>
    <zorder>cmb_multiDownload</zorder>
    <zorder>label_11</zorder>

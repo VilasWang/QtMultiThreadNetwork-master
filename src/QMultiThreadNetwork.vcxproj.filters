@@ -110,6 +110,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkmtdownloadrequest.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="ClassMemoryTracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\network_global.h">
@@ -122,6 +125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Log4cplusWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassMemoryTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -46,6 +46,7 @@ private:
 	QString bytes2String(qint64 bytes);
 	void appendMsg(const QString& strMsg, bool bQDebug = true);
 	void reset();
+	QString getDefaultDownloadDir();//获取系统默认下载目录
 
 private:
 	Ui::networkClass ui;

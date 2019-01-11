@@ -15,21 +15,13 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-
+#define QMT_POST_TEST
+#define DEFAULT_CONCURRENT_TASK 4
+#define DEFAULT_MTDOWNLOAD_COUNT 5
 //局域网Apache http服务器
 #define HTTP_SERVER_IP "127.0.0.1"
 #define HTTP_SERVER_PORT "80"
 
-//获取系统默认下载目录
-QString getDefaultDownloadDir()
-{
-	const QStringList& lstDir = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
-	if (!lstDir.isEmpty())
-	{
-		return lstDir[0];
-	}
-	return "download/";
-}
 
 NetworkTool::NetworkTool(QWidget *parent)
 	: QMainWindow(parent)
@@ -50,18 +42,18 @@ NetworkTool::NetworkTool(QWidget *parent)
 	ui.progressBar_d->setFormat("%p%(%v / %m)");
 	ui.progressBar_u->setFormat("%p%(%v / %m)");
 
-	ui.cmb_maxTaskNum->setView(new QListView(this));
+	ui.cmb_concurrentTask->setView(new QListView(this));
 	ui.cmb_multiDownload->setView(new QListView(this));
 	for (int i = 1; i <= 8; ++i)
 	{
-		ui.cmb_maxTaskNum->addItem(QString::number(i));
+		ui.cmb_concurrentTask->addItem(QString::number(i));
 	}
 	for (int i = 2; i <= 10; ++i)
 	{
 		ui.cmb_multiDownload->addItem(QString::number(i));
 	}
-	ui.cmb_maxTaskNum->setCurrentText(QString::number(4));
-	ui.cmb_multiDownload->setCurrentText(QString::number(5));
+	ui.cmb_concurrentTask->setCurrentText(QString::number(DEFAULT_CONCURRENT_TASK));
+	ui.cmb_multiDownload->setCurrentText(QString::number(DEFAULT_MTDOWNLOAD_COUNT));
 
 	QButtonGroup *bg1 = new QButtonGroup(this);
 	bg1->addButton(ui.cb_http);
@@ -94,7 +86,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 			onUpdateDefaultInfos();
 		}
 	});
-	connect(ui.cmb_maxTaskNum, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged), 
+	connect(ui.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged), 
 		this, [=](const QString &strText){
 			int num = strText.toInt();
 			if (num >= 1 && num <= 8)
@@ -462,6 +454,21 @@ void NetworkTool::onPostRequest()
 	request.eType = eTypePost;
 	request.strRequestArg = strArg;
 
+#ifdef QMT_POST_TEST
+	BatchRequestTask requests;
+	for (int i = 0; i < 1000; ++i)
+	{
+		request.bAbortBatchWhileOneFailed = false;
+		requests.append(request);
+	}
+	m_nTotalNum = requests.size();
+	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
+	if (nullptr != pReply)
+	{
+		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+			this, SLOT(onRequestFinished(const RequestTask &)));
+	}
+#else
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
@@ -469,6 +476,7 @@ void NetworkTool::onPostRequest()
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 	}
+#endif
 }
 
 void NetworkTool::onPutRequest()
@@ -662,17 +670,15 @@ void NetworkTool::onBatchDownload()
 	}
 	m_nTotalNum = requests.size();
 
-	quint64 uiBatchId = 0;
-	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, uiBatchId);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
 	if (nullptr != pReply)
 	{
-		m_batchId = uiBatchId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
 	appendMsg(m_timeStart.toString() + " - Start batch request. Batch id: " 
-		+ QString::number(uiBatchId) + ", Total: " + QString::number(m_nTotalNum));
+		+ QString::number(m_batchId) + ", Total: " + QString::number(m_nTotalNum));
 }
 
 void NetworkTool::onBatchMixedTask()
@@ -995,3 +1001,33 @@ void NetworkTool::appendMsg(const QString& strMsg, bool bQDebug)
 		ui.textEdit_output->append("");
 	}
 }
+
+QString NetworkTool::getDefaultDownloadDir()
+{
+	const QStringList& lstDir = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
+	if (!lstDir.isEmpty())
+	{
+		return lstDir[0];
+	}
+	return QLatin1String("download/");
+}
+
+//////////////////////////////////////////////////////////////////////////
+template<typename T, typename TBase> class ClassIsDerived
+{
+public:
+	static int t(TBase* base)
+	{
+		return 1;
+	}
+
+	static char t(void* t2)
+	{
+		return 0;
+	}
+
+	enum
+	{
+		Result = (sizeof(int) == sizeof(t((T*)NULL))),
+	};
+};

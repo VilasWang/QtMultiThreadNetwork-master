@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QByteArray>
 #include <QVariant>
+#include <atomic>
 
 #pragma pack(push, _CRT_PACKING)
 
@@ -165,53 +166,6 @@ public:
 	qint64 iBtyes;
 	qint64 iTotalBtyes;
 };
-
-////////////////追踪类内存分配和释放/////////////////////////////////////////////////////
-#define NETWORK_TRACE_CLASS_MEMORY
-#ifdef NETWORK_TRACE_CLASS_MEMORY
-namespace TraceMemory
-{
-template<typename T, typename TBase> class ClassIsDerived
-{
-public:
-	static int t(TBase* base)
-	{
-		return 1;
-	}
-
-	static char t(void* t2)
-	{
-		return 0;
-	}
-
-	enum
-	{
-		Result = (sizeof(int) == sizeof(t((T*)NULL))),
-	};
-};
-
-template <typename T>
-void addTracedClass()
-{
-	typedef std::map<std::string, std::atomic<int>> TClassReferenceCount;
-	static TClassReferenceCount s_mapRcConstructor;
-	static TClassReferenceCount s_mapRcDestructor;
-
-	const char *name = typeid(T).name;
-	std::string str(name);
-	auto iter = s_mapRcConstructor.find(str);
-	if (iter == s_mapRcConstructor.cend())
-	{
-		s_mapRcConstructor[str] = 0;
-	}
-	auto iter = s_mapRcDestructor.find(str);
-	if (iter == s_mapRcDestructor.cend())
-	{
-		s_mapRcDestructor[str] = 0;
-	}
-}
-}
-#endif
 
 #pragma pack(pop)
 

@@ -1,10 +1,7 @@
 /*
 @Brief:			Qt multi-threaded network module
-@version:		2.0.1.0
-@Last modified: 2019/1/10
-@Author:		vilas
-@Contact:		QQ451930733
-@Email:			451930733@qq.com
+@Author:		vilas wang
+@Contact:		QQ451930733|451930733@qq.com
 
 The Qt multi-threaded network module is a wrapper of Qt Network module, and combine with thread-pool to realize multi-threaded networking.
 - Multi-task concurrent(Each request task is executed in different threads).

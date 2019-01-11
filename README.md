@@ -1,9 +1,8 @@
 Qt multi-threaded network module
 ==============================================================================================================================
-@version:	2.0.1.0  
+@version:	2.1.1   
 @Author:	Vilas Wang  
-@Contact:	QQ451930733  
-@Email:		451930733@qq.com
+@Contact:	QQ451930733 | 451930733@qq.com  
 
 
 
@@ -105,7 +104,7 @@ connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress
 connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress,
 	this, &NetworkTool::onBatchUploadProgress);
 
-RequestTasks tasks;
+BatchRequestTask tasks;
 RequestTask task;
 foreach (const QString& strUrl, strlstUrl)
 {

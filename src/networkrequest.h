@@ -4,30 +4,19 @@
 #include <QObject>
 #include <memory>
 #include "NetworkDef.h"
-
-/*//////////////////////////////////////////////////////////////////////////
-	Example:
-
-	RequestTask request;
-	...
-	NetworkRequest *pRequest = NetworkRequestFactory::createRequestInstance(request.eType);
-	if (nullptr != pRequest)
-	{
-		connect(pRequest, SIGNAL(requestFinished(bool, const QByteArray&)),
-		this, SLOT(onRequestFinished(bool, const QByteArray&)));
-
-		pRequest->setRequestTask(m_task);
-		pRequest->start();
-	}
-/////////////////////////////////////////////////////////////////////////*/
+#include "ClassMemoryTracer.h"
 
 class NetworkRequest : public QObject
 {
 	Q_OBJECT
 
 public:
-	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false){}
-	virtual ~NetworkRequest(){}
+	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false)
+	{ 
+		TRACE_CLASS_CONSTRUCTOR(NetworkRequest); 
+	}
+
+	virtual ~NetworkRequest(){ TRACE_CLASS_DESTRUCTOR(NetworkRequest); }
 
 	void setRequestTask(const RequestTask &request){ m_request = request; }
 	//是否重定向
