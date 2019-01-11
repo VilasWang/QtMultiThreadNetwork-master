@@ -169,7 +169,7 @@ public:
 ////////////////追踪类内存分配和释放/////////////////////////////////////////////////////
 #define NETWORK_TRACE_CLASS_MEMORY
 #ifdef NETWORK_TRACE_CLASS_MEMORY
-namespace TraceClass
+namespace TraceMemory
 {
 template<typename T, typename TBase> class ClassIsDerived
 {
@@ -190,24 +190,46 @@ public:
 	};
 };
 
+typedef std::map<std::string, std::atomic<int>> TClassReferenceCount;
+const TClassReferenceCount constructorMap()
+{
+	static TClassReferenceCount s_mapRcConstructor;
+	static TClassReferenceCount s_mapRcDestructor;
+	return s_mapRcConstructor;
+}
+
 template <typename T>
 void addTracedClass()
 {
-	typedef std::map<std::string, std::atomic<int>> TClassReferenceCount;
-	static TClassReferenceCount s_mapRcConstructor;
-	static TClassReferenceCount s_mapRcDestructor;
-
 	const char *name = typeid(T).name;
 	std::string str(name);
-	auto iter = s_mapReferenceCount.find(str);
-	if (iter != s_mapReferenceCount.cend())
-	{
-
-	}
-	else
+	auto iter = s_mapRcConstructor.find(str);
+	if (iter == s_mapRcConstructor.cend())
 	{
 		s_mapRcConstructor[str] = 0;
 	}
+	auto iter = s_mapRcDestructor.find(str);
+	if (iter == s_mapRcDestructor.cend())
+	{
+		s_mapRcDestructor[str] = 0;
+	}
+}
+
+template <typename T>
+void addConstructorCount()
+{
+	const char *name = typeid(T).name;
+	std::string str(name);
+	auto iter = s_mapRcConstructor.find(str);
+	if (iter == s_mapRcConstructor.cend())
+	{
+	}
+}
+
+template <typename T>
+void addDestructorCount()
+{
+
 }
 }
 #endif

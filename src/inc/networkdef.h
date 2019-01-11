@@ -169,7 +169,7 @@ public:
 ////////////////追踪类内存分配和释放/////////////////////////////////////////////////////
 #define NETWORK_TRACE_CLASS_MEMORY
 #ifdef NETWORK_TRACE_CLASS_MEMORY
-namespace TraceClass
+namespace TraceMemory
 {
 template<typename T, typename TBase> class ClassIsDerived
 {
@@ -199,14 +199,15 @@ void addTracedClass()
 
 	const char *name = typeid(T).name;
 	std::string str(name);
-	auto iter = s_mapReferenceCount.find(str);
-	if (iter != s_mapReferenceCount.cend())
-	{
-
-	}
-	else
+	auto iter = s_mapRcConstructor.find(str);
+	if (iter == s_mapRcConstructor.cend())
 	{
 		s_mapRcConstructor[str] = 0;
+	}
+	auto iter = s_mapRcDestructor.find(str);
+	if (iter == s_mapRcDestructor.cend())
+	{
+		s_mapRcDestructor[str] = 0;
 	}
 }
 }
