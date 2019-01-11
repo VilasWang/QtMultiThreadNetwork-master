@@ -1,13 +1,13 @@
 /*
 @Brief:			Qt multi-threaded network module
-@version:		2.0.0.2
-@Last modified: 2018/12/12
+@version:		2.0.1.0
+@Last modified: 2019/1/10
 @Author:		vilas
 @Contact:		QQ451930733
-@Email:			vilas900420@outlook.com / 451930733@qq.com
+@Email:			451930733@qq.com
 
 The Qt multi-threaded network module is a wrapper of Qt Network module, and combine with thread-pool to realize multi-threaded networking.
-- Multi-task concurrent(one request corresponding to one thread).
+- Multi-task concurrent(Each request task is executed in different threads).
 - Both single request and batch request mode are supported.
 - Big file multi-thread downloading supported. (The thread here refers to the download channel. Download speed is faster.)
 - HTTP(S)/FTP protocol supported.
@@ -52,7 +52,7 @@ public:
 	NetworkReply *addRequest(RequestTask& task);
 
 	// 添加批处理请求任务
-	NetworkReply *addBatchRequest(const RequestTasks& tasks, quint64 &uiBatchId);
+	NetworkReply *addBatchRequest(const BatchRequestTask& tasks, quint64 &uiBatchId);
 
 	// 停止所有的请求任务
 	// bNoEmit: 不会发出操作取消的信号

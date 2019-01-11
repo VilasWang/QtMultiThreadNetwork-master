@@ -67,6 +67,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 	bg1->addButton(ui.cb_http);
 	bg1->addButton(ui.cb_ftp);
 	bg1->setExclusive(true);
+	bg1->metaObject()->className();
 
 	QButtonGroup *bg2 = new QButtonGroup(this);
 	bg2->addButton(ui.cb_download);
@@ -633,7 +634,7 @@ void NetworkTool::onBatchDownload()
 		strSaveDir.append("/");
 	}
 
-	RequestTasks requests;
+	BatchRequestTask requests;
 	RequestTask request;
 	foreach (const QString& strUrl, strlstUrl)
 	{
@@ -652,7 +653,12 @@ void NetworkTool::onBatchDownload()
 		request.bShowProgress = ui.cb_showProgress->isChecked();
 		request.strRequestArg = strDir;
 		request.bAbortBatchWhileOneFailed = ui.cb_abortBatch->isChecked();
+
+#if _MSC_VER >= 1700
+		requests.append(std::move(request));
+#else
 		requests.append(request);
+#endif
 	}
 	m_nTotalNum = requests.size();
 
@@ -678,7 +684,7 @@ void NetworkTool::onBatchMixedTask()
 	strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794740247819.jpeg");
 	strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794986284124.jpeg");
 
-	RequestTasks tasks;
+	BatchRequestTask requests;
 	RequestTask request;
 	foreach (const QString& strFile, strlstUrlDownload)
 	{
@@ -690,7 +696,11 @@ void NetworkTool::onBatchMixedTask()
 		request.bShowProgress = ui.cb_showProgress->isChecked();
 		request.strRequestArg = getDefaultDownloadDir();
 		request.bAbortBatchWhileOneFailed = ui.cb_abortBatch->isChecked();
-		tasks.append(request);
+#if _MSC_VER >= 1700
+		requests.append(std::move(request));
+#else
+		requests.append(request);
+#endif
 	}
 
 	//ÉÏ´«
@@ -711,7 +721,11 @@ void NetworkTool::onBatchMixedTask()
 		request.bShowProgress = ui.cb_showProgress->isChecked();
 		request.strRequestArg = strFile;
 		request.bAbortBatchWhileOneFailed = ui.cb_abortBatch->isChecked();
-		tasks.append(request);
+#if _MSC_VER >= 1700
+		requests.append(std::move(request));
+#else
+		requests.append(request);
+#endif
 	}
 
 	//POST
@@ -730,7 +744,11 @@ void NetworkTool::onBatchMixedTask()
 	request.eType = eTypePost;
 	request.strRequestArg = strArg;
 	request.bAbortBatchWhileOneFailed = ui.cb_abortBatch->isChecked();
-	tasks.append(request);
+#if _MSC_VER >= 1700
+	requests.append(std::move(request));
+#else
+	requests.append(request);
+#endif
 
 	//DELETE
 	strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
@@ -740,13 +758,17 @@ void NetworkTool::onBatchMixedTask()
 	request.url = urlHost;
 	request.eType = eTypeDelete;
 	request.bAbortBatchWhileOneFailed = ui.cb_abortBatch->isChecked();
-	tasks.append(request);
+#if _MSC_VER >= 1700
+	requests.append(std::move(request));
+#else
+	requests.append(request);
+#endif
 
 
-	m_nTotalNum = tasks.size();
+	m_nTotalNum = requests.size();
 
 	quint64 uiBatchId = 0;
-	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(tasks, uiBatchId);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, uiBatchId);
 	if (nullptr != pReply)
 	{
 		m_batchId = uiBatchId;

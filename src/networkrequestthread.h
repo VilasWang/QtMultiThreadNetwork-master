@@ -20,7 +20,7 @@ public:
 
 	quint64 requsetId() const;
 	quint64 batchId() const;
-	const RequestTask task() {return m_task;}
+	const RequestTask task() const {return m_task;}
 
 	//结束事件循环以结束线程,会自动结束正在执行的请求
 	void quit();

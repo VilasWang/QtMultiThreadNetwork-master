@@ -6,13 +6,11 @@
 #include <QMap>
 #include <QByteArray>
 #include <QVariant>
-#include <QIODevice>
-#include <QNetworkRequest>
 
 #pragma pack(push, _CRT_PACKING)
 
 // 本模块支持的协议：HTTP(S)/FTP
-// 本模块支持的HTTP协议请求方法：GET/POST/PUT/DELETE/HEAD/OPTIONS
+// 本模块支持的HTTP协议请求方法：GET/POST/PUT/DELETE/HEAD
 
 enum RequestType
 {
@@ -57,9 +55,8 @@ struct RequestTask
 	QVariant varContent;
 
 	// 请求的header信息
-	//	 QMap<QNetworkRequest::KnownHeaders, QVariant> mapHeader;
-	//	 mapHeader.insert(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
-	QMap<QNetworkRequest::KnownHeaders, QVariant> mapHeader;
+	//void QNetworkRequest::setRawHeader(const QByteArray &headerName, const QByteArray &value);
+	QMap<QByteArray, QByteArray> mapRawHeader;
 
 	// 是否显示进度，默认为false.
 	bool bShowProgress;
@@ -103,37 +100,35 @@ struct RequestTask
 	}
 };
 Q_DECLARE_METATYPE(RequestTask);
-typedef QVector<RequestTask> RequestTasks;
+typedef QVector<RequestTask> BatchRequestTask;
 
 
 ////////////////// Event ////////////////////////////////////////////////////
 namespace QEventRegister
 {
 	template <class Type>
-	int regiesterEventType(const Type& eventName)
+	int regiesterEvent(const Type& eventName)
 	{
-		typedef std::map<Type, int> TEventMap;
-		static TEventMap mapCustomEvent;
+		typedef std::map<Type, int> TUserEventMap;
+		static TUserEventMap s_mapUserEvent;
 
-		TEventMap::const_iterator iter = mapCustomEvent.find(eventName);
-		if (iter != mapCustomEvent.end())
+		TUserEventMap::const_iterator iter = s_mapUserEvent.find(eventName);
+		if (iter != s_mapUserEvent.cend())
 		{
 			return iter->second;
 		}
-		else
-		{
-			int iEventType = QEvent::registerEventType();
-			mapCustomEvent[eventName] = iEventType;
-			return iEventType;
-		}
+		
+		int nEventType = QEvent::registerEventType();
+		s_mapUserEvent[eventName] = nEventType;
+		return nEventType;
 	}
 }
 
 namespace NetworkEvent
 {
-	const QEvent::Type WaitForIdleThread	= (QEvent::Type)QEventRegister::regiesterEventType(QLatin1String("WaitForIdleThread"));
-	const QEvent::Type ReplyResult			= (QEvent::Type)QEventRegister::regiesterEventType(QLatin1String("ReplyResult"));
-	const QEvent::Type NetworkProgress		= (QEvent::Type)QEventRegister::regiesterEventType(QLatin1String("NetworkProgress"));
+	const QEvent::Type WaitForIdleThread	= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("WaitForIdleThread"));
+	const QEvent::Type ReplyResult			= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("ReplyResult"));
+	const QEvent::Type NetworkProgress		= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
 }
 
 //等待空闲线程事件
@@ -170,6 +165,52 @@ public:
 	qint64 iBtyes;
 	qint64 iTotalBtyes;
 };
+
+////////////////追踪类内存分配和释放/////////////////////////////////////////////////////
+#define NETWORK_TRACE_CLASS_MEMORY
+#ifdef NETWORK_TRACE_CLASS_MEMORY
+namespace TraceClass
+{
+template<typename T, typename TBase> class ClassIsDerived
+{
+public:
+	static int t(TBase* base)
+	{
+		return 1;
+	}
+
+	static char t(void* t2)
+	{
+		return 0;
+	}
+
+	enum
+	{
+		Result = (sizeof(int) == sizeof(t((T*)NULL))),
+	};
+};
+
+template <typename T>
+void addTracedClass()
+{
+	typedef std::map<std::string, std::atomic<int>> TClassReferenceCount;
+	static TClassReferenceCount s_mapRcConstructor;
+	static TClassReferenceCount s_mapRcDestructor;
+
+	const char *name = typeid(T).name;
+	std::string str(name);
+	auto iter = s_mapReferenceCount.find(str);
+	if (iter != s_mapReferenceCount.cend())
+	{
+
+	}
+	else
+	{
+		s_mapRcConstructor[str] = 0;
+	}
+}
+}
+#endif
 
 #pragma pack(pop)
 

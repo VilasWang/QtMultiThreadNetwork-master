@@ -14,7 +14,7 @@ public:
 	explicit NetworkReply(bool bBatch, QObject *parent = 0);
 	~NetworkReply();
 
-	const bool isBatchRequest() const {return m_bBatch;}
+	bool isBatchRequest() const {return m_bBatch;}
 
 	virtual bool event(QEvent *) Q_DECL_OVERRIDE;
 
