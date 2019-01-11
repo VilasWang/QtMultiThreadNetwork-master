@@ -15,7 +15,7 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-#define QMT_POST_TEST
+//#define QMT_POST_TEST
 #define DEFAULT_CONCURRENT_TASK 4
 #define DEFAULT_MTDOWNLOAD_COUNT 5
 //¾ÖÓòÍøApache http·şÎñÆ÷

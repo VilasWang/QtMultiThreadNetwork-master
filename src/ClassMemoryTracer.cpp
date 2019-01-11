@@ -1,5 +1,5 @@
 #include "ClassMemoryTracer.h"
-#include "Log4cplusWrapper.h"
+//#include "Log4cplusWrapper.h"
 #include <sstream>
 
 std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
@@ -9,7 +9,7 @@ TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 void printLog(std::string str)
 {
 	OutputDebugStringA(str.c_str());
-	LOG_INFO(str);
+	//LOG_INFO(str);
 }
 
 std::string intToString(const int n)

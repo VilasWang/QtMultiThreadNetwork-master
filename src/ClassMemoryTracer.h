@@ -16,12 +16,7 @@ A() { TRACE_CLASS_CONSTRUCTOR(A); }
 ~A() { TRACE_CLASS_DESTRUCTOR(A); }
 }
 
-3: 外部添加哪些类需要追踪
-TRACE_CLASS_BIND(A);
-TRACE_CLASS_BIND(B);
-...
-
-4: 最后等需要知道类内存分配和释放情况的时候(比如程序退出前)打印信息
+3: 最后等需要知道类内存分配和释放情况的时候(比如程序退出前)打印信息
 TRACE_CLASS_PRINT();
 ///////////////////////////////////////////////////////////////////////////////////////*/
 
@@ -43,26 +38,6 @@ class Lock;
 class ClassMemoryTracer
 {
 public:
-	template<class T>
-	static void addClass()
-	{
-		const char *name = typeid(T).name();
-		std::string str(name);
-
-		m_lock->lock();
-		auto iter = s_mapRefConstructor.find(str);
-		if (iter == s_mapRefConstructor.cend())
-		{
-			s_mapRefConstructor[str] = 0;
-		}
-		auto iter1 = s_mapRefDestructor.find(str);
-		if (iter1 == s_mapRefDestructor.cend())
-		{
-			s_mapRefDestructor[str] = 0;
-		}
-		m_lock->unLock();
-	}
-
 	template <class T>
 	static void addRef()
 	{
@@ -70,7 +45,11 @@ public:
 		std::string str(name);
 		m_lock->lock();
 		auto iter = s_mapRefConstructor.find(str);
-		if (iter != s_mapRefConstructor.end())
+		if (iter == s_mapRefConstructor.end())
+		{
+			s_mapRefConstructor[str] = 1;
+		}
+		else
 		{
 			s_mapRefConstructor[str] = ++iter->second;
 		}
@@ -84,7 +63,11 @@ public:
 		std::string str(name);
 		m_lock->lock();
 		auto iter = s_mapRefDestructor.find(str);
-		if (iter != s_mapRefDestructor.end())
+		if (iter == s_mapRefDestructor.end())
+		{
+			s_mapRefDestructor[str] = 1;
+		}
+		else
 		{
 			s_mapRefDestructor[str] = ++iter->second;
 		}
@@ -118,14 +101,6 @@ private:
 	CRITICAL_SECTION m_cs;
 };
 
-
-#ifndef TRACE_CLASS_BIND
-#ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_BIND(T) ClassMemoryTracer::addClass<T>()
-#else
-#define TRACE_CLASS_BIND(T) __noop
-#endif
-#endif
 
 #ifndef TRACE_CLASS_CONSTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
