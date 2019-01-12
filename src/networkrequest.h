@@ -12,15 +12,15 @@ class NetworkRequest : public QObject
 
 public:
 	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false)
-	{ 
-		TRACE_CLASS_CONSTRUCTOR(NetworkRequest); 
+	{
+		TRACE_CLASS_CONSTRUCTOR(NetworkRequest);
 	}
 
-	virtual ~NetworkRequest(){ TRACE_CLASS_DESTRUCTOR(NetworkRequest); }
+	virtual ~NetworkRequest() { TRACE_CLASS_DESTRUCTOR(NetworkRequest); }
 
-	void setRequestTask(const RequestTask &request){ m_request = request; }
+	void setRequestTask(const RequestTask &request) { m_request = request; }
 	//是否重定向
-	bool redirected() const{ return (m_redirectUrl.isValid() && m_redirectUrl != m_request.url); }
+	bool redirected() const { return (m_redirectUrl.isValid() && m_redirectUrl != m_request.url); }
 
 	QString error() const { return m_strError; }
 
@@ -46,8 +46,8 @@ public:
 	static std::unique_ptr<NetworkRequest> createRequestInstance(const RequestType& type, bool bMultiDownloadMode = false);
 };
 
-inline bool isHttpProxy(const QString& strScheme) {return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0);}
-inline bool isHttpsProxy(const QString& strScheme) {return (strScheme.compare(QLatin1String("https"), Qt::CaseInsensitive) == 0);}
-inline bool isFtpProxy(const QString& strScheme) {return (strScheme.compare(QLatin1String("ftp"), Qt::CaseInsensitive) == 0);}
+inline bool isHttpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0); }
+inline bool isHttpsProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("https"), Qt::CaseInsensitive) == 0); }
+inline bool isFtpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("ftp"), Qt::CaseInsensitive) == 0); }
 
 #endif // NETWORKREQUEST_H

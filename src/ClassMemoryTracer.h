@@ -3,7 +3,7 @@
 @Author:	vilas wang
 @Contact:	QQ451930733|451930733@qq.com
 
-【用法】 
+【用法】
 
 1：预定义宏TRACE_CLASS_MEMORY_ENABLED
 
@@ -77,9 +77,9 @@ public:
 	static void printInfo();
 
 private:
-	ClassMemoryTracer(){}
-	ClassMemoryTracer(const ClassMemoryTracer &){}
-	ClassMemoryTracer &operator=(const ClassMemoryTracer &){}
+	ClassMemoryTracer() {}
+	ClassMemoryTracer(const ClassMemoryTracer &) {}
+	ClassMemoryTracer &operator=(const ClassMemoryTracer &) {}
 
 private:
 	static std::unique_ptr<Lock> m_lock;

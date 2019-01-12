@@ -12,7 +12,7 @@ The Qt multi-threaded network module is a wrapper of Qt Network module, and comb
 - Asynchronous API.
 - Thread-safe.
 
-Note: You must call NetworkManager::initialize() before use, and call NetworkManager::unInitialize() before application quit. 
+Note: You must call NetworkManager::initialize() before use, and call NetworkManager::unInitialize() before application quit.
 That must be called in the main thread.
 */
 
@@ -102,7 +102,7 @@ private:
 	void waitForIdleThread();
 
 	// bDownload(false: upload)
-	void updateProgress(quint64 uiRequestId, quint64 uiBatchId, 
+	void updateProgress(quint64 uiRequestId, quint64 uiBatchId,
 		qint64 iBytes, qint64 iTotalBytes, bool bDownload);
 
 private:

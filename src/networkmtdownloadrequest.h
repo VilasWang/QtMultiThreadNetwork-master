@@ -76,12 +76,12 @@ public:
 	Downloader(int index, QObject *parent = 0);
 	~Downloader();
 
-	bool startDownload(const QUrl &url, 
+	bool startDownload(const QUrl &url,
 		QFile* file,
 		QNetworkAccessManager* pNetworkManager,
-		qint64 startPoint	= 0, 
-		qint64 endPoint		= -1,
-		bool bShowProgress	= false);
+		qint64 startPoint = 0,
+		qint64 endPoint = -1,
+		bool bShowProgress = false);
 
 	void abort();
 
@@ -90,9 +90,9 @@ Q_SIGNALS:
 	void downloadProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
 
 	public Q_SLOTS:
-		void onFinished();
-		void onReadyRead();
-		void onError(QNetworkReply::NetworkError code);
+	void onFinished();
+	void onReadyRead();
+	void onError(QNetworkReply::NetworkError code);
 
 private:
 	QPointer<QNetworkAccessManager> m_pNetworkManager;

@@ -81,18 +81,19 @@ NetworkTool::NetworkTool(QWidget *parent)
 	connect(ui.btn_abort, SIGNAL(clicked()), this, SLOT(onAbortTask()));
 	connect(ui.btn_browser1, SIGNAL(clicked()), this, SLOT(onGetSaveDirectory()));
 	connect(ui.btn_browser2, SIGNAL(clicked()), this, SLOT(onGetUploadFile()));
-	connect(ui.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked){
-		if (checked){
+	connect(ui.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
+		if (checked)
+		{
 			onUpdateDefaultInfos();
 		}
 	});
-	connect(ui.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged), 
-		this, [=](const QString &strText){
-			int num = strText.toInt();
-			if (num >= 1 && num <= 8)
-			{
-				NetworkManager::globalInstance()->setMaxThreadCount(num);
-			}
+	connect(ui.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+		this, [=](const QString &strText) {
+		int num = strText.toInt();
+		if (num >= 1 && num <= 8)
+		{
+			NetworkManager::globalInstance()->setMaxThreadCount(num);
+		}
 	});
 	connect(bg1, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultInfos()));
 	connect(bg2, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultInfos()));
@@ -301,7 +302,7 @@ void NetworkTool::onDownload()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -310,14 +311,14 @@ void NetworkTool::onDownload()
 	QString strSavePath = ui.lineEdit_saveDir->text().trimmed();
 	if (strSavePath.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("文件保存位置不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -353,7 +354,7 @@ void NetworkTool::onUpload()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -362,14 +363,14 @@ void NetworkTool::onUpload()
 	QString strUploadFilePath = ui.lineEdit_uploadFile->text().trimmed();
 	if (strUploadFilePath.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -396,14 +397,14 @@ void NetworkTool::onGetRequest()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -428,7 +429,7 @@ void NetworkTool::onPostRequest()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -437,14 +438,14 @@ void NetworkTool::onPostRequest()
 	QString strArg = ui.lineEdit_arg->text().trimmed();
 	if (strArg.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -486,7 +487,7 @@ void NetworkTool::onPutRequest()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -495,7 +496,7 @@ void NetworkTool::onPutRequest()
 	QString strUploadFilePath = ui.lineEdit_uploadFile->text().trimmed();
 	if (strUploadFilePath.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -504,7 +505,7 @@ void NetworkTool::onPutRequest()
 	QFile file(strUploadFilePath);
 	if (!file.exists() || !file.open(QIODevice::ReadOnly))
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
 		reset();
 		return;
@@ -513,7 +514,7 @@ void NetworkTool::onPutRequest()
 	file.close();
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -539,14 +540,14 @@ void NetworkTool::onDeleteRequest()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -571,14 +572,14 @@ void NetworkTool::onHeadRequest()
 	QString strUrl = ui.lineEdit_url->text().trimmed();
 	if (strUrl.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start request[" +strUrl+"]");
+	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
@@ -601,7 +602,7 @@ void NetworkTool::onBatchDownload()
 	QString strFile = ui.lineEdit_url->text().trimmed();
 	if (strFile.isEmpty())
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
@@ -611,12 +612,12 @@ void NetworkTool::onBatchDownload()
 	QFile file(strFile);
 	if (file.open(QIODevice::ReadOnly))
 	{
-		QTextStream stream( &file );
+		QTextStream stream(&file);
 		QTextCodec *codec = QTextCodec::codecForName("UTF-8");
 		stream.setCodec(codec);
 
 		QString strLine;
-		while (!stream.atEnd()) 
+		while (!stream.atEnd())
 		{
 			strLine = stream.readLine();
 			strLine = strLine.trimmed();
@@ -626,7 +627,7 @@ void NetworkTool::onBatchDownload()
 	}
 	else
 	{
-		QMessageBox::information(nullptr, "Tips", 
+		QMessageBox::information(nullptr, "Tips",
 			QStringLiteral("文件打开失败！"), QMessageBox::Ok);
 		reset();
 		return;
@@ -644,7 +645,7 @@ void NetworkTool::onBatchDownload()
 
 	BatchRequestTask requests;
 	RequestTask request;
-	foreach (const QString& strUrl, strlstUrl)
+	foreach(const QString& strUrl, strlstUrl)
 	{
 		const QString& strUrlStandard = QDir::fromNativeSeparators(strUrl);
 		QUrl url(strUrlStandard);
@@ -677,7 +678,7 @@ void NetworkTool::onBatchDownload()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start batch request. Batch id: " 
+	appendMsg(m_timeStart.toString() + " - Start batch request. Batch id: "
 		+ QString::number(m_batchId) + ", Total: " + QString::number(m_nTotalNum));
 }
 
@@ -692,7 +693,7 @@ void NetworkTool::onBatchMixedTask()
 
 	BatchRequestTask requests;
 	RequestTask request;
-	foreach (const QString& strFile, strlstUrlDownload)
+	foreach(const QString& strFile, strlstUrlDownload)
 	{
 		QUrl urlHost(strFile);
 		Q_ASSERT(urlHost.isValid());
@@ -717,7 +718,7 @@ void NetworkTool::onBatchMixedTask()
 	strlstFileUpload.append("resources/test/2.jpg");
 	strlstFileUpload.append("resources/test/3.jpeg");
 	int i = 1;
-	foreach (const QString& strFile, strlstFileUpload)
+	foreach(const QString& strFile, strlstFileUpload)
 	{
 		QUrl urlHost(strUrl.arg(i++));
 		Q_ASSERT(urlHost.isValid());
@@ -770,7 +771,6 @@ void NetworkTool::onBatchMixedTask()
 	requests.append(request);
 #endif
 
-
 	m_nTotalNum = requests.size();
 
 	quint64 uiBatchId = 0;
@@ -782,7 +782,7 @@ void NetworkTool::onBatchMixedTask()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId: " 
+	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId: "
 		+ QString::number(uiBatchId) + ", Total: " + QString::number(m_nTotalNum));
 }
 
@@ -816,12 +816,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 			|| (ui.cb_abortBatch->isChecked() && m_nFailedNum > 0))
 		{
 			QTime time = QTime::currentTime();
-			appendMsg(time.toString() + " - Batch request finished. Total[" 
+			appendMsg(time.toString() + " - Batch request finished. Total["
 				+ QString::number(m_nTotalNum) + "] Success[" + QString::number(m_nSuccessNum)
 				+ "] Failed[" + QString::number(m_nFailedNum) + "]");
 
 			int msec = m_timeStart.msecsTo(time);
-			float sec = (float) msec / 1000;
+			float sec = (float)msec / 1000;
 			QString strMsg = QString("Time elapsed: %1s.").arg(sec);
 			appendMsg(strMsg);
 			reset();
@@ -832,21 +832,21 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		QTime time = QTime::currentTime();
 		int msec = m_timeStart.msecsTo(time);
 
-		appendMsg(time.toString() + " - Request finished. Success[" 
+		appendMsg(time.toString() + " - Request finished. Success["
 			+ QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
 
-		float sec = (float) msec / 1000;
+		float sec = (float)msec / 1000;
 		quint64 uiSpeed = 0;
 		if (sec > 0)
 		{
 			if (request.bSuccess && request.eType == eTypeDownload && m_nBytesTotalDownload > 0)
 			{
-				uiSpeed = m_nBytesTotalDownload/sec;
-				
+				uiSpeed = m_nBytesTotalDownload / sec;
+
 			}
 			else if (request.bSuccess && request.eType == eTypeUpload && m_nBytesTotalUpload > 0)
 			{
-				uiSpeed = m_nBytesTotalUpload/sec;
+				uiSpeed = m_nBytesTotalUpload / sec;
 			}
 		}
 
@@ -966,21 +966,21 @@ QString NetworkTool::bytes2String(qint64 bytes)
 	{
 		str = QString("%1B").arg(bytes);
 	}
-	else if (bytes < 1024*1024)
+	else if (bytes < 1024 * 1024)
 	{
-		bytes = bytes/1024;
+		bytes = bytes / 1024;
 		str = QString("%1KB").arg(bytes);
 	}
-	else if (bytes < 1024*1024*1024)
+	else if (bytes < 1024 * 1024 * 1024)
 	{
-		qreal dSize = (qreal)bytes/1024/1024;
+		qreal dSize = (qreal)bytes / 1024 / 1024;
 		char ch[8] = {0};
 		sprintf(ch, "%.2f", dSize);
 		str = QString("%1MB").arg(ch);
 	}
 	else
 	{
-		qreal dSize = (qreal)bytes/1024/1024/1024;
+		qreal dSize = (qreal)bytes / 1024 / 1024 / 1024;
 		char ch[8] = {0};
 		sprintf(ch, "%.2f", dSize);
 		str = QString("%1GB").arg(ch);

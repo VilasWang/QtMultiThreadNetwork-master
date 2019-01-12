@@ -25,9 +25,9 @@ enum RequestType
 	eTypePost,
 	// PUT方式请求（支持http和ftp）
 	eTypePut,
-	// DELETE方式请求（仅支持http）（需要服务器支持）
+	// DELETE方式请求（仅支持http）
 	eTypeDelete,
-	// HEAD方式请求（仅支持http）（需要服务器支持）
+	// HEAD方式请求（仅支持http）
 	eTypeHead,
 
 	eTypeUnknown = -1,
@@ -118,7 +118,7 @@ namespace QEventRegister
 		{
 			return iter->second;
 		}
-		
+
 		int nEventType = QEvent::registerEventType();
 		s_mapUserEvent[eventName] = nEventType;
 		return nEventType;
@@ -127,23 +127,23 @@ namespace QEventRegister
 
 namespace NetworkEvent
 {
-	const QEvent::Type WaitForIdleThread	= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("WaitForIdleThread"));
-	const QEvent::Type ReplyResult			= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("ReplyResult"));
-	const QEvent::Type NetworkProgress		= (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
+	const QEvent::Type WaitForIdleThread = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("WaitForIdleThread"));
+	const QEvent::Type ReplyResult = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("ReplyResult"));
+	const QEvent::Type NetworkProgress = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
 }
 
 //等待空闲线程事件
 class WaitForIdleThreadEvent : public QEvent
 {
 public:
-	WaitForIdleThreadEvent() : QEvent(QEvent::Type(NetworkEvent::WaitForIdleThread)){}
+	WaitForIdleThreadEvent() : QEvent(QEvent::Type(NetworkEvent::WaitForIdleThread)) {}
 };
 
 //通知结果事件
 class ReplyResultEvent : public QEvent
 {
 public:
-	ReplyResultEvent() : QEvent(QEvent::Type(NetworkEvent::ReplyResult)), bDestroyed(true){}
+	ReplyResultEvent() : QEvent(QEvent::Type(NetworkEvent::ReplyResult)), bDestroyed(true) {}
 
 	RequestTask request;
 	bool bDestroyed;
@@ -154,11 +154,13 @@ class NetworkProgressEvent : public QEvent
 {
 public:
 	NetworkProgressEvent() : QEvent(QEvent::Type(NetworkEvent::NetworkProgress))
-	, bDownload(true)
-	, uiId(0)
-	, uiBatchId(0)
-	, iBtyes(0)
-	, iTotalBtyes(0){}
+		, bDownload(true)
+		, uiId(0)
+		, uiBatchId(0)
+		, iBtyes(0)
+		, iTotalBtyes(0)
+	{
+	}
 
 	bool bDownload;
 	quint64 uiId;
