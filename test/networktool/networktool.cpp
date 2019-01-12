@@ -88,7 +88,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 		}
 	});
 	connect(ui.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-		this, [=](const QString &strText) {
+			this, [=](const QString &strText) {
 		int num = strText.toInt();
 		if (num >= 1 && num <= 8)
 		{
@@ -111,15 +111,15 @@ void NetworkTool::initialize()
 {
 	NetworkManager::initialize();
 	connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress
-		, this, &NetworkTool::onDownloadProgress);
+			, this, &NetworkTool::onDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress
-		, this, &NetworkTool::onUploadProgress);
+			, this, &NetworkTool::onUploadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress
-		, this, &NetworkTool::onBatchDownloadProgress);
+			, this, &NetworkTool::onBatchDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress
-		, this, &NetworkTool::onBatchUploadProgress);
+			, this, &NetworkTool::onBatchUploadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::errorMessage
-		, this, &NetworkTool::onErrorMessage);
+			, this, &NetworkTool::onErrorMessage);
 }
 
 void NetworkTool::unIntialize()
@@ -303,7 +303,7 @@ void NetworkTool::onDownload()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -312,7 +312,7 @@ void NetworkTool::onDownload()
 	if (strSavePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("文件保存位置不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("文件保存位置不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -343,7 +343,7 @@ void NetworkTool::onDownload()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -355,7 +355,7 @@ void NetworkTool::onUpload()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -364,7 +364,7 @@ void NetworkTool::onUpload()
 	if (strUploadFilePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -386,7 +386,7 @@ void NetworkTool::onUpload()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -398,7 +398,7 @@ void NetworkTool::onGetRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -418,7 +418,7 @@ void NetworkTool::onGetRequest()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -430,7 +430,7 @@ void NetworkTool::onPostRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -439,7 +439,7 @@ void NetworkTool::onPostRequest()
 	if (strArg.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -467,7 +467,7 @@ void NetworkTool::onPostRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 #else
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
@@ -475,7 +475,7 @@ void NetworkTool::onPostRequest()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 #endif
 }
@@ -488,7 +488,7 @@ void NetworkTool::onPutRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -497,7 +497,7 @@ void NetworkTool::onPutRequest()
 	if (strUploadFilePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -506,7 +506,7 @@ void NetworkTool::onPutRequest()
 	if (!file.exists() || !file.open(QIODevice::ReadOnly))
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
+								 QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -529,7 +529,7 @@ void NetworkTool::onPutRequest()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -541,7 +541,7 @@ void NetworkTool::onDeleteRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -561,7 +561,7 @@ void NetworkTool::onDeleteRequest()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -573,7 +573,7 @@ void NetworkTool::onHeadRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -593,7 +593,7 @@ void NetworkTool::onHeadRequest()
 	{
 		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 }
 
@@ -603,7 +603,7 @@ void NetworkTool::onBatchDownload()
 	if (strFile.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -628,7 +628,7 @@ void NetworkTool::onBatchDownload()
 	else
 	{
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("文件打开失败！"), QMessageBox::Ok);
+								 QStringLiteral("文件打开失败！"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -675,11 +675,11 @@ void NetworkTool::onBatchDownload()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
 	appendMsg(m_timeStart.toString() + " - Start batch request. Batch id: "
-		+ QString::number(m_batchId) + ", Total: " + QString::number(m_nTotalNum));
+			  + QString::number(m_batchId) + ", Total: " + QString::number(m_nTotalNum));
 }
 
 void NetworkTool::onBatchMixedTask()
@@ -779,11 +779,11 @@ void NetworkTool::onBatchMixedTask()
 	{
 		m_batchId = uiBatchId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
+				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
 	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId: "
-		+ QString::number(uiBatchId) + ", Total: " + QString::number(m_nTotalNum));
+			  + QString::number(uiBatchId) + ", Total: " + QString::number(m_nTotalNum));
 }
 
 //request:		任务信息
@@ -817,8 +817,8 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		{
 			QTime time = QTime::currentTime();
 			appendMsg(time.toString() + " - Batch request finished. Total["
-				+ QString::number(m_nTotalNum) + "] Success[" + QString::number(m_nSuccessNum)
-				+ "] Failed[" + QString::number(m_nFailedNum) + "]");
+					  + QString::number(m_nTotalNum) + "] Success[" + QString::number(m_nSuccessNum)
+					  + "] Failed[" + QString::number(m_nFailedNum) + "]");
 
 			int msec = m_timeStart.msecsTo(time);
 			float sec = (float)msec / 1000;
@@ -833,7 +833,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		int msec = m_timeStart.msecsTo(time);
 
 		appendMsg(time.toString() + " - Request finished. Success["
-			+ QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
+				  + QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
 
 		float sec = (float)msec / 1000;
 		quint64 uiSpeed = 0;
@@ -920,8 +920,8 @@ void NetworkTool::onErrorMessage(const QString& error)
 void NetworkTool::onGetSaveDirectory()
 {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-		"/home",
-		QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+													"/home",
+													QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	if (!dir.isNull() && !dir.isEmpty())
 	{
@@ -932,8 +932,8 @@ void NetworkTool::onGetSaveDirectory()
 void NetworkTool::onGetUploadFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-		"/home",
-		tr("File (*.*)"));
+													"/home",
+													tr("File (*.*)"));
 
 	if (!fileName.isNull() && !fileName.isEmpty())
 	{
