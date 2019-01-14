@@ -796,7 +796,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		m_nSuccessNum++;
 		if (bBatch)
 		{
-			//qDebug() << "Success[" + QString::number(m_nSuccessNum) + "]" << request.url.url();
+			qDebug() << "Success[" + QString::number(m_nSuccessNum) + "]" << request.url.url();
 		}
 	}
 	else  //下载成功后的文件(文件绝对路径：request.strFileSavePath + 文件名：request.url.filename())
@@ -804,7 +804,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		m_nFailedNum++;
 		if (bBatch)
 		{
-			//qDebug() << "Failed[" + QString::number(m_nFailedNum) + "]" << request.url.url();
+			qDebug() << "Failed[" + QString::number(m_nFailedNum) + "]" << request.url.url();
 		}
 	}
 	appendMsg(request.bytesContent, false);
