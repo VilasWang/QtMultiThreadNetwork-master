@@ -48,11 +48,10 @@ public:
 	// 添加单个请求任务（若返回nullptr，表示url无效）
 	NetworkReply *addRequest(RequestTask& task);
 
-	// 添加批处理请求任务
+	// 添加批量请求任务
 	NetworkReply *addBatchRequest(const BatchRequestTask& tasks, quint64 &uiBatchId);
 
 	// 停止所有的请求任务
-	// bNoEmit: 不会发出操作取消的信号
 	void stopAllRequest();
 	// 停止指定batchid的批次请求任务
 	void stopBatchRequests(quint64 uiBatchId);
@@ -70,7 +69,7 @@ public:
 
 Q_SIGNALS:
 	void errorMessage(const QString& error);
-	void batchRequestFinished(quint64 uiBatchId);
+	void batchRequestFinished(quint64 uiBatchId, bool bAllSuccess);
 
 	// Progress
 	void downloadProgress(quint64 uiRequestId, qint64 iBytesDownload, qint64 iBytesTotal);
@@ -95,8 +94,8 @@ private:
 	// 启动一个新的线程以开始请求
 	bool startRequest(const RequestTask &task);
 
-	// 进行下个请求，直到所有请求完成
-	void startNextRequest();
+	// 尝试开始一个请求(若等待队列非空)
+	void tryStartRequest();
 
 	// 等待空闲的线程
 	void waitForIdleThread();

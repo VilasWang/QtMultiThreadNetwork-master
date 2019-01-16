@@ -65,7 +65,7 @@ struct RequestTask
 	// 任务失败后，是否再尝试请求一次，默认为false.
 	bool bTryAgainWhileFailed;
 
-	// 批处理请求失败一个就终止整个批次，默认为true.
+	// 批量请求失败一个就终止整批请求，默认为true.
 	bool bAbortBatchWhileOneFailed;
 
 	// 多线程下载模式(需服务器支持)
@@ -84,7 +84,7 @@ struct RequestTask
 
 	// 请求ID
 	quint64 uiId;
-	// 批次ID (批处理请求)
+	// 批次ID (批量请求)
 	quint64 uiBatchId;
 
 	RequestTask()

@@ -318,6 +318,7 @@ void NetworkTool::onDownload()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -370,6 +371,7 @@ void NetworkTool::onUpload()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -404,6 +406,7 @@ void NetworkTool::onGetRequest()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -445,6 +448,7 @@ void NetworkTool::onPostRequest()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -514,6 +518,7 @@ void NetworkTool::onPutRequest()
 	file.close();
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -547,6 +552,7 @@ void NetworkTool::onDeleteRequest()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -579,6 +585,7 @@ void NetworkTool::onHeadRequest()
 	}
 
 	m_timeStart = QTime::currentTime();
+	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start request[" + strUrl + "]");
 
 	QUrl urlHost(strUrl);
@@ -678,8 +685,9 @@ void NetworkTool::onBatchDownload()
 				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start batch request. Batch id: "
-			  + QString::number(m_batchId) + ", Total: " + QString::number(m_nTotalNum));
+	m_timeStart.start();
+	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId["
+		+ QString::number(m_batchId) + "] Total[" + QString::number(m_nTotalNum) + "]");
 }
 
 void NetworkTool::onBatchMixedTask()
@@ -773,17 +781,16 @@ void NetworkTool::onBatchMixedTask()
 
 	m_nTotalNum = requests.size();
 
-	quint64 uiBatchId = 0;
-	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, uiBatchId);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
 	if (nullptr != pReply)
 	{
-		m_batchId = uiBatchId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
 	m_timeStart = QTime::currentTime();
-	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId: "
-			  + QString::number(uiBatchId) + ", Total: " + QString::number(m_nTotalNum));
+	m_timeStart.start();
+	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId["
+			  + QString::number(m_batchId) + "] Total[" + QString::number(m_nTotalNum) + "]");
 }
 
 //request:		任务信息
@@ -809,18 +816,17 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 	}
 	appendMsg(request.bytesContent, false);
 
-	//批处理请求
+	//批量请求
 	if (bBatch)
 	{
 		if (m_nSuccessNum + m_nFailedNum == m_nTotalNum
 			|| (ui.cb_abortBatch->isChecked() && m_nFailedNum > 0))
 		{
-			QTime time = QTime::currentTime();
-			appendMsg(time.toString() + " - Batch request finished. Total["
+			appendMsg("Batch request finished. Total["
 					  + QString::number(m_nTotalNum) + "] Success[" + QString::number(m_nSuccessNum)
 					  + "] Failed[" + QString::number(m_nFailedNum) + "]");
 
-			int msec = m_timeStart.msecsTo(time);
+			int msec = m_timeStart.elapsed();
 			float sec = (float)msec / 1000;
 			QString strMsg = QString("Time elapsed: %1s.").arg(sec);
 			appendMsg(strMsg);
@@ -829,12 +835,10 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 	}
 	else //单任务
 	{
-		QTime time = QTime::currentTime();
-		int msec = m_timeStart.msecsTo(time);
-
-		appendMsg(time.toString() + " - Request finished. Success["
+		appendMsg("Request finished. Success["
 				  + QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
 
+		int msec = m_timeStart.elapsed();
 		float sec = (float)msec / 1000;
 		quint64 uiSpeed = 0;
 		if (sec > 0)
@@ -870,14 +874,9 @@ void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint6
 		if (bytesTotal != m_nBytesTotalDownload)
 		{
 			m_nBytesTotalDownload = bytesTotal;
-			m_strTotalDownload = bytes2String(bytesTotal);
 			ui.progressBar_d->setMaximum(bytesTotal);
 		}
 		ui.progressBar_d->setValue(bytesReceived);
-
-		/*const QString& strReceived = bytes2String(bytesReceived);
-		appendMsg(QStringLiteral("任务：%1   下载：%2 / %3")
-		.arg(taskId).arg(strReceived).arg(m_strTotalDownload), false);*/
 	}
 }
 
@@ -889,27 +888,22 @@ void NetworkTool::onUploadProgress(quint64 taskId, qint64 bytesSent, qint64 byte
 		if (bytesTotal != m_nBytesTotalUpload)
 		{
 			m_nBytesTotalUpload = bytesTotal;
-			m_strTotalUpload = bytes2String(bytesTotal);
 			ui.progressBar_u->setMaximum(bytesTotal);
 		}
 		ui.progressBar_u->setValue(bytesSent);
-
-		/*const QString& strSent = bytes2String(bytesSent);
-		appendMsg(QStringLiteral("任务：%1   上传：%2 / %3")
-		.arg(taskId).arg(strSent).arg(m_strTotalUpload), false);*/
 	}
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
 {
-	const QString& str = bytes2String(bytes);
-	appendMsg(QStringLiteral("批任务[%1]   下载：%2").arg(batchId).arg(str), false);
+	//const QString& str = bytes2String(bytes);
+	appendMsg(QStringLiteral("批任务[%1]   下载：%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onBatchUploadProgress(quint64 batchId, qint64 bytes)
 {
-	const QString& str = bytes2String(bytes);
-	appendMsg(QStringLiteral("批任务[%1]   上传：%2").arg(batchId).arg(str), false);
+	//const QString& str = bytes2String(bytes);
+	appendMsg(QStringLiteral("批任务[%1]   上传：%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onErrorMessage(const QString& error)
