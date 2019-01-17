@@ -11,15 +11,12 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
 [Rr]eleases/
 [Xx]64/
 [Xx]86/
 [Bb]uild/
 bld/
-[Bb]in/
 [Oo]bj/
 
 # Visual Studio 2015 cache/options directory
@@ -243,3 +240,15 @@ ModelManifest.xml
 /test/networktool/GeneratedFiles/qrc_networktool.cpp
 /test/networktool/GeneratedFiles/ui_networktool.h
 *.bak
+/test/networktool/log
+/bin/Debug/NetworkTool.exe
+/bin/Debug/QMultiThreadNetworkd.dll
+/bin/Release/NetworkTool.exe
+/bin/Release/QMultiThreadNetwork.dll
+*.exp
+/lib/Debug/QMultiThreadNetworkd.lib
+/lib/Release/QMultiThreadNetwork.lib
+*.tlog
+/src/GeneratedFiles/Debug
+*.res
+/test/networktool/GeneratedFiles

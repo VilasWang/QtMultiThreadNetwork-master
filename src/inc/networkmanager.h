@@ -94,7 +94,7 @@ private:
 	// 启动一个新的线程以开始请求
 	bool startRequest(const RequestTask &task);
 
-	// 尝试开始一个请求请求，直到所有请求完成
+	// 尝试开始一个请求(若等待队列非空)
 	void tryStartRequest();
 
 	// 等待空闲的线程
