@@ -252,3 +252,4 @@ ModelManifest.xml
 /src/GeneratedFiles/Debug
 *.res
 /test/networktool/GeneratedFiles
+/src/GeneratedFiles/Release
