@@ -1,18 +1,16 @@
 ﻿<?php  
 header("content-type:text/html;charset:utf-8");
-echo "[PHP] <br>";
-var_dump($_SERVER['REQUEST_METHOD']);
-echo " <br>";
+echo "<br>[PHP] <br>";
+//var_dump($_SERVER['REQUEST_METHOD']);
+//echo " <br>";
 
 $fileInfo = $_FILES["sendfile"];
 echo "Upload file: ".$fileInfo["name"]." <br>";
-echo "Type: ".$fileInfo["type"]." <br>";
 echo "Size: ".($fileInfo["size"] / 1024)." kB <br>";
-echo "Temp file: ".$fileInfo["tmp_name"]." <br>";
+//echo "Temp file: ".$fileInfo["tmp_name"]." <br>";
 $targetname = $_POST["filename"];
-echo "Target file: ".$targetname." <br>";
 $targetpath = $_POST["path"];
-echo "Target path: ".$targetpath." <br>";
+//echo "Target file: ".$targetpath."/".$targetname." <br>";
 
 if ($fileInfo["error"] > 0){
     echo "Error：".$fileInfo["error"]." <br>";
@@ -46,19 +44,19 @@ else{
 			}
 			if (!file_exists($move_to_file)){
 				if(move_uploaded_file($uploaded_file, iconv("utf-8","gb2312",$move_to_file))) {  
-					echo "Result: success <br>";
+					echo $targetname." upload success. <br>";
 				} else {  
-					echo "Result: failed <br>";  
+					echo $targetname." upload failed. <br>";  
 				}
 			}
 			else{
-				echo "Result: failed - ".$targetname." already exists <br>";
+				echo "Upload failed. ".$targetname." already exists <br>";
 			}
 		} else {  
-			echo "Result: failed <br>";  
+			echo "Upload failed. <br>";  
 		}
 	} else {  
-		echo "Result: failed - File cannot be larger than 512MB <br>";  
+		echo "Upload failed. File cannot be larger than 512MB <br>";  
 	}
 }
 ?>
