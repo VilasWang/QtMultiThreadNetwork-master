@@ -1,9 +1,9 @@
 <?php
 header("content-type:text/html;charset:utf-8");
-echo "[PHP] <br>";
+echo "<br>[PHP] <br>";
 var_dump($_SERVER['REQUEST_METHOD']);
 //var_dump($_SERVER['REQUEST_URI']);
-echo " <br>";
+//echo " <br>";
 
 if (($stream = fopen('php://input', "r")) !== FALSE){
     var_dump(stream_get_contents($stream));

@@ -6,7 +6,7 @@ $file_sub_path=$_SERVER['DOCUMENT_ROOT']."/resource/";
 $file_path=$file_sub_path.$file_name; 
 echo $file_path;
 if(!file_exists($file_path)){ 
-	echo "404"; 
+	echo "404 not found!"; 
 	return; 
 } 
 $fp=fopen($file_path,"r"); 
