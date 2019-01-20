@@ -4,6 +4,9 @@
 #include <QtWidgets/QMainWindow>
 #include <QTime>
 #include "ui_networktool.h"
+#include "ui_addBatchTask.h"
+#include "ui_addtask.h"
+#include "listview.h"
 #include "NetworkDef.h"
 
 class NetworkTool : public QMainWindow
@@ -15,8 +18,9 @@ public:
 	~NetworkTool();
 
 public Q_SLOTS:
-	void onStartTask();
+	void onAddTask();
 	void onAbortTask();
+	void onAbortAllTask();
 
 private Q_SLOTS:
 	void onDownload();
@@ -36,20 +40,32 @@ private Q_SLOTS:
 	void onBatchUploadProgress(quint64, qint64);
 	void onErrorMessage(const QString& error);
 
-	void onUpdateDefaultInfos();
+	void onUpdateDefaultValue();
 	void onGetSaveDirectory();
 	void onGetUploadFile();
 
 private:
 	void initialize();
 	void unIntialize();
+	void initCtrls();
+	void initConnecting();
 	QString bytes2String(qint64 bytes);
 	void appendMsg(const QString& strMsg, bool bQDebug = true);
 	void reset();
 	QString getDefaultDownloadDir();//获取系统默认下载目录
 
 private:
-	Ui::networkClass ui;
+	Ui::networkClass uiMain;
+	Ui::Widget_addTask uiAddTask;
+	Ui::Widget_addBatch uiAddBatchTask;
+
+	QWidget *m_pWidgetAddTask;
+	QWidget *m_pWidgetAddBatch;
+	Listview *m_pListView;
+	Model *m_pModel;
+	Delegate *m_pDelegate;
+	QButtonGroup *bg_protocal;
+	QButtonGroup *bg_type;
 
 	quint64 m_requestId;
 	quint64 m_batchId;
@@ -66,6 +82,25 @@ private:
 	QString m_strTotalUpload;
 
 	QTime m_timeStart;
+};
+
+class TaskDelegate : public Delegate
+{
+public:
+	TaskDelegate(QObject* parent = NULL);
+	~TaskDelegate();
+
+public:
+	void paint(QPainter *painter,
+			   const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+	QSize sizeHint(const QStyleOptionViewItem &option,
+				   const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+protected:
+	bool editorEvent(QEvent *event, QAbstractItemModel *model,
+					 const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
+
 };
 
 #endif // INTERNET_H
