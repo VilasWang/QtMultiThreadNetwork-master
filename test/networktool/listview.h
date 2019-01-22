@@ -21,6 +21,7 @@ public:
 	void setListDelegate(Delegate *);
 	void setListModel(Model *);
 	void insert(const QVariant&);
+	void insert(QVector<QVariant>& vec);
 	void updateAll(QVector<QVariant>&);
 
 private:
@@ -46,6 +47,7 @@ protected:
 
 public:
 	void insert(const QVariant&);
+	void insert(QVector<QVariant>& vec);
 	void updateAll(const QVector<QVariant>&);
 	void clearModel();
 

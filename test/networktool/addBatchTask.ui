@@ -166,7 +166,7 @@ border-radius:0%;
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_browser1">
+  <widget class="QPushButton" name="btn_browser">
    <property name="geometry">
     <rect>
      <x>440</x>

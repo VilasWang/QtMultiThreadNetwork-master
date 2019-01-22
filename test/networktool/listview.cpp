@@ -60,6 +60,14 @@ void Listview::insert(const QVariant& var)
 	}
 }
 
+void Listview::insert(QVector<QVariant>& vec)
+{
+	if (m_pModel != nullptr)
+	{
+		m_pModel->insert(vec);
+	}
+}
+
 void Listview::updateAll(QVector<QVariant>& vec)
 {
 	if (m_pModel != nullptr)
@@ -114,13 +122,26 @@ void Model::insert(const QVariant& var)
 	endInsertRows();
 }
 
+void Model::insert(QVector<QVariant>& vec)
+{
+	if (vec.size() > 0)
+	{
+		beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size() + vec.size() - 1);
+		m_vecVariant << vec;
+		endInsertRows();
+	}
+}
+
 void Model::updateAll(const QVector<QVariant>& vec)
 {
 	clearModel();
 
-	beginInsertRows(QModelIndex(), 0, m_vecVariant.size()-1);
-	m_vecVariant << vec;
-	endInsertRows();
+	if (vec.size() > 0)
+	{
+		beginInsertRows(QModelIndex(), 0, m_vecVariant.size() - 1);
+		m_vecVariant << vec;
+		endInsertRows();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

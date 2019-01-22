@@ -30,7 +30,7 @@ private Q_SLOTS:
 	void onPutRequest();
 	void onDeleteRequest();
 	void onHeadRequest();
-	void onBatchDownload();
+	void onBatchRequest();
 	void onBatchMixedTask();
 	void onRequestFinished(const RequestTask &);
 	
@@ -43,6 +43,7 @@ private Q_SLOTS:
 	void onUpdateDefaultValue();
 	void onGetSaveDirectory();
 	void onGetUploadFile();
+	void onGetBatchTaskConfigFile();
 
 private:
 	void initialize();

@@ -135,7 +135,9 @@ void NetworkTool::initConnecting()
 	connect(uiMain.btn_abortAll, SIGNAL(clicked()), this, SLOT(onAbortAllTask()));
 	connect(uiAddTask.btn_browser1, SIGNAL(clicked()), this, SLOT(onGetSaveDirectory()));
 	connect(uiAddTask.btn_browser2, SIGNAL(clicked()), this, SLOT(onGetUploadFile()));
+	connect(uiAddBatchTask.btn_browser, SIGNAL(clicked()), this, SLOT(onGetBatchTaskConfigFile()));
 	connect(uiAddTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddTask()));
+	connect(uiAddBatchTask.btn_start_2, SIGNAL(clicked()), this, SLOT(onBatchRequest()));
 	connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
 		if (checked)
 		{
@@ -647,20 +649,26 @@ void NetworkTool::onHeadRequest()
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
 	}
+
+	STTask stTask;
+	stTask.strUrl = request.url.toString();
+	stTask.eType = request.eType;
+	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
+	m_pListView->update();
 }
 
-void NetworkTool::onBatchDownload()
+void NetworkTool::onBatchRequest()
 {
 	QString strFile = uiAddBatchTask.lineEdit_config->text().trimmed();
 	if (strFile.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+								 QStringLiteral("批处理配置文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
-	QStringList strlstUrl;
+	QStringList strlstLine;
 	QFile file(strFile);
 	if (file.open(QIODevice::ReadOnly))
 	{
@@ -673,55 +681,94 @@ void NetworkTool::onBatchDownload()
 		{
 			strLine = stream.readLine();
 			strLine = strLine.trimmed();
-			strlstUrl += strLine;
+			strlstLine += strLine;
 		}
 		file.close();
 	}
 	else
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("文件打开失败！"), QMessageBox::Ok);
+								 QStringLiteral("打开批处理配置文件失败！"), QMessageBox::Ok);
 		reset();
 		return;
 	}
 
-	QString strSaveDir;
-	//strSaveDir  = uiMain.lineEdit_saveDir->text().trimmed();
-	if (strSaveDir.isEmpty())
-	{
-		strSaveDir = getDefaultDownloadDir();
-	}
-	if (!strSaveDir.endsWith("/"))
-	{
-		strSaveDir.append("/");
-	}
-
+	STTask task;
+	QVector<QVariant> tasks;
 	BatchRequestTask requests;
 	RequestTask request;
-	foreach(const QString& strUrl, strlstUrl)
+	QStringList strlst;
+	foreach(const QString& strline, strlstLine)
 	{
-		const QString& strUrlStandard = QDir::fromNativeSeparators(strUrl);
-		QUrl url(strUrlStandard);
-		url = url.adjusted(QUrl::RemoveFilename);
-		url = url.adjusted(QUrl::RemoveAuthority);
-		url = url.adjusted(QUrl::RemoveScheme);
+		strlst = strline.split(",");
+		if (strlst.size() != 3)
+		{
+			qDebug() << "error line:" << strline;
+			continue;
+		}
 
-		const QString& strDir = strSaveDir + url.toString();
+		const QString& strUrlStandard = QDir::fromNativeSeparators(strlst[0]);
+		QString strArg = strlst[2];
 
 		QUrl urlHost(strUrlStandard);
 		Q_ASSERT(urlHost.isValid());
 		request.url = urlHost;
-		request.eType = eTypeDownload;
-		request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-		request.strRequestArg = strDir;
-		request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+		request.eType = RequestType(strlst[1].toInt());
+		switch (request.eType)
+		{
+		case eTypeDownload:
+			{
+				QString strSaveDir = strArg;
+				if (strSaveDir.isEmpty())
+				{
+					strSaveDir = getDefaultDownloadDir();
+				}
+				if (!strSaveDir.endsWith("/"))
+				{
+					strSaveDir.append("/");
+				}
+				QUrl url(strUrlStandard);
+				url = url.adjusted(QUrl::RemoveFilename);
+				url = url.adjusted(QUrl::RemoveAuthority);
+				url = url.adjusted(QUrl::RemoveScheme);
+				const QString& strDir = strSaveDir + url.toString();
+				request.strRequestArg = strDir;
+				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+				request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+			}
+		case eTypeUpload:
+			{
+				request.strRequestArg = strArg;
+				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+			}
+			break;
+		case eTypePost:
+		case eTypePut:
+			{
+				request.strRequestArg = strArg;
+			}
+			break;
+		case eTypeGet:
+		case eTypeDelete:
+		case eTypeHead:
+			break;
+		default:
+			break;
+		}
+
+		task.strUrl = request.url.toString();
+		task.eType = request.eType;
 
 #if _MSC_VER >= 1700
 		requests.append(std::move(request));
+		tasks.append(std::move(QVariant::fromValue(task)));
 #else
 		requests.append(request);
+		tasks.append(QVariant::fromValue(task));
 #endif
 	}
+	m_pListView->insert(tasks);
+	m_pListView->update();
 	m_nTotalNum = requests.size();
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
@@ -974,12 +1021,24 @@ void NetworkTool::onGetSaveDirectory()
 void NetworkTool::onGetUploadFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-													"/home",
+													"/desktop",
 													tr("File (*.*)"));
 
 	if (!fileName.isNull() && !fileName.isEmpty())
 	{
 		uiAddTask.lineEdit_uploadFile->setText(fileName);
+	}
+}
+
+void NetworkTool::onGetBatchTaskConfigFile()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+		"/desktop",
+		tr("File (*.dat)"));
+
+	if (!fileName.isNull() && !fileName.isEmpty())
+	{
+		uiAddBatchTask.lineEdit_config->setText(fileName);
 	}
 }
 
@@ -995,10 +1054,6 @@ void NetworkTool::reset()
 	m_nBytesTotalDownload = 0;
 	m_nbytesSent = 0;
 	m_nBytesTotalUpload = 0;
-	//uiMain.progressBar_d->setMaximum(100);
-	//uiMain.progressBar_d->setValue(0);
-	//uiMain.progressBar_u->setMaximum(100);
-	//uiMain.progressBar_u->setValue(0);
 }
 
 QString NetworkTool::bytes2String(qint64 bytes)
