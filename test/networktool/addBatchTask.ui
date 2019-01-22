@@ -179,6 +179,22 @@ border-radius:0%;
     <string>浏览</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btn_close_2">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>10</y>
+     <width>18</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{border-image:url(resources/close.png) 0 0 0 0 repeat repeat;}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -33,6 +33,14 @@ struct STTask
 	quint64 uiId;
 	// 批次ID (批量请求)
 	quint64 uiBatchId;
+
+	STTask()
+	{
+		eType = eTypeUnknown;
+		bShowProgress = false;
+		uiId = 0;
+		uiBatchId = 0;
+	}
 };
 Q_DECLARE_METATYPE(STTask);
 
@@ -80,11 +88,11 @@ void NetworkTool::initCtrls()
 	//uiMain.progressBar_d->setFormat("%p%(%v / %m)");
 	//uiMain.progressBar_u->setFormat("%p%(%v / %m)");
 
-	m_pWidgetAddTask = new QWidget;
+	m_pWidgetAddTask = new QWidget(this);
 	uiAddTask.setupUi(m_pWidgetAddTask);
 	m_pWidgetAddTask->hide();
 
-	m_pWidgetAddBatch = new QWidget;
+	m_pWidgetAddBatch = new QWidget(this);
 	uiAddBatchTask.setupUi(m_pWidgetAddBatch);
 	m_pWidgetAddBatch->hide();
 
@@ -122,15 +130,30 @@ void NetworkTool::initCtrls()
 
 	m_pListView = new Listview(this);
 	m_pListView->setGeometry(10, 110, 310, 490);
-	m_pListView->setStyleSheet("background:transparent;");
 	m_pListView->setListModel(m_pModel);
 	m_pListView->setListDelegate(m_pDelegate);
+	m_pListView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	m_pListView->setStyleSheet("QListView{background:transparent;}\
+			QProgressBar{border:1px solid #808080;background-color:#191919;}\
+			QScrollBar{border:0px; background - color:#292929; width:14px;}\
+			QScrollBar::handle{border:1px solid #636363; background - color:#333333; margin: 16px 0px 16px 0px; min - height:30px;}\
+			QScrollBar::add - page:vertical, QScrollBar::sub - page : vertical{background: transparent;}");
 }
 
 void NetworkTool::initConnecting()
 {
-	connect(uiMain.btn_add, SIGNAL(clicked()), m_pWidgetAddTask, SLOT(show()));
-	connect(uiMain.btn_addBatch, SIGNAL(clicked()), m_pWidgetAddBatch, SLOT(show()));
+	connect(uiMain.btn_add, &QPushButton::clicked, m_pWidgetAddTask, [=] {
+		m_pWidgetAddTask->move(this->width() / 2 - m_pWidgetAddTask->width() / 2,
+							   this->height() / 2 - m_pWidgetAddTask->height() / 2);
+		m_pWidgetAddTask->show();
+		m_pWidgetAddTask->raise();
+	});
+	connect(uiMain.btn_addBatch, &QPushButton::clicked, m_pWidgetAddBatch, [=] {
+		m_pWidgetAddBatch->move(this->width() / 2 - m_pWidgetAddBatch->width() / 2,
+								this->height() / 2 - m_pWidgetAddBatch->height() / 2);
+		m_pWidgetAddBatch->show();
+		m_pWidgetAddBatch->raise();
+	});
 	connect(uiMain.btn_abort, SIGNAL(clicked()), this, SLOT(onAbortTask()));
 	connect(uiMain.btn_abortAll, SIGNAL(clicked()), this, SLOT(onAbortAllTask()));
 	connect(uiAddTask.btn_browser1, SIGNAL(clicked()), this, SLOT(onGetSaveDirectory()));
@@ -138,6 +161,8 @@ void NetworkTool::initConnecting()
 	connect(uiAddBatchTask.btn_browser, SIGNAL(clicked()), this, SLOT(onGetBatchTaskConfigFile()));
 	connect(uiAddTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddTask()));
 	connect(uiAddBatchTask.btn_start_2, SIGNAL(clicked()), this, SLOT(onBatchRequest()));
+	connect(uiAddTask.btn_close, SIGNAL(clicked()), m_pWidgetAddTask, SLOT(hide()));
+	connect(uiAddBatchTask.btn_close, SIGNAL(clicked()), m_pWidgetAddBatch, SLOT(hide()));
 	connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
 		if (checked)
 		{
@@ -150,6 +175,12 @@ void NetworkTool::initConnecting()
 		if (num >= 1 && num <= 8)
 		{
 			NetworkManager::globalInstance()->setMaxThreadCount(num);
+		}
+	});
+	connect(m_pListView, &QAbstractItemView::clicked, this, [=](const QModelIndex &index) {
+		if (index.isValid())
+		{
+			uiMain.btn_abort->setEnabled(true);
 		}
 	});
 	connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
@@ -229,11 +260,6 @@ void NetworkTool::onUpdateDefaultValue()
 			{
 				uiAddTask.lineEdit_url->setText("http://forspeed.onlinedown.net/down/warcraftiii1.24bbzh.rar");
 			}
-			/*else if (uiAddTask.cb_batchDownload->isChecked())
-			{
-				uiAddTask.lineEdit_url->setText("resources/test/VerComp.dat");
-				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
-			}*/
 		}
 		//FTP
 		else if (uiAddTask.cb_ftp->isChecked())
@@ -316,13 +342,13 @@ void NetworkTool::onAbortTask()
 {
 	qDebug() << __FUNCTION__ << m_requestId << m_batchId;
 	uiMain.btn_abort->setEnabled(false);
-	if (m_requestId != 0)
+
+	QModelIndex index = m_pListView->currentIndex();
+	if (index.isValid())
 	{
-		NetworkManager::globalInstance()->stopRequest(m_requestId);
-	}
-	if (m_batchId != 0)
-	{
-		NetworkManager::globalInstance()->stopBatchRequests(m_batchId);
+		QVariant var = index.data(Qt::UserRole);
+		STTask task = var.value<STTask>();
+		NetworkManager::globalInstance()->stopRequest(task.uiId);
 	}
 	reset();
 }
@@ -389,6 +415,7 @@ void NetworkTool::onDownload()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -437,6 +464,7 @@ void NetworkTool::onUpload()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -474,6 +502,7 @@ void NetworkTool::onGetRequest()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -521,6 +550,7 @@ void NetworkTool::onPostRequest()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -579,6 +609,7 @@ void NetworkTool::onPutRequest()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -616,6 +647,7 @@ void NetworkTool::onDeleteRequest()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -653,6 +685,7 @@ void NetworkTool::onHeadRequest()
 	STTask stTask;
 	stTask.strUrl = request.url.toString();
 	stTask.eType = request.eType;
+	stTask.uiId = request.uiId;
 	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
 	m_pListView->update();
 }
@@ -717,37 +750,37 @@ void NetworkTool::onBatchRequest()
 		switch (request.eType)
 		{
 		case eTypeDownload:
+		{
+			QString strSaveDir = strArg;
+			if (strSaveDir.isEmpty())
 			{
-				QString strSaveDir = strArg;
-				if (strSaveDir.isEmpty())
-				{
-					strSaveDir = getDefaultDownloadDir();
-				}
-				if (!strSaveDir.endsWith("/"))
-				{
-					strSaveDir.append("/");
-				}
-				QUrl url(strUrlStandard);
-				url = url.adjusted(QUrl::RemoveFilename);
-				url = url.adjusted(QUrl::RemoveAuthority);
-				url = url.adjusted(QUrl::RemoveScheme);
-				const QString& strDir = strSaveDir + url.toString();
-				request.strRequestArg = strDir;
-				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-				request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+				strSaveDir = getDefaultDownloadDir();
 			}
+			if (!strSaveDir.endsWith("/"))
+			{
+				strSaveDir.append("/");
+			}
+			QUrl url(strUrlStandard);
+			url = url.adjusted(QUrl::RemoveFilename);
+			url = url.adjusted(QUrl::RemoveAuthority);
+			url = url.adjusted(QUrl::RemoveScheme);
+			const QString& strDir = strSaveDir + url.toString();
+			request.strRequestArg = strDir;
+			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+			request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+		}
 		case eTypeUpload:
-			{
-				request.strRequestArg = strArg;
-				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-			}
-			break;
+		{
+			request.strRequestArg = strArg;
+			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+		}
+		break;
 		case eTypePost:
 		case eTypePut:
-			{
-				request.strRequestArg = strArg;
-			}
-			break;
+		{
+			request.strRequestArg = strArg;
+		}
+		break;
 		case eTypeGet:
 		case eTypeDelete:
 		case eTypeHead:
@@ -758,6 +791,8 @@ void NetworkTool::onBatchRequest()
 
 		task.strUrl = request.url.toString();
 		task.eType = request.eType;
+		task.uiId = request.uiId;
+		task.uiBatchId = request.uiBatchId;
 
 #if _MSC_VER >= 1700
 		requests.append(std::move(request));
@@ -770,6 +805,8 @@ void NetworkTool::onBatchRequest()
 	m_pListView->insert(tasks);
 	m_pListView->update();
 	m_nTotalNum = requests.size();
+	m_nSuccessNum = 0;
+	m_nFailedNum = 0;
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
 	if (nullptr != pReply)
@@ -780,7 +817,9 @@ void NetworkTool::onBatchRequest()
 	m_timeStart = QTime::currentTime();
 	m_timeStart.start();
 	appendMsg(m_timeStart.toString() + " - Start batch request, uiBatchId["
-		+ QString::number(m_batchId) + "] Total[" + QString::number(m_nTotalNum) + "]");
+			  + QString::number(m_batchId) + "] Total[" + QString::number(m_nTotalNum) + "]");
+
+	m_pWidgetAddBatch->hide();
 }
 
 void NetworkTool::onBatchMixedTask()
@@ -1033,8 +1072,8 @@ void NetworkTool::onGetUploadFile()
 void NetworkTool::onGetBatchTaskConfigFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-		"/desktop",
-		tr("File (*.dat)"));
+													"/desktop",
+													tr("File (*.dat)"));
 
 	if (!fileName.isNull() && !fileName.isEmpty())
 	{
@@ -1152,7 +1191,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 	if (index.isValid())
 	{
 		QRect rect = option.rect;
-		if (option.state & QStyle::State_MouseOver)
+		if (option.state & QStyle::State_MouseOver || option.state & QStyle::State_Selected)
 		{
 			painter->fillRect(rect, QColor("#808080"));
 		}
@@ -1172,14 +1211,18 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 			painter->setFont(font);
 			painter->setPen(Qt::white);
 
-			painter->drawText(QRect(rect.left(), rect.top(), 250, 14), stTask.strUrl, QTextOption(Qt::AlignLeft|Qt::AlignVCenter));
+			QFontMetrics fontMetric(font);
+			QRect boundingRect = fontMetric.boundingRect(QRect(rect.left(), rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.strUrl);
+			painter->drawText(boundingRect, Qt::TextWordWrap, stTask.strUrl);
+			painter->drawText(QRect(rect.left(), rect.top(), 60, 14), QStringLiteral("类型（%1）").arg(stTask.eType), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+			painter->drawText(QRect(rect.left() + 60, rect.top(), 40, 14), QStringLiteral("ID（%1）").arg(stTask.uiId), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 		}
 	}
 	painter->restore();
 }
 
 bool TaskDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-						   const QStyleOptionViewItem &option, const QModelIndex &index)
+							   const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	return __super::editorEvent(event, model, option, index);
 }
