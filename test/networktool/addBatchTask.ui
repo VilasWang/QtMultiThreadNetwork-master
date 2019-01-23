@@ -132,7 +132,7 @@ border-radius:0%;
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_start_2">
+  <widget class="QPushButton" name="btn_start">
    <property name="geometry">
     <rect>
      <x>410</x>
@@ -150,22 +150,6 @@ border-radius:0%;
     <string>开始任务</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_close">
-   <property name="geometry">
-    <rect>
-     <x>530</x>
-     <y>10</y>
-     <width>18</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton{border-image:url(resources/close.png) 0 0 0 0 repeat repeat;}</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btn_browser">
    <property name="geometry">
     <rect>
@@ -179,7 +163,7 @@ border-radius:0%;
     <string>浏览</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_close_2">
+  <widget class="QPushButton" name="btn_close">
    <property name="geometry">
     <rect>
      <x>480</x>

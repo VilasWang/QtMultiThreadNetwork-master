@@ -58,7 +58,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 	, m_batchId(0)
 {
 	uiMain.setupUi(this);
-	setFixedSize(700, 620);
+	setFixedSize(700, 510);
 	setWindowTitle(QStringLiteral("Qt Network Tool"));
 
 	initialize();
@@ -129,7 +129,7 @@ void NetworkTool::initCtrls()
 	m_pDelegate = new TaskDelegate(this);
 
 	m_pListView = new Listview(this);
-	m_pListView->setGeometry(10, 110, 310, 490);
+	m_pListView->setGeometry(10, 110, 310, 370);
 	m_pListView->setListModel(m_pModel);
 	m_pListView->setListDelegate(m_pDelegate);
 	m_pListView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -160,7 +160,7 @@ void NetworkTool::initConnecting()
 	connect(uiAddTask.btn_browser2, SIGNAL(clicked()), this, SLOT(onGetUploadFile()));
 	connect(uiAddBatchTask.btn_browser, SIGNAL(clicked()), this, SLOT(onGetBatchTaskConfigFile()));
 	connect(uiAddTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddTask()));
-	connect(uiAddBatchTask.btn_start_2, SIGNAL(clicked()), this, SLOT(onBatchRequest()));
+	connect(uiAddBatchTask.btn_start, SIGNAL(clicked()), this, SLOT(onBatchRequest()));
 	connect(uiAddTask.btn_close, SIGNAL(clicked()), m_pWidgetAddTask, SLOT(hide()));
 	connect(uiAddBatchTask.btn_close, SIGNAL(clicked()), m_pWidgetAddBatch, SLOT(hide()));
 	connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
