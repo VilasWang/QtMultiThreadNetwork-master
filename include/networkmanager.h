@@ -49,7 +49,7 @@ public:
 	NetworkReply *addRequest(RequestTask& task);
 
 	// 添加批量请求任务
-	NetworkReply *addBatchRequest(const BatchRequestTask& tasks, quint64 &uiBatchId);
+	NetworkReply *addBatchRequest(BatchRequestTask& tasks, quint64 &uiBatchId);
 
 	// 停止所有的请求任务
 	void stopAllRequest();

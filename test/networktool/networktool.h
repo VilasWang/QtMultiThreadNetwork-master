@@ -9,6 +9,8 @@
 #include "listview.h"
 #include "NetworkDef.h"
 
+class TaskListView;
+class TaskModel;
 class NetworkTool : public QMainWindow
 {
 	Q_OBJECT
@@ -62,9 +64,9 @@ private:
 
 	QWidget *m_pWidgetAddTask;
 	QWidget *m_pWidgetAddBatch;
-	Listview *m_pListView;
-	Model *m_pModel;
-	Delegate *m_pDelegate;
+	TaskListView *m_pListView;
+	ListModel *m_pModel;
+	ListDelegate *m_pDelegate;
 	QButtonGroup *bg_protocal;
 	QButtonGroup *bg_type;
 
@@ -85,11 +87,29 @@ private:
 	QTime m_timeStart;
 };
 
-class TaskDelegate : public Delegate
+class TaskListView : public Listview
+{
+public:
+	TaskListView(QWidget* parent = NULL);
+	~TaskListView(){}
+
+	void onTaskFinished(int id, bool bSuccess);
+};
+
+class TaskModel : public ListModel
+{
+public:
+	TaskModel(QObject* parent = NULL);
+	~TaskModel() {}
+
+	void onTaskFinished(int id, bool bSuccess);
+};
+
+class TaskDelegate : public ListDelegate
 {
 public:
 	TaskDelegate(QObject* parent = NULL);
-	~TaskDelegate();
+	~TaskDelegate(){}
 
 public:
 	void paint(QPainter *painter,

@@ -6,8 +6,8 @@
 #include <QListView>
 #include <QPointer>
 
-class Model;
-class Delegate;
+class ListModel;
+class ListDelegate;
 
 class Listview : public QListView
 {
@@ -15,31 +15,30 @@ class Listview : public QListView
 
 public:
 	explicit Listview(QWidget* parent = NULL );
-	~Listview();
+	virtual ~Listview();
 
 public:
-	void setListDelegate(Delegate *);
-	void setListModel(Model *);
+	void setListDelegate(ListDelegate *);
+	void setListModel(ListModel *);
 	void insert(const QVariant&);
 	void insert(QVector<QVariant>& vec);
 	void updateAll(QVector<QVariant>&);
 
 private:
 	void initView();
-	void initModelDelagate();
 
 private:
-	QPointer<Model> m_pModel;
-	QPointer<Delegate> m_pDelegate;
+	QPointer<ListModel> m_pModel;
+	QPointer<ListDelegate> m_pDelegate;
 };
 
-class Model : public QAbstractListModel
+class ListModel : public QAbstractListModel
 {
 	Q_OBJECT
 
 public:
-	explicit Model(QObject* parent = NULL);
-	~Model();
+	explicit ListModel(QObject* parent = NULL);
+	virtual ~ListModel();
 
 protected:
 	int rowCount(const QModelIndex & parent = QModelIndex()) const;
@@ -49,19 +48,19 @@ public:
 	void insert(const QVariant&);
 	void insert(QVector<QVariant>& vec);
 	void updateAll(const QVector<QVariant>&);
-	void clearModel();
+	void clear();
 
-private:
+protected:
 	QVector<QVariant> m_vecVariant;
 };
 
-class Delegate : public QStyledItemDelegate
+class ListDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
 
 public:
-	explicit Delegate(QObject* parent = NULL);
-	~Delegate();
+	explicit ListDelegate(QObject* parent = NULL);
+	virtual ~ListDelegate();
 
 public:
 	void paint(QPainter *painter,

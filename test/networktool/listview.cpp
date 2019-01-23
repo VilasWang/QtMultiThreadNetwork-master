@@ -30,11 +30,7 @@ void Listview::initView()
 	setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 }
 
-void Listview::initModelDelagate()
-{
-}
-
-void Listview::setListDelegate(Delegate *pDelegate)
+void Listview::setListDelegate(ListDelegate *pDelegate)
 {
 	if (pDelegate != nullptr)
 	{
@@ -43,7 +39,7 @@ void Listview::setListDelegate(Delegate *pDelegate)
 	}
 }
 
-void Listview::setListModel(Model *pModel)
+void Listview::setListModel(ListModel *pModel)
 {
 	if (pModel != nullptr)
 	{
@@ -77,24 +73,24 @@ void Listview::updateAll(QVector<QVariant>& vec)
 }
 
 //////////////////////////////////////////////////////////////////////////
-Model::Model(QObject* parent /*= NULL*/)
+ListModel::ListModel(QObject* parent /*= NULL*/)
 	: QAbstractListModel(parent)
 {
 
 }
 
-Model::~Model()
+ListModel::~ListModel()
 {
 	m_vecVariant.clear();
 }
 
-int Model::rowCount(const QModelIndex & parent /*= QModelIndex()*/) const
+int ListModel::rowCount(const QModelIndex & parent /*= QModelIndex()*/) const
 {
 	Q_UNUSED(parent);
 	return m_vecVariant.size();
 }
 
-QVariant Model::data(const QModelIndex & index, int role /* = Qt::DisplayRole */) const
+QVariant ListModel::data(const QModelIndex & index, int role /* = Qt::DisplayRole */) const
 {
 	QVariant var;
 	if ( index.isValid() && role == Qt::DisplayRole )
@@ -108,21 +104,21 @@ QVariant Model::data(const QModelIndex & index, int role /* = Qt::DisplayRole */
 	return var;
 }
 
-void Model::clearModel()
+void ListModel::clear()
 {
 	beginRemoveRows(QModelIndex(),0,m_vecVariant.size());
 	m_vecVariant.clear();
 	endRemoveRows();
 }
 
-void Model::insert(const QVariant& var)
+void ListModel::insert(const QVariant& var)
 {
 	beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size());
 	m_vecVariant << var;
 	endInsertRows();
 }
 
-void Model::insert(QVector<QVariant>& vec)
+void ListModel::insert(QVector<QVariant>& vec)
 {
 	if (vec.size() > 0)
 	{
@@ -132,9 +128,9 @@ void Model::insert(QVector<QVariant>& vec)
 	}
 }
 
-void Model::updateAll(const QVector<QVariant>& vec)
+void ListModel::updateAll(const QVector<QVariant>& vec)
 {
-	clearModel();
+	clear();
 
 	if (vec.size() > 0)
 	{
@@ -145,28 +141,28 @@ void Model::updateAll(const QVector<QVariant>& vec)
 }
 
 //////////////////////////////////////////////////////////////////////////
-Delegate::Delegate(QObject* parent /*= NULL*/)
+ListDelegate::ListDelegate(QObject* parent /*= NULL*/)
 	: QStyledItemDelegate(parent)
 {
 	
 }
 
-Delegate::~Delegate()
+ListDelegate::~ListDelegate()
 {
 
 }
 
-QSize Delegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize ListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	return __super::sizeHint(option, index);
 }
 
-void Delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+void ListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	__super::paint(painter, option, index);
 }
 
-bool Delegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+bool ListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				 const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	return __super::editorEvent(event, model, option, index);
