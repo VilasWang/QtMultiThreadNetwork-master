@@ -3,7 +3,7 @@
 #include <qDebug>
 #include <QScrollBar>
 
-Listview::Listview(QWidget* parent/* = NULL*/ )
+Listview::Listview(QWidget* parent/* = NULL*/)
 	: QListView(parent)
 	, m_pModel(nullptr)
 	, m_pDelegate(nullptr)
@@ -20,11 +20,11 @@ void Listview::initView()
 {
 	setFrameShape(QFrame::NoFrame);
 	setSpacing(0);
-	
+
 	setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
-	verticalScrollBar()->setContentsMargins(0,0,0,0);
+	verticalScrollBar()->setContentsMargins(0, 0, 0, 0);
 	verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
-	horizontalScrollBar()->setContentsMargins(0,0,0,0);
+	horizontalScrollBar()->setContentsMargins(0, 0, 0, 0);
 	horizontalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -93,10 +93,10 @@ int ListModel::rowCount(const QModelIndex & parent /*= QModelIndex()*/) const
 QVariant ListModel::data(const QModelIndex & index, int role /* = Qt::DisplayRole */) const
 {
 	QVariant var;
-	if ( index.isValid() && role == Qt::DisplayRole )
+	if (index.isValid() && role == Qt::DisplayRole)
 	{
 		int nIndex = index.row();
-		if ( nIndex < m_vecVariant.size() )
+		if (nIndex < m_vecVariant.size())
 		{
 			var.setValue(m_vecVariant[nIndex]);
 		}
@@ -106,7 +106,7 @@ QVariant ListModel::data(const QModelIndex & index, int role /* = Qt::DisplayRol
 
 void ListModel::clear()
 {
-	beginRemoveRows(QModelIndex(),0,m_vecVariant.size());
+	beginRemoveRows(QModelIndex(), 0, m_vecVariant.size());
 	m_vecVariant.clear();
 	endRemoveRows();
 
@@ -150,7 +150,7 @@ void ListModel::resetAll(const QVector<QVariant>& vec)
 ListDelegate::ListDelegate(QObject* parent /*= NULL*/)
 	: QStyledItemDelegate(parent)
 {
-	
+
 }
 
 ListDelegate::~ListDelegate()
@@ -169,7 +169,7 @@ void ListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 }
 
 bool ListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-				 const QStyleOptionViewItem &option, const QModelIndex &index)
+	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	return __super::editorEvent(event, model, option, index);
 }

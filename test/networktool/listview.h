@@ -14,7 +14,7 @@ class Listview : public QListView
 	Q_OBJECT
 
 public:
-	explicit Listview(QWidget* parent = NULL );
+	explicit Listview(QWidget* parent = NULL);
 	virtual ~Listview();
 
 public:
@@ -74,7 +74,7 @@ public:
 
 protected:
 	bool editorEvent(QEvent *event, QAbstractItemModel *model,
-					 const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
+		const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
 };
 
 #endif

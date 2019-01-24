@@ -179,6 +179,19 @@ border-radius:0%;
     <string/>
    </property>
   </widget>
+  <widget class="QPushButton" name="btn_help">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>90</y>
+     <width>61</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>帮助说明</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

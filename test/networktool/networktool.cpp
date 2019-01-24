@@ -141,13 +141,13 @@ void NetworkTool::initConnecting()
 {
 	connect(uiMain.btn_add, &QPushButton::clicked, m_pWidgetAddTask, [=] {
 		m_pWidgetAddTask->move(this->width() / 2 - m_pWidgetAddTask->width() / 2,
-							   this->height() / 2 - m_pWidgetAddTask->height() / 2);
+			this->height() / 2 - m_pWidgetAddTask->height() / 2);
 		m_pWidgetAddTask->show();
 		m_pWidgetAddTask->raise();
 	});
 	connect(uiMain.btn_addBatch, &QPushButton::clicked, m_pWidgetAddBatch, [=] {
 		m_pWidgetAddBatch->move(this->width() / 2 - m_pWidgetAddBatch->width() / 2,
-								this->height() / 2 - m_pWidgetAddBatch->height() / 2);
+			this->height() / 2 - m_pWidgetAddBatch->height() / 2);
 		m_pWidgetAddBatch->show();
 		m_pWidgetAddBatch->raise();
 	});
@@ -166,8 +166,12 @@ void NetworkTool::initConnecting()
 			onUpdateDefaultValue();
 		}
 	});
+	connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
+		QMessageBox::information(nullptr, "Tips",
+			QStringLiteral("请参考默认的批处理请求配置文件。文件位置（工程目录/test/networktool/help/Vercomp2.dat）"), QMessageBox::Ok);
+	});
 	connect(uiMain.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-			this, [=](const QString &strText) {
+		this, [=](const QString &strText) {
 		int num = strText.toInt();
 		if (num >= 1 && num <= 8)
 		{
@@ -204,7 +208,7 @@ void NetworkTool::initConnecting()
 	connect(m_pModelFinished, &ListModel::sizeChanged, this, [=](int size) {
 		m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(size));
 	});
-	connect(m_pLblTasking, &LabelEx::dbClicked, this, [=] () {
+	connect(m_pLblTasking, &LabelEx::dbClicked, this, [=]() {
 		switchTaskView();
 	});
 	connect(m_pLblFinished, &LabelEx::dbClicked, this, [=]() {
@@ -216,15 +220,15 @@ void NetworkTool::initConnecting()
 
 	//////////////////////////////////////////////////////////////////////////
 	connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress
-			, this, &NetworkTool::onDownloadProgress);
+		, this, &NetworkTool::onDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress
-			, this, &NetworkTool::onUploadProgress);
+		, this, &NetworkTool::onUploadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress
-			, this, &NetworkTool::onBatchDownloadProgress);
+		, this, &NetworkTool::onBatchDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress
-			, this, &NetworkTool::onBatchUploadProgress);
+		, this, &NetworkTool::onBatchUploadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::errorMessage
-			, this, &NetworkTool::onErrorMessage);
+		, this, &NetworkTool::onErrorMessage);
 }
 
 void NetworkTool::switchTaskView(bool bForceDoing)
@@ -422,7 +426,7 @@ void NetworkTool::onDownload()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -431,7 +435,7 @@ void NetworkTool::onDownload()
 	if (strSavePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("文件保存位置不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("文件保存位置不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -460,7 +464,7 @@ void NetworkTool::onDownload()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -474,7 +478,7 @@ void NetworkTool::onUpload()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -483,7 +487,7 @@ void NetworkTool::onUpload()
 	if (strUploadFilePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -503,7 +507,7 @@ void NetworkTool::onUpload()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -517,7 +521,7 @@ void NetworkTool::onGetRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -535,7 +539,7 @@ void NetworkTool::onGetRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -549,7 +553,7 @@ void NetworkTool::onPostRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -558,7 +562,7 @@ void NetworkTool::onPostRequest()
 	if (strArg.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -577,7 +581,7 @@ void NetworkTool::onPostRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -591,7 +595,7 @@ void NetworkTool::onPutRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -600,7 +604,7 @@ void NetworkTool::onPutRequest()
 	if (strUploadFilePath.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("上传文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -609,7 +613,7 @@ void NetworkTool::onPutRequest()
 	if (!file.exists() || !file.open(QIODevice::ReadOnly))
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
+			QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -630,7 +634,7 @@ void NetworkTool::onPutRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -643,7 +647,7 @@ void NetworkTool::onDeleteRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -661,7 +665,7 @@ void NetworkTool::onDeleteRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -675,7 +679,7 @@ void NetworkTool::onHeadRequest()
 	if (strUrl.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("链接地址不能为空，详情请参考使用说明"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -693,7 +697,7 @@ void NetworkTool::onHeadRequest()
 	if (nullptr != pReply)
 	{
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
 		m_pListViewDoing->update();
@@ -707,7 +711,7 @@ void NetworkTool::onBatchRequest()
 	if (strFile.isEmpty())
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("批处理配置文件不能为空，详情请参考使用说明"), QMessageBox::Ok);
+			QStringLiteral("批处理配置文件不能为空，请点击帮助说明按钮查看信息"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -732,7 +736,7 @@ void NetworkTool::onBatchRequest()
 	else
 	{
 		QMessageBox::information(nullptr, "Tips",
-								 QStringLiteral("打开批处理配置文件失败！"), QMessageBox::Ok);
+			QStringLiteral("打开批处理配置文件失败！"), QMessageBox::Ok);
 		reset();
 		return;
 	}
@@ -759,37 +763,37 @@ void NetworkTool::onBatchRequest()
 		switch (request.eType)
 		{
 		case eTypeDownload:
-		{
-			QString strSaveDir = strArg;
-			if (strSaveDir.isEmpty())
 			{
-				strSaveDir = getDefaultDownloadDir();
+				QString strSaveDir = strArg;
+				if (strSaveDir.isEmpty())
+				{
+					strSaveDir = getDefaultDownloadDir();
+				}
+				if (!strSaveDir.endsWith("/"))
+				{
+					strSaveDir.append("/");
+				}
+				QUrl url(strUrlStandard);
+				url = url.adjusted(QUrl::RemoveFilename);
+				url = url.adjusted(QUrl::RemoveAuthority);
+				url = url.adjusted(QUrl::RemoveScheme);
+				const QString& strDir = strSaveDir + url.toString();
+				request.strReqArg = strDir;
+				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+				request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
 			}
-			if (!strSaveDir.endsWith("/"))
-			{
-				strSaveDir.append("/");
-			}
-			QUrl url(strUrlStandard);
-			url = url.adjusted(QUrl::RemoveFilename);
-			url = url.adjusted(QUrl::RemoveAuthority);
-			url = url.adjusted(QUrl::RemoveScheme);
-			const QString& strDir = strSaveDir + url.toString();
-			request.strReqArg = strDir;
-			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-			request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
-		}
 		case eTypeUpload:
-		{
-			request.strReqArg = strArg;
-			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-		}
-		break;
+			{
+				request.strReqArg = strArg;
+				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+			}
+			break;
 		case eTypePost:
 		case eTypePut:
-		{
-			request.strReqArg = strArg;
-		}
-		break;
+			{
+				request.strReqArg = strArg;
+			}
+			break;
 		case eTypeGet:
 		case eTypeDelete:
 		case eTypeHead:
@@ -810,7 +814,7 @@ void NetworkTool::onBatchRequest()
 	{
 		m_mapBatchTotalSize.insert(batchId, requests.size());
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
+			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
@@ -911,7 +915,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		if (request.bSuccess)
 		{
 			m_mapBatchSuccessSize[request.uiBatchId] = m_mapBatchSuccessSize.value(request.uiBatchId) + 1;
-			qDebug() << "Success. Batch[" + QString::number(request.uiBatchId) 
+			qDebug() << "Success. Batch[" + QString::number(request.uiBatchId)
 				+ "] [" + QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
 				+ "/" + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "]";
 		}
@@ -927,10 +931,10 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 			|| (request.bAbortBatchWhileOneFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
 		{
 			appendMsg("Batch finished. Total["
-				+ QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success[" 
+				+ QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success["
 				+ QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
 				+ "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]");
-			
+
 			m_mapBatchSuccessSize.remove(request.uiBatchId);
 			m_mapBatchFailedSize.remove(request.uiBatchId);
 			m_mapBatchTotalSize.remove(request.uiBatchId);
@@ -987,8 +991,8 @@ void NetworkTool::onErrorMessage(const QString& error)
 void NetworkTool::onGetSaveDirectory()
 {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-													"/home",
-													QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+		"/home",
+		QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	if (!dir.isNull() && !dir.isEmpty())
 	{
@@ -999,8 +1003,8 @@ void NetworkTool::onGetSaveDirectory()
 void NetworkTool::onGetUploadFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-													"/desktop",
-													tr("File (*.*)"));
+		"/desktop",
+		tr("File (*.*)"));
 
 	if (!fileName.isNull() && !fileName.isEmpty())
 	{
@@ -1011,8 +1015,8 @@ void NetworkTool::onGetUploadFile()
 void NetworkTool::onGetBatchTaskConfigFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-													"/desktop",
-													tr("File (*.dat)"));
+		"/desktop",
+		tr("File (*.dat)"));
 
 	if (!fileName.isNull() && !fileName.isEmpty())
 	{
@@ -1046,14 +1050,14 @@ QString NetworkTool::bytes2String(qint64 bytes)
 	else if (bytes < 1024 * 1024 * 1024)
 	{
 		qreal dSize = (qreal)bytes / 1024 / 1024;
-		char ch[8] = {0};
+		char ch[8] = { 0 };
 		sprintf(ch, "%.2f", dSize);
 		str = QString("%1MB").arg(ch);
 	}
 	else
 	{
 		qreal dSize = (qreal)bytes / 1024 / 1024 / 1024;
-		char ch[8] = {0};
+		char ch[8] = { 0 };
 		sprintf(ch, "%.2f", dSize);
 		str = QString("%1GB").arg(ch);
 	}
@@ -1286,7 +1290,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 			}
 			else if (stTask.bFinished)
 			{
-				
+
 				if (stTask.bSuccess)
 				{
 					painter->setPen(Qt::green);
@@ -1306,7 +1310,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 }
 
 bool TaskDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-							   const QStyleOptionViewItem &option, const QModelIndex &index)
+	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	return __super::editorEvent(event, model, option, index);
 }

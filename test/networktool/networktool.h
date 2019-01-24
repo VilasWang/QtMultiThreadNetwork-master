@@ -20,12 +20,12 @@ public:
 	NetworkTool(QWidget *parent = 0);
 	~NetworkTool();
 
-public Q_SLOTS:
+	public Q_SLOTS:
 	void onAddTask();
 	void onAbortTask();
 	void onAbortAllTask();
 
-private Q_SLOTS:
+	private Q_SLOTS:
 	void onDownload();
 	void onUpload();
 	void onGetRequest();
@@ -36,7 +36,7 @@ private Q_SLOTS:
 	void onBatchRequest();
 	void onBatchMixedTask();
 	void onRequestFinished(const RequestTask &);
-	
+
 	void onDownloadProgress(quint64, qint64, qint64);
 	void onUploadProgress(quint64, qint64, qint64);
 	void onBatchDownloadProgress(quint64, qint64);
@@ -112,7 +112,7 @@ class TaskListView : public Listview
 
 public:
 	TaskListView(QWidget* parent = NULL);
-	~TaskListView(){}
+	~TaskListView() {}
 
 Q_SIGNALS:
 	void taskFinished(const QVariant&);
@@ -134,18 +134,18 @@ class TaskDelegate : public ListDelegate
 {
 public:
 	TaskDelegate(QObject* parent = NULL);
-	~TaskDelegate(){}
+	~TaskDelegate() {}
 
 public:
 	void paint(QPainter *painter,
-			   const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+		const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 	QSize sizeHint(const QStyleOptionViewItem &option,
-				   const QModelIndex &index) const Q_DECL_OVERRIDE;
+		const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 protected:
 	bool editorEvent(QEvent *event, QAbstractItemModel *model,
-					 const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
+		const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
 
 };
 
