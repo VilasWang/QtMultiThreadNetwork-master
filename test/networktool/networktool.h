@@ -11,6 +11,7 @@
 
 class TaskListView;
 class TaskModel;
+class LabelEx;
 class NetworkTool : public QMainWindow
 {
 	Q_OBJECT
@@ -52,10 +53,12 @@ private:
 	void unIntialize();
 	void initCtrls();
 	void initConnecting();
+
 	QString bytes2String(qint64 bytes);
 	void appendMsg(const QString& strMsg, bool bQDebug = true);
-	void reset();
 	QString getDefaultDownloadDir();//获取系统默认下载目录
+	void switchTaskView(bool bForceDoing = false);
+	void reset();
 
 private:
 	Ui::networkClass uiMain;
@@ -64,18 +67,19 @@ private:
 
 	QWidget *m_pWidgetAddTask;
 	QWidget *m_pWidgetAddBatch;
-	TaskListView *m_pListView;
-	ListModel *m_pModel;
+	LabelEx *m_pLblTasking;
+	LabelEx *m_pLblFinished;
+	TaskListView *m_pListViewDoing;
+	TaskListView *m_pListViewFinished;
+	ListModel *m_pModelDoing;
+	ListModel *m_pModelFinished;
 	ListDelegate *m_pDelegate;
 	QButtonGroup *bg_protocal;
 	QButtonGroup *bg_type;
 
-	quint64 m_requestId;
-	quint64 m_batchId;
-
-	int m_nTotalNum;
-	int m_nFailedNum;
-	int m_nSuccessNum;
+	QMap<quint64, int> m_mapBatchTotalSize;
+	QMap<quint64, int> m_mapBatchSuccessSize;
+	QMap<quint64, int> m_mapBatchFailedSize;
 
 	qint64 m_nbytesReceived;
 	qint64 m_nBytesTotalDownload;
@@ -87,13 +91,34 @@ private:
 	QTime m_timeStart;
 };
 
+class LabelEx : public QLabel
+{
+	Q_OBJECT
+
+public:
+	LabelEx(QWidget* parent = NULL);
+	~LabelEx() {}
+
+Q_SIGNALS:
+	void dbClicked();
+
+protected:
+	void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+};
+
 class TaskListView : public Listview
 {
+	Q_OBJECT
+
 public:
 	TaskListView(QWidget* parent = NULL);
 	~TaskListView(){}
 
-	void onTaskFinished(int id, bool bSuccess);
+Q_SIGNALS:
+	void taskFinished(const QVariant&);
+
+public:
+	void onTaskFinished(const RequestTask &request);
 };
 
 class TaskModel : public ListModel
@@ -102,7 +127,7 @@ public:
 	TaskModel(QObject* parent = NULL);
 	~TaskModel() {}
 
-	void onTaskFinished(int id, bool bSuccess);
+	QVariant onTaskFinished(const RequestTask &request);
 };
 
 class TaskDelegate : public ListDelegate

@@ -12,6 +12,7 @@
 #include <QButtonGroup>
 #include <QStandardPaths>
 #include <QPainter>
+#include <QScrollBar>
 #include "networktool.h"
 #include "NetworkManager.h"
 #include "NetworkReply.h"
@@ -22,44 +23,16 @@
 //局域网Apache http服务器
 #define HTTP_SERVER_IP "127.0.0.1"
 #define HTTP_SERVER_PORT "80"
-
-struct STTask
-{
-	QString strUrl;
-	RequestType eType;
-	QString strSaveFileName;
-	bool bFinished;
-	bool bSuccess;
-	bool bShowProgress;
-	// 请求ID
-	quint64 uiId;
-	// 批次ID (批量请求)
-	quint64 uiBatchId;
-
-	STTask()
-	{
-		eType = eTypeUnknown;
-		bShowProgress = false;
-		bFinished = false;
-		bSuccess = false;
-		uiId = 0;
-		uiBatchId = 0;
-	}
-};
-Q_DECLARE_METATYPE(STTask);
+#define TASKING_TEXT_FORMAT QStringLiteral("  执行中的任务(%1)")
+#define FINISHED_TEXT_FORMAT QStringLiteral("  已完成的任务(%1)")
 
 
 NetworkTool::NetworkTool(QWidget *parent)
 	: QMainWindow(parent)
-	, m_nFailedNum(0)
-	, m_nSuccessNum(0)
-	, m_nTotalNum(0)
 	, m_nbytesReceived(0)
 	, m_nBytesTotalDownload(0)
 	, m_nbytesSent(0)
 	, m_nBytesTotalUpload(0)
-	, m_requestId(0)
-	, m_batchId(0)
 {
 	uiMain.setupUi(this);
 	setFixedSize(700, 510);
@@ -90,7 +63,6 @@ void NetworkTool::unIntialize()
 void NetworkTool::initCtrls()
 {
 	//uiMain.progressBar_d->setFormat("%p%(%v / %m)");
-	//uiMain.progressBar_u->setFormat("%p%(%v / %m)");
 
 	m_pWidgetAddTask = new QWidget(this);
 	uiAddTask.setupUi(m_pWidgetAddTask);
@@ -129,19 +101,40 @@ void NetworkTool::initCtrls()
 	bg_type->addButton(uiAddTask.cb_head);
 	bg_type->setExclusive(true);
 
-	m_pModel = new TaskModel(this);
+	m_pModelDoing = new TaskModel(this);
+	m_pModelFinished = new TaskModel(this);
 	m_pDelegate = new TaskDelegate(this);
 
-	m_pListView = new TaskListView(this);
-	m_pListView->setGeometry(10, 110, 310, 370);
-	m_pListView->setListModel(m_pModel);
-	m_pListView->setListDelegate(m_pDelegate);
-	m_pListView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	m_pListView->setStyleSheet("QListView{background:transparent;}\
-			QProgressBar{border:1px solid #808080;background-color:#191919;}\
-			QScrollBar{border:0px; background - color:#292929; width:14px;}\
-			QScrollBar::handle{border:1px solid #636363; background - color:#333333; margin: 16px 0px 16px 0px; min - height:30px;}\
-			QScrollBar::add - page:vertical, QScrollBar::sub - page : vertical{background: transparent;}");
+	m_pListViewDoing = new TaskListView(this);
+	m_pListViewDoing->setGeometry(0, 105, 320, 350);
+	m_pListViewDoing->setListModel(m_pModelDoing);
+	m_pListViewDoing->setListDelegate(m_pDelegate);
+	m_pListViewDoing->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	m_pListViewDoing->setStyleSheet("QListView{background:transparent;}\
+			QProgressBar{border:1px solid #808080;background-color:#191919;}");
+	m_pListViewDoing->verticalScrollBar()->setStyleSheet("QWidget{border:1px solid #808080;border-radius:5%;background-color:#333333;color:#DBDBDB;}\
+		QScrollBar{border:0px;background-color:#292929;width:12px;}\
+		QScrollBar::handle{ border:1px solid #636363; background-color:#333333; margin: 16px 0px 16px 0px; min-height:30px; }\
+		QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{background: transparent;}");
+	m_pListViewDoing->hide();
+
+	m_pListViewFinished = new TaskListView(this);
+	m_pListViewFinished->setGeometry(0, 127, 320, 330);
+	m_pListViewFinished->setListModel(m_pModelFinished);
+	m_pListViewFinished->setListDelegate(m_pDelegate);
+	m_pListViewFinished->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	m_pListViewFinished->setStyleSheet(m_pListViewDoing->styleSheet());
+	m_pListViewFinished->verticalScrollBar()->setStyleSheet(m_pListViewDoing->verticalScrollBar()->styleSheet());
+
+	m_pLblTasking = new LabelEx(this);
+	m_pLblTasking->setGeometry(0, 80, 320, 20);
+	m_pLblTasking->setText(TASKING_TEXT_FORMAT.arg(0));
+	m_pLblTasking->setStyleSheet("QLabel{background-color:#636363;color:#DBDBDB;}");
+
+	m_pLblFinished = new LabelEx(this);
+	m_pLblFinished->setGeometry(0, 102, 320, 20);
+	m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(0));
+	m_pLblFinished->setStyleSheet("QLabel{background-color:#636363;color:#DBDBDB;}");
 }
 
 void NetworkTool::initConnecting()
@@ -181,15 +174,47 @@ void NetworkTool::initConnecting()
 			NetworkManager::globalInstance()->setMaxThreadCount(num);
 		}
 	});
-	connect(m_pListView, &QAbstractItemView::clicked, this, [=](const QModelIndex &index) {
+	connect(m_pListViewDoing, &QAbstractItemView::clicked, this, [=](const QModelIndex &index) {
 		if (index.isValid())
 		{
-			uiMain.btn_abort->setEnabled(true);
+			const QVariant& var = index.data(Qt::DisplayRole);
+			if (var.isValid())
+			{
+				const RequestTask& stTask = qvariant_cast<RequestTask>(var);
+				if (stTask.uiId > 0 && !stTask.bCancel && !stTask.bFinished)
+				{
+					uiMain.btn_abort->setEnabled(true);
+				}
+				else
+				{
+					uiMain.btn_abort->setEnabled(false);
+				}
+			}
 		}
+	});
+	connect(m_pListViewDoing, &TaskListView::taskFinished, this, [=](const QVariant& var) {
+		if (var.isValid())
+		{
+			m_pListViewFinished->insert(var);
+		}
+	});
+	connect(m_pModelDoing, &ListModel::sizeChanged, this, [=](int size) {
+		m_pLblTasking->setText(TASKING_TEXT_FORMAT.arg(size));
+	});
+	connect(m_pModelFinished, &ListModel::sizeChanged, this, [=](int size) {
+		m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(size));
+	});
+	connect(m_pLblTasking, &LabelEx::dbClicked, this, [=] () {
+		switchTaskView();
+	});
+	connect(m_pLblFinished, &LabelEx::dbClicked, this, [=]() {
+		switchTaskView();
 	});
 	connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
 	connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
 
+
+	//////////////////////////////////////////////////////////////////////////
 	connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress
 			, this, &NetworkTool::onDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress
@@ -200,6 +225,31 @@ void NetworkTool::initConnecting()
 			, this, &NetworkTool::onBatchUploadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::errorMessage
 			, this, &NetworkTool::onErrorMessage);
+}
+
+void NetworkTool::switchTaskView(bool bForceDoing)
+{
+	if (bForceDoing)
+	{
+		m_pLblFinished->move(0, 460);
+		m_pListViewDoing->show();
+		m_pListViewFinished->hide();
+	}
+	else
+	{
+		if (m_pListViewFinished->isVisible())
+		{
+			m_pLblFinished->move(0, 460);
+			m_pListViewDoing->show();
+			m_pListViewFinished->hide();
+		}
+		else
+		{
+			m_pLblFinished->move(0, 102);
+			m_pListViewDoing->hide();
+			m_pListViewFinished->show();
+		}
+	}
 }
 
 void NetworkTool::onUpdateDefaultValue()
@@ -293,14 +343,6 @@ void NetworkTool::onUpdateDefaultValue()
 
 void NetworkTool::onAddTask()
 {
-	/*m_nFailedNum = 0;
-	m_nSuccessNum = 0;
-	m_nTotalNum = 0;
-	m_nbytesReceived = 0;
-	m_nBytesTotalDownload = 0;
-	m_nbytesSent = 0;
-	m_nBytesTotalUpload = 0;*/
-
 	if (uiAddTask.cb_download->isChecked())
 	{
 		onDownload();
@@ -329,14 +371,6 @@ void NetworkTool::onAddTask()
 	{
 		onHeadRequest();
 	}
-	/*else if (uiAddTask.cb_batchDownload->isChecked())
-	{
-		onBatchDownload();
-	}
-	else if (uiAddTask.cb_batchMixed->isChecked())
-	{
-		onBatchMixedTask();
-	}*/
 
 	m_pWidgetAddTask->hide();
 	uiMain.btn_add->setEnabled(true);
@@ -347,24 +381,27 @@ void NetworkTool::onAbortTask()
 	qDebug() << __FUNCTION__;
 	uiMain.btn_abort->setEnabled(false);
 
-	QModelIndex index = m_pListView->currentIndex();
+	QModelIndex index = m_pListViewDoing->currentIndex();
 	if (index.isValid())
 	{
-		QVariant var = index.data(Qt::UserRole);
-		STTask task = var.value<STTask>();
-		if (task.uiBatchId > 0)
+		const QVariant& var = index.data(Qt::DisplayRole);
+		if (var.isValid())
 		{
-			if (QMessageBox::Yes == QMessageBox::information(nullptr, "Tips",
-				QStringLiteral("该任务为批处理任务，是否终止整批任务？ 选择是终止整批任务，否则终止该任务。"), QMessageBox::Yes | QMessageBox::No))
+			const RequestTask& stTask = qvariant_cast<RequestTask>(var);
+			if (stTask.uiBatchId > 0)
 			{
-				NetworkManager::globalInstance()->stopBatchRequests(task.uiBatchId);
-				return;
+				if (QMessageBox::Yes == QMessageBox::information(nullptr, "Tips",
+					QStringLiteral("该任务为批处理任务，是否终止整批任务？ 选择是终止整批任务，否则终止该任务。"), QMessageBox::Yes | QMessageBox::No))
+				{
+					NetworkManager::globalInstance()->stopBatchRequests(stTask.uiBatchId);
+					return;
+				}
 			}
-		}
-		
-		if (task.uiId > 0)
-		{
-			NetworkManager::globalInstance()->stopRequest(task.uiId);
+
+			if (stTask.uiId > 0)
+			{
+				NetworkManager::globalInstance()->stopRequest(stTask.uiId);
+			}
 		}
 	}
 	reset();
@@ -408,7 +445,7 @@ void NetworkTool::onDownload()
 	request.url = urlHost;
 	request.eType = eTypeDownload;
 	request.bShowProgress = uiAddTask.cb_showProgress->isChecked();
-	request.strRequestArg = strSavePath;
+	request.strReqArg = strSavePath;
 	if (!uiAddTask.lineEdit_filename->text().isEmpty())
 	{
 		request.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
@@ -422,17 +459,13 @@ void NetworkTool::onDownload()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onUpload()
@@ -463,23 +496,19 @@ void NetworkTool::onUpload()
 	RequestTask request;
 	request.url = urlHost;
 	request.eType = eTypeUpload;
-	request.strRequestArg = strUploadFilePath; //本地文件路径
+	request.strReqArg = strUploadFilePath; //本地文件路径
 	request.bShowProgress = uiAddTask.cb_showProgress->isChecked();
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onGetRequest()
@@ -505,17 +534,13 @@ void NetworkTool::onGetRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onPostRequest()
@@ -546,22 +571,18 @@ void NetworkTool::onPostRequest()
 	RequestTask request;
 	request.url = urlHost;
 	request.eType = eTypePost;
-	request.strRequestArg = strArg;
+	request.strReqArg = strArg;
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onPutRequest()
@@ -603,22 +624,17 @@ void NetworkTool::onPutRequest()
 	RequestTask request;
 	request.url = urlHost;
 	request.eType = eTypePut;
-	request.strRequestArg = QString::fromUtf8(bytes);
+	request.strReqArg = QString::fromUtf8(bytes);
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+	}
 }
 
 void NetworkTool::onDeleteRequest()
@@ -644,17 +660,13 @@ void NetworkTool::onDeleteRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onHeadRequest()
@@ -680,17 +692,13 @@ void NetworkTool::onHeadRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
 	if (nullptr != pReply)
 	{
-		m_requestId = request.uiId;
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
 
-	STTask stTask;
-	stTask.strUrl = request.url.toString();
-	stTask.eType = request.eType;
-	stTask.uiId = request.uiId;
-	m_pListView->insert(QVariant::fromValue<STTask>(stTask));
-	m_pListView->update();
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
 }
 
 void NetworkTool::onBatchRequest()
@@ -766,20 +774,20 @@ void NetworkTool::onBatchRequest()
 			url = url.adjusted(QUrl::RemoveAuthority);
 			url = url.adjusted(QUrl::RemoveScheme);
 			const QString& strDir = strSaveDir + url.toString();
-			request.strRequestArg = strDir;
+			request.strReqArg = strDir;
 			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
 			request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
 		}
 		case eTypeUpload:
 		{
-			request.strRequestArg = strArg;
+			request.strReqArg = strArg;
 			request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
 		}
 		break;
 		case eTypePost:
 		case eTypePut:
 		{
-			request.strRequestArg = strArg;
+			request.strReqArg = strArg;
 		}
 		break;
 		case eTypeGet:
@@ -800,30 +808,27 @@ void NetworkTool::onBatchRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
 	{
+		m_mapBatchTotalSize.insert(batchId, requests.size());
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
-	appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
-			  + QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
-	STTask task;
-	QVector<QVariant> tasks;
-	foreach(const RequestTask& req, requests)
-	{
-		task.strUrl = request.url.toString();
-		task.eType = request.eType;
-		task.uiId = request.uiId;
-		task.uiBatchId = request.uiBatchId;
+		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
+			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
+		QVector<QVariant> tasks;
+		foreach(const RequestTask& req, requests)
+		{
 #if _MSC_VER >= 1700
-		tasks.append(std::move(QVariant::fromValue(task)));
+			tasks.append(std::move(QVariant::fromValue(req)));
 #else
-		tasks.append(QVariant::fromValue(task));
+			tasks.append(QVariant::fromValue(req));
 #endif
+		}
+		m_pListViewDoing->insert(tasks);
+		m_pListViewDoing->update();
+		m_pWidgetAddBatch->hide();
+		switchTaskView(true);
 	}
-	m_pListView->insert(tasks);
-	m_pListView->update();
-	m_pWidgetAddBatch->hide();
 }
 
 void NetworkTool::onBatchMixedTask()
@@ -836,24 +841,6 @@ void NetworkTool::onBatchMixedTask()
 	strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794740247819.jpeg");
 	strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794986284124.jpeg");
 
-	BatchRequestTask requests;
-	RequestTask request;
-	foreach(const QString& strFile, strlstUrlDownload)
-	{
-		QUrl urlHost(strFile);
-		Q_ASSERT(urlHost.isValid());
-
-		request.url = urlHost;
-		request.eType = eTypeDownload;
-		request.bShowProgress = uiMain.cb_showProgress->isChecked();
-		request.strRequestArg = getDefaultDownloadDir();
-		request.bAbortBatchWhileOneFailed = uiMain.cb_abortBatch->isChecked();
-#if _MSC_VER >= 1700
-		requests.append(std::move(request));
-#else
-		requests.append(request);
-#endif
-	}
 
 	//上传
 	QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/%3.jpg")
@@ -862,23 +849,6 @@ void NetworkTool::onBatchMixedTask()
 	strlstFileUpload.append("resources/test/1.png");
 	strlstFileUpload.append("resources/test/2.jpg");
 	strlstFileUpload.append("resources/test/3.jpeg");
-	int i = 1;
-	foreach(const QString& strFile, strlstFileUpload)
-	{
-		QUrl urlHost(strUrl.arg(i++));
-		Q_ASSERT(urlHost.isValid());
-
-		request.url = urlHost;
-		request.eType = eTypeUpload;
-		request.bShowProgress = uiMain.cb_showProgress->isChecked();
-		request.strRequestArg = strFile;
-		request.bAbortBatchWhileOneFailed = uiMain.cb_abortBatch->isChecked();
-#if _MSC_VER >= 1700
-		requests.append(std::move(request));
-#else
-		requests.append(request);
-#endif
-	}
 
 	//POST
 	QString strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUAT"
@@ -891,41 +861,10 @@ void NetworkTool::onBatchMixedTask()
 		"NwAyAFQAMAA9AA==";
 
 	QUrl urlHost("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
-	Q_ASSERT(urlHost.isValid());
-	request.url = urlHost;
-	request.eType = eTypePost;
-	request.strRequestArg = strArg;
-	request.bAbortBatchWhileOneFailed = uiMain.cb_abortBatch->isChecked();
-#if _MSC_VER >= 1700
-	requests.append(std::move(request));
-#else
-	requests.append(request);
-#endif
 
 	//DELETE
 	strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
 		.arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
-	urlHost = QUrl(strUrl);
-	Q_ASSERT(urlHost.isValid());
-	request.url = urlHost;
-	request.eType = eTypeDelete;
-	request.bAbortBatchWhileOneFailed = uiMain.cb_abortBatch->isChecked();
-#if _MSC_VER >= 1700
-	requests.append(std::move(request));
-#else
-	requests.append(request);
-#endif
-
-	m_nTotalNum = requests.size();
-
-	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, m_batchId);
-	if (nullptr != pReply)
-	{
-		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-				this, SLOT(onRequestFinished(const RequestTask &)));
-	}
-	appendMsg(QTime::currentTime().toString() + " - Start batch task, uiBatchId["
-			  + QString::number(m_batchId) + "] Total[" + QString::number(m_nTotalNum) + "]");
 #endif
 }
 
@@ -933,73 +872,75 @@ void NetworkTool::onBatchMixedTask()
 //bSuccess：	任务是否成功
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
+	appendMsg(QTime::currentTime().toString() + " - Task finished. IsSuccess["
+		+ QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
+
+	if (!request.bytesContent.isEmpty())
+	{
+		appendMsg(QString("Content:\n") + request.bytesContent, false);
+	}
+
+	/*int msec = m_timeStart.elapsed();
+	float sec = (float)msec / 1000;
+	quint64 uiSpeed = 0;
+	if (sec > 0)
+	{
+	if (request.bSuccess && request.eType == eTypeDownload && m_nBytesTotalDownload > 0)
+	{
+	uiSpeed = m_nBytesTotalDownload / sec;
+
+	}
+	else if (request.bSuccess && request.eType == eTypeUpload && m_nBytesTotalUpload > 0)
+	{
+	uiSpeed = m_nBytesTotalUpload / sec;
+	}
+	}
+
+	QString strMsg = QString("Time elapsed: %1s.").arg(sec);
+	if (uiSpeed > 0)
+	{
+	strMsg = QString("Time elapsed: %1s. Speed: %2/s")
+	.arg(sec).arg(bytes2String(uiSpeed));
+	}
+
+	appendMsg(strMsg);*/
+
 	bool bBatch = (request.uiBatchId > 0);
-	if (request.bSuccess)
+	if (bBatch)
 	{
-		m_nSuccessNum++;
-		/*if (bBatch)
+		if (request.bSuccess)
 		{
-			qDebug() << "Success[" + QString::number(m_nSuccessNum) + "]" << request.url.url();
-		}*/
-	}
-	else  //下载成功后的文件(文件绝对路径：request.strFileSavePath + 文件名：request.url.filename())
-	{
-		m_nFailedNum++;
-		/*if (bBatch)
+			m_mapBatchSuccessSize[request.uiBatchId] = m_mapBatchSuccessSize.value(request.uiBatchId) + 1;
+			qDebug() << "Success. Batch[" + QString::number(request.uiBatchId) 
+				+ "] [" + QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
+				+ "/" + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "]";
+		}
+		else
 		{
-			qDebug() << "Failed[" + QString::number(m_nFailedNum) + "]" << request.url.url();
-		}*/
-	}
-
-	////批量请求
-	//if (bBatch)
-	//{
-	//	if (m_nSuccessNum + m_nFailedNum == m_nTotalNum
-	//		|| (request.bAbortBatchWhileOneFailed && m_nFailedNum > 0))
-	//	{
-	//		appendMsg("Batch request finished. Total["
-	//				  + QString::number(m_nTotalNum) + "] Success[" + QString::number(m_nSuccessNum)
-	//				  + "] Failed[" + QString::number(m_nFailedNum) + "]");
-
-	//		//int msec = m_timeStart.elapsed();
-	//		//float sec = (float)msec / 1000;
-	//		//QString strMsg = QString("Time elapsed: %1s.").arg(sec);
-	//		//appendMsg(strMsg);
-	//		reset();
-	//	}
-	//}
-	//else //单任务
-	{
-		appendMsg("Task finished. Success["
-				  + QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
-
-		/*int msec = m_timeStart.elapsed();
-		float sec = (float)msec / 1000;
-		quint64 uiSpeed = 0;
-		if (sec > 0)
-		{
-			if (request.bSuccess && request.eType == eTypeDownload && m_nBytesTotalDownload > 0)
-			{
-				uiSpeed = m_nBytesTotalDownload / sec;
-
-			}
-			else if (request.bSuccess && request.eType == eTypeUpload && m_nBytesTotalUpload > 0)
-			{
-				uiSpeed = m_nBytesTotalUpload / sec;
-			}
+			m_mapBatchFailedSize[request.uiBatchId] = m_mapBatchFailedSize.value(request.uiBatchId) + 1;
+			qDebug() << "Failed. Batch[" + QString::number(request.uiBatchId)
+				+ "] [" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId))
+				+ "/" + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "]";
 		}
 
-		QString strMsg = QString("Time elapsed: %1s.").arg(sec);
-		if (uiSpeed > 0)
+		if (m_mapBatchSuccessSize.value(request.uiBatchId) + m_mapBatchFailedSize.value(request.uiBatchId) == m_mapBatchTotalSize.value(request.uiBatchId)
+			|| (request.bAbortBatchWhileOneFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
 		{
-			strMsg = QString("Time elapsed: %1s. Speed: %2/s")
-				.arg(sec).arg(bytes2String(uiSpeed));
+			appendMsg("Batch finished. Total["
+				+ QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success[" 
+				+ QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
+				+ "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]");
+			
+			m_mapBatchSuccessSize.remove(request.uiBatchId);
+			m_mapBatchFailedSize.remove(request.uiBatchId);
+			m_mapBatchTotalSize.remove(request.uiBatchId);
 		}
-
-		appendMsg(strMsg);
-		reset();*/
 	}
-	appendMsg(request.bytesContent, false);
+
+	if (m_pListViewDoing)
+	{
+		m_pListViewDoing->onTaskFinished(request);
+	}
 }
 
 void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal)
@@ -1010,9 +951,7 @@ void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint6
 		if (bytesTotal != m_nBytesTotalDownload)
 		{
 			m_nBytesTotalDownload = bytesTotal;
-			//uiMain.progressBar_d->setMaximum(bytesTotal);
 		}
-		//uiMain.progressBar_d->setValue(bytesReceived);
 	}
 }
 
@@ -1024,9 +963,7 @@ void NetworkTool::onUploadProgress(quint64 taskId, qint64 bytesSent, qint64 byte
 		if (bytesTotal != m_nBytesTotalUpload)
 		{
 			m_nBytesTotalUpload = bytesTotal;
-			//uiMain.progressBar_u->setMaximum(bytesTotal);
 		}
-		//uiMain.progressBar_u->setValue(bytesSent);
 	}
 }
 
@@ -1088,9 +1025,6 @@ void NetworkTool::reset()
 	uiMain.btn_add->setEnabled(true);
 	uiMain.btn_addBatch->setEnabled(true);
 
-	m_nFailedNum = 0;
-	m_nSuccessNum = 0;
-	m_nTotalNum = 0;
 	m_nbytesReceived = 0;
 	m_nBytesTotalDownload = 0;
 	m_nbytesSent = 0;
@@ -1172,18 +1106,34 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
+LabelEx::LabelEx(QWidget* parent)
+	: QLabel(parent)
+{
+}
+
+void LabelEx::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	__super::mouseDoubleClickEvent(event);
+	emit dbClicked();
+}
+
+//////////////////////////////////////////////////////////////////////////
 TaskListView::TaskListView(QWidget* parent)
 	: Listview(parent)
 {
 }
 
-void TaskListView::onTaskFinished(int id, bool bSuccess)
+void TaskListView::onTaskFinished(const RequestTask &request)
 {
 	QAbstractItemModel *model = this->model();
 	TaskModel *pModel = dynamic_cast<TaskModel *>(model);
 	if (pModel)
 	{
-		pModel->onTaskFinished(id, bSuccess);
+		const QVariant& variant = pModel->onTaskFinished(request);
+		if (variant.isValid())
+		{
+			emit taskFinished(variant);
+		}
 		update();
 	}
 }
@@ -1194,19 +1144,59 @@ TaskModel::TaskModel(QObject* parent)
 {
 }
 
-void TaskModel::onTaskFinished(int id, bool bSuccess)
+QVariant TaskModel::onTaskFinished(const RequestTask &request)
 {
-	for (int i = 0; i < m_vecVariant.size(); ++i)
+	QVariant variant;
+	RequestTask task;
+	if (request.uiId == ALL_TASK_ID && request.bCancel)
 	{
-		STTask task = m_vecVariant[i].value<STTask>();
-		if (task.uiId == id)
+		for (int i = 0; i < m_vecVariant.size(); ++i)
 		{
-			task.bFinished = true;
-			task.bSuccess = bSuccess;
+			task = m_vecVariant[i].value<RequestTask>();
+			task.bFinished = request.bFinished;
+			task.bCancel = request.bCancel;
+			task.bSuccess = request.bSuccess;
 			m_vecVariant[i] = QVariant::fromValue(task);
-			break;
 		}
 	}
+	else if (request.bCancel && request.uiBatchId > 0)
+	{
+		for (int i = 0; i < m_vecVariant.size(); ++i)
+		{
+			task = m_vecVariant[i].value<RequestTask>();
+			if (task.uiBatchId == request.uiBatchId)
+			{
+				task.bFinished = request.bFinished;
+				task.bCancel = request.bCancel;
+				task.bSuccess = request.bSuccess;
+				m_vecVariant[i] = QVariant::fromValue(task);
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m_vecVariant.size(); ++i)
+		{
+			task = m_vecVariant[i].value<RequestTask>();
+			if (task.uiId == request.uiId)
+			{
+				task.bFinished = request.bFinished;
+				task.bCancel = request.bCancel;
+				task.bSuccess = request.bSuccess;
+				m_vecVariant[i] = QVariant::fromValue(task);
+
+				if (task.bSuccess)
+				{
+					variant = m_vecVariant[i];
+					m_vecVariant.remove(i);
+					emit sizeChanged(m_vecVariant.size());
+				}
+				break;
+			}
+		}
+	}
+
+	return variant;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1225,11 +1215,11 @@ QString getTypeString(RequestType eType)
 	QString strType;
 	if (eType == eTypeDownload)
 	{
-		strType = QLatin1String("下载");
+		strType = QStringLiteral("下载");
 	}
 	else if (eType == eTypeUpload)
 	{
-		strType = QLatin1String("上传");
+		strType = QStringLiteral("上传");
 	}
 	else if (eType == eTypeGet)
 	{
@@ -1260,19 +1250,21 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 	if (index.isValid())
 	{
 		QRect rect = option.rect;
+		QRect rtBg = rect;
+		rtBg.setHeight(rect.height() - 1);
 		if (option.state & QStyle::State_MouseOver || option.state & QStyle::State_Selected)
 		{
-			painter->fillRect(rect, QColor("#808080"));
+			painter->fillRect(rtBg, QColor("#808080"));
 		}
 		else
 		{
-			painter->fillRect(rect, QColor("#333333"));
+			painter->fillRect(rtBg, QColor("#333333"));
 		}
 
-		QVariant var = index.data(Qt::DisplayRole);
+		const QVariant& var = index.data(Qt::DisplayRole);
 		if (var.isValid())
 		{
-			STTask stTask = qvariant_cast<STTask>(var);
+			const RequestTask& stTask = qvariant_cast<RequestTask>(var);
 
 			QFont font;
 			font.setFamily("Microsoft YaHei");
@@ -1280,21 +1272,32 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 			painter->setFont(font);
 			painter->setPen(Qt::white);
 
-			QFontMetrics fontMetric(font);
-			QRect boundingRect = fontMetric.boundingRect(QRect(rect.left(), rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.strUrl);
-			painter->drawText(boundingRect, Qt::TextWordWrap, stTask.strUrl);
-			painter->drawText(QRect(rect.left(), rect.top(), 60, 14), QStringLiteral("类型（%1）").arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
-			if (stTask.bFinished)
+			QFontMetrics fm(font);
+			QRect boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url.toString());
+			painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url.toString());
+			painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("类型（%1）")
+				.arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+
+			if (stTask.bCancel)
 			{
+				painter->setPen(Qt::blue);
+				painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
+					QStringLiteral("已取消"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+			}
+			else if (stTask.bFinished)
+			{
+				
 				if (stTask.bSuccess)
 				{
 					painter->setPen(Qt::green);
-					painter->drawText(QRect(rect.left() + 60, rect.top(), 40, 14), QStringLiteral("已完成"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+					painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
+						QStringLiteral("已完成"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 				}
 				else
 				{
 					painter->setPen(Qt::red);
-					painter->drawText(QRect(rect.left() + 60, rect.top(), 40, 14), QStringLiteral("任务出错"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+					painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
+						QStringLiteral("任务出错"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 				}
 			}
 		}

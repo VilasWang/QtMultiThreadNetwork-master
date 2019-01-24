@@ -149,19 +149,6 @@ border:0px;
      <string>批量添加</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>121</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>执行中的任务(0)</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btn_abortAll">
     <property name="enabled">
      <bool>true</bool>

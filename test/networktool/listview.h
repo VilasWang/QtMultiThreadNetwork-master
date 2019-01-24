@@ -22,7 +22,7 @@ public:
 	void setListModel(ListModel *);
 	void insert(const QVariant&);
 	void insert(QVector<QVariant>& vec);
-	void updateAll(QVector<QVariant>&);
+	void resetAll(QVector<QVariant>&);
 
 private:
 	void initView();
@@ -47,8 +47,11 @@ protected:
 public:
 	void insert(const QVariant&);
 	void insert(QVector<QVariant>& vec);
-	void updateAll(const QVector<QVariant>&);
+	void resetAll(const QVector<QVariant>&);
 	void clear();
+
+Q_SIGNALS:
+	void sizeChanged(int);
 
 protected:
 	QVector<QVariant> m_vecVariant;

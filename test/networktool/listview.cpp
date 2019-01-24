@@ -64,11 +64,11 @@ void Listview::insert(QVector<QVariant>& vec)
 	}
 }
 
-void Listview::updateAll(QVector<QVariant>& vec)
+void Listview::resetAll(QVector<QVariant>& vec)
 {
 	if (m_pModel != nullptr)
 	{
-		m_pModel->updateAll(vec);
+		m_pModel->resetAll(vec);
 	}
 }
 
@@ -109,6 +109,8 @@ void ListModel::clear()
 	beginRemoveRows(QModelIndex(),0,m_vecVariant.size());
 	m_vecVariant.clear();
 	endRemoveRows();
+
+	emit sizeChanged(m_vecVariant.size());
 }
 
 void ListModel::insert(const QVariant& var)
@@ -116,6 +118,8 @@ void ListModel::insert(const QVariant& var)
 	beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size());
 	m_vecVariant << var;
 	endInsertRows();
+
+	emit sizeChanged(m_vecVariant.size());
 }
 
 void ListModel::insert(QVector<QVariant>& vec)
@@ -125,18 +129,20 @@ void ListModel::insert(QVector<QVariant>& vec)
 		beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size() + vec.size() - 1);
 		m_vecVariant << vec;
 		endInsertRows();
+
+		emit sizeChanged(m_vecVariant.size());
 	}
 }
 
-void ListModel::updateAll(const QVector<QVariant>& vec)
+void ListModel::resetAll(const QVector<QVariant>& vec)
 {
-	clear();
-
 	if (vec.size() > 0)
 	{
 		beginInsertRows(QModelIndex(), 0, m_vecVariant.size() - 1);
 		m_vecVariant << vec;
 		endInsertRows();
+
+		emit sizeChanged(m_vecVariant.size());
 	}
 }
 

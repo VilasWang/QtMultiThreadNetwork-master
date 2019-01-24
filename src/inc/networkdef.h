@@ -33,6 +33,7 @@ enum RequestType
 	eTypeUnknown = -1,
 };
 
+#define ALL_TASK_ID 0xFFFF
 //请求结构
 struct RequestTask
 {
@@ -47,13 +48,10 @@ struct RequestTask
 	// case eTypeUpload：	待上传的文件路径. (绝对路径 or 相对路径)
 	// case eTypePost：		post的参数. 如："a=b&c=d".
 	// case eTypePut：		put的数据流.
-	QString strRequestArg;
+	QString strReqArg;
 
 	// case eTypeDownload: 若指定了strSaveFileName，则保存的文件名是strSaveFileName;否则，根据url.
 	QString strSaveFileName;
-
-	// 用户自定义内容（可用于回传）
-	QVariant varContent;
 
 	// 请求的header信息
 	//void QNetworkRequest::setRawHeader(const QByteArray &headerName, const QByteArray &value);
@@ -75,10 +73,19 @@ struct RequestTask
 	// n个下载通道(默认是5)(取值范围2-10)
 	quint16 nDownloadThreadCount;
 
+	// 用户自定义内容（可用于回传）
+	QVariant varArg1;
+	// 用户自定义内容（可用于回传）
+	QVariant varArg2;
+	// 用户自定义内容（可用于回传）
+	QVariant varArg3;
+
 	//////////////////////返回结果的字段/////////////////////////////////////////////
+	bool bFinished;	//正常结束
+	bool bCancel;	//玩家取消
+
 	// 请求是否成功
 	bool bSuccess;
-
 	// 请求返回的内容/返回的错误信息等.
 	QByteArray bytesContent;
 
@@ -92,6 +99,8 @@ struct RequestTask
 		uiId = 0;
 		uiBatchId = 0;
 		eType = eTypeUnknown;
+		bFinished = false;
+		bCancel = false;
 		bSuccess = false;
 		bShowProgress = false;
 		bTryAgainWhileFailed = false;
