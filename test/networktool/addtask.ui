@@ -501,6 +501,9 @@ border-radius:0%;
      <height>18</height>
     </size>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_filename">
    <property name="geometry">

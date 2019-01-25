@@ -11,7 +11,7 @@
 
 class TaskListView;
 class TaskModel;
-class LabelEx;
+class QLabelEx;
 class NetworkTool : public QMainWindow
 {
 	Q_OBJECT
@@ -67,8 +67,8 @@ private:
 
 	QWidget *m_pWidgetAddTask;
 	QWidget *m_pWidgetAddBatch;
-	LabelEx *m_pLblTasking;
-	LabelEx *m_pLblFinished;
+	QLabelEx *m_pLblTasking;
+	QLabelEx *m_pLblFinished;
 	TaskListView *m_pListViewDoing;
 	TaskListView *m_pListViewFinished;
 	ListModel *m_pModelDoing;
@@ -91,13 +91,13 @@ private:
 	QTime m_timeStart;
 };
 
-class LabelEx : public QLabel
+class QLabelEx : public QLabel
 {
 	Q_OBJECT
 
 public:
-	LabelEx(QWidget* parent = NULL);
-	~LabelEx() {}
+	explicit QLabelEx(QWidget* parent = NULL);
+	~QLabelEx() {}
 
 Q_SIGNALS:
 	void dbClicked();
@@ -111,20 +111,21 @@ class TaskListView : public Listview
 	Q_OBJECT
 
 public:
-	TaskListView(QWidget* parent = NULL);
+	explicit TaskListView(QWidget* parent = NULL);
 	~TaskListView() {}
 
 Q_SIGNALS:
 	void taskFinished(const QVariant&);
 
-public:
+public Q_SLOTS:
 	void onTaskFinished(const RequestTask &request);
+	void onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal);
 };
 
 class TaskModel : public ListModel
 {
 public:
-	TaskModel(QObject* parent = NULL);
+	explicit TaskModel(QObject* parent = NULL);
 	~TaskModel() {}
 
 	QVariant onTaskFinished(const RequestTask &request);
@@ -133,8 +134,8 @@ public:
 class TaskDelegate : public ListDelegate
 {
 public:
-	TaskDelegate(QObject* parent = NULL);
-	~TaskDelegate() {}
+	explicit TaskDelegate(QObject* parent = NULL);
+	~TaskDelegate();
 
 public:
 	void paint(QPainter *painter,
@@ -143,9 +144,14 @@ public:
 	QSize sizeHint(const QStyleOptionViewItem &option,
 		const QModelIndex &index) const Q_DECL_OVERRIDE;
 
+	void setProgress(quint64, int);
+
 protected:
 	bool editorEvent(QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index) Q_DECL_OVERRIDE;
+
+private:
+	QMap<quint64, int> m_mapProgress;
 
 };
 

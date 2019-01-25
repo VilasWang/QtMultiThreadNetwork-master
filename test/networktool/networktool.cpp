@@ -126,12 +126,12 @@ void NetworkTool::initCtrls()
 	m_pListViewFinished->setStyleSheet(m_pListViewDoing->styleSheet());
 	m_pListViewFinished->verticalScrollBar()->setStyleSheet(m_pListViewDoing->verticalScrollBar()->styleSheet());
 
-	m_pLblTasking = new LabelEx(this);
+	m_pLblTasking = new QLabelEx(this);
 	m_pLblTasking->setGeometry(0, 80, 320, 20);
 	m_pLblTasking->setText(TASKING_TEXT_FORMAT.arg(0));
 	m_pLblTasking->setStyleSheet("QLabel{background-color:#636363;color:#DBDBDB;}");
 
-	m_pLblFinished = new LabelEx(this);
+	m_pLblFinished = new QLabelEx(this);
 	m_pLblFinished->setGeometry(0, 102, 320, 20);
 	m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(0));
 	m_pLblFinished->setStyleSheet("QLabel{background-color:#636363;color:#DBDBDB;}");
@@ -208,10 +208,10 @@ void NetworkTool::initConnecting()
 	connect(m_pModelFinished, &ListModel::sizeChanged, this, [=](int size) {
 		m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(size));
 	});
-	connect(m_pLblTasking, &LabelEx::dbClicked, this, [=]() {
+	connect(m_pLblTasking, &QLabelEx::dbClicked, this, [=]() {
 		switchTaskView();
 	});
-	connect(m_pLblFinished, &LabelEx::dbClicked, this, [=]() {
+	connect(m_pLblFinished, &QLabelEx::dbClicked, this, [=]() {
 		switchTaskView();
 	});
 	connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
@@ -220,9 +220,9 @@ void NetworkTool::initConnecting()
 
 	//////////////////////////////////////////////////////////////////////////
 	connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress
-		, this, &NetworkTool::onDownloadProgress);
+		, m_pListViewDoing, &TaskListView::onUpdateTaskProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress
-		, this, &NetworkTool::onUploadProgress);
+		, m_pListViewDoing, &TaskListView::onUpdateTaskProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress
 		, this, &NetworkTool::onBatchDownloadProgress);
 	connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress
@@ -729,7 +729,10 @@ void NetworkTool::onBatchRequest()
 		{
 			strLine = stream.readLine();
 			strLine = strLine.trimmed();
-			strlstLine += strLine;
+			if (!strLine.isEmpty())
+			{
+				strlstLine += strLine;
+			}
 		}
 		file.close();
 	}
@@ -881,7 +884,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 
 	if (!request.bytesContent.isEmpty())
 	{
-		appendMsg(QString("Content:\n") + request.bytesContent, false);
+		appendMsg(QString("[Content]\n") + request.bytesContent, false);
 	}
 
 	/*int msec = m_timeStart.elapsed();
@@ -949,38 +952,27 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 
 void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal)
 {
-	if (bytesReceived > m_nbytesReceived)
+	if (m_pListViewDoing)
 	{
-		m_nbytesReceived = bytesReceived;
-		if (bytesTotal != m_nBytesTotalDownload)
-		{
-			m_nBytesTotalDownload = bytesTotal;
-		}
+		m_pListViewDoing->onUpdateTaskProgress(taskId, bytesReceived, bytesTotal);
 	}
 }
 
 void NetworkTool::onUploadProgress(quint64 taskId, qint64 bytesSent, qint64 bytesTotal)
 {
-	if (bytesSent > m_nbytesSent)
-	{
-		m_nbytesSent = bytesSent;
-		if (bytesTotal != m_nBytesTotalUpload)
-		{
-			m_nBytesTotalUpload = bytesTotal;
-		}
-	}
+	
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
 {
 	//const QString& str = bytes2String(bytes);
-	appendMsg(QStringLiteral("批任务[%1]   下载：%2").arg(batchId).arg(bytes), false);
+	//appendMsg(QStringLiteral("批任务[%1]   下载：%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onBatchUploadProgress(quint64 batchId, qint64 bytes)
 {
 	//const QString& str = bytes2String(bytes);
-	appendMsg(QStringLiteral("批任务[%1]   上传：%2").arg(batchId).arg(bytes), false);
+	//appendMsg(QStringLiteral("批任务[%1]   上传：%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onErrorMessage(const QString& error)
@@ -1110,12 +1102,12 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-LabelEx::LabelEx(QWidget* parent)
+QLabelEx::QLabelEx(QWidget* parent)
 	: QLabel(parent)
 {
 }
 
-void LabelEx::mouseDoubleClickEvent(QMouseEvent *event)
+void QLabelEx::mouseDoubleClickEvent(QMouseEvent *event)
 {
 	__super::mouseDoubleClickEvent(event);
 	emit dbClicked();
@@ -1139,6 +1131,22 @@ void TaskListView::onTaskFinished(const RequestTask &request)
 			emit taskFinished(variant);
 		}
 		update();
+	}
+}
+
+void TaskListView::onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal)
+{
+	if (bytesTotal > 0 && taskId > 0)
+	{
+		//qDebug() << taskId << bytesReceived << bytesTotal;
+		int p = bytesReceived * 100 / bytesTotal;
+		QAbstractItemDelegate *delegate = this->itemDelegate();
+		TaskDelegate *pdelegate = dynamic_cast<TaskDelegate *>(delegate);
+		if (pdelegate)
+		{
+			pdelegate->setProgress(taskId, p);
+			update();
+		}
 	}
 }
 
@@ -1207,6 +1215,11 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 TaskDelegate::TaskDelegate(QObject* parent /*= NULL*/)
 	: ListDelegate(parent)
 {
+}
+
+TaskDelegate::~TaskDelegate()
+{
+	m_mapProgress.clear();
 }
 
 QSize TaskDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -1284,7 +1297,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 
 			if (stTask.bCancel)
 			{
-				painter->setPen(Qt::blue);
+				painter->setPen(Qt::red);
 				painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
 					QStringLiteral("已取消"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 			}
@@ -1304,6 +1317,18 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
 						QStringLiteral("任务出错"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 				}
 			}
+
+			if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress && (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload))
+			{
+				int p = m_mapProgress.value(stTask.uiId);
+				painter->fillRect(rect.left() + 180, rect.top() + 1, 102, 12, QBrush("#191919"));
+				painter->fillRect(rect.left() + 181, rect.top() + 2, p, 10, QBrush("#08ce5b"));
+				font.setPixelSize(10);
+				painter->setFont(font);
+				painter->setPen(Qt::white);
+				painter->drawText(QRect(rect.left() + 220, rect.top() + 1, 60, 12),
+					QStringLiteral("%1%").arg(p), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+			}
 		}
 	}
 	painter->restore();
@@ -1313,4 +1338,9 @@ bool TaskDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	return __super::editorEvent(event, model, option, index);
+}
+
+void TaskDelegate::setProgress(quint64 id, int progress)
+{
+	m_mapProgress[id] = progress;
 }
