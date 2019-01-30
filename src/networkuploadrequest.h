@@ -24,6 +24,7 @@ public Q_SLOTS:
 	void onFinished();
 	void onUploadProgress(qint64, qint64);
 	void onError(QNetworkReply::NetworkError);
+	void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
 
 private:
 	//读取本地文件的内容

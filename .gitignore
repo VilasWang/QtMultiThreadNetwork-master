@@ -261,3 +261,4 @@ ModelManifest.xml
 /test/networktool/Debug/NetworkTool.lastbuildstate
 /test/networktool/Release/NetworkTool.exe.intermediate.manifest
 /test/networktool/Release/NetworkTool.lastbuildstate
+*.unsuccessfulbuild
