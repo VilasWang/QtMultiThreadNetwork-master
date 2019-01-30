@@ -18,13 +18,13 @@
 #include "NetworkReply.h"
 
 #define Test_Performance
-#define DEFAULT_CONCURRENT_TASK 4
-#define DEFAULT_MTDOWNLOAD_COUNT 5
+#define DEFAULT_CONCURRENT_TASK		8
+#define DEFAULT_MTDOWNLOAD_COUNT	5
+#define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
+#define FINISHED_TEXT_FORMAT		QString::fromStdWString(L"  已完成的任务(%1)")
 //Apache http本地服务器
-#define HTTP_SERVER_IP "127.0.0.1"
-#define HTTP_SERVER_PORT "80"
-#define TASKING_TEXT_FORMAT QStringLiteral("  执行中的任务(%1)")
-#define FINISHED_TEXT_FORMAT QStringLiteral("  已完成的任务(%1)")
+#define HTTP_SERVER_IP				"127.0.0.1"
+#define HTTP_SERVER_PORT			"80"
 
 
 NetworkTool::NetworkTool(QWidget *parent)
@@ -203,10 +203,10 @@ void NetworkTool::initConnecting()
 		}
 	});
 	connect(m_pModelDoing, &ListModel::sizeChanged, this, [=](int size) {
-		m_pLblTasking->setText(TASKING_TEXT_FORMAT.arg(size));
+		m_pLblTasking->setText(QString(TASKING_TEXT_FORMAT).arg(size));
 	});
 	connect(m_pModelFinished, &ListModel::sizeChanged, this, [=](int size) {
-		m_pLblFinished->setText(FINISHED_TEXT_FORMAT.arg(size));
+		m_pLblFinished->setText(QString(FINISHED_TEXT_FORMAT).arg(size));
 	});
 	connect(m_pLblTasking, &QLabelEx::dbClicked, this, [=]() {
 		switchTaskView();

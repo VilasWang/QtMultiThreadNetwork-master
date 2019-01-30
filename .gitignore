@@ -253,3 +253,11 @@ ModelManifest.xml
 *.res
 /test/networktool/GeneratedFiles
 /src/GeneratedFiles/Release
+/src/Debug/QMultiThreadNetwork.lastbuildstate
+/src/Release/QMultiThreadNetwork.dll.intermediate.manifest
+/src/Debug/QMultiThreadNetworkd.dll.intermediate.manifest
+/src/Release/QMultiThreadNetwork.lastbuildstate
+/test/networktool/Debug/NetworkTool.exe.intermediate.manifest
+/test/networktool/Debug/NetworkTool.lastbuildstate
+/test/networktool/Release/NetworkTool.exe.intermediate.manifest
+/test/networktool/Release/NetworkTool.lastbuildstate

@@ -6,7 +6,6 @@
 #include <QMap>
 #include <QByteArray>
 #include <QVariant>
-#include <atomic>
 
 #pragma pack(push, _CRT_PACKING)
 
