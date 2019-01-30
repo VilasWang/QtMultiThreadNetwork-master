@@ -58,14 +58,9 @@ public:
 	// 停止某个请求任务
 	void stopRequest(quint64 uiTaskId);
 
-	// 设置线程池最大线程数（从1-8个, 默认4线程）
-	// 建议最好是cpu核心数*2
+	// 设置线程池最大线程数（从1-16个, 默认5线程）
 	bool setMaxThreadCount(int iMax);
 	int maxThreadCount();
-	bool isThreadAvailable();
-
-	// 等待的请求任务是否为空
-	bool isWaitingRequestEmpty();
 
 Q_SIGNALS:
 	void errorMessage(const QString& error);
@@ -91,14 +86,7 @@ private:
 	void init();
 	void fini();
 
-	// 启动一个新的线程以开始请求
-	bool startRequest(const RequestTask &task);
-
-	// 尝试开始一个请求(若等待队列非空)
-	void tryStartRequest();
-
-	// 等待空闲的线程
-	void waitForIdleThread();
+	bool startAsRunnable(const RequestTask &task);
 
 	// bDownload(false: upload)
 	void updateProgress(quint64 uiRequestId, quint64 uiBatchId,
@@ -111,4 +99,4 @@ private:
 	static bool ms_bIntialized;
 };
 
-#endif
+#endif //NETWORKMANAGER_H

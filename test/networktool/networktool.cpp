@@ -17,9 +17,10 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
+#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK 4
 #define DEFAULT_MTDOWNLOAD_COUNT 5
-//局域网Apache http服务器
+//Apache http本地服务器
 #define HTTP_SERVER_IP "127.0.0.1"
 #define HTTP_SERVER_PORT "80"
 #define TASKING_TEXT_FORMAT QStringLiteral("  执行中的任务(%1)")
@@ -73,7 +74,7 @@ void NetworkTool::initCtrls()
 
 	uiMain.cmb_concurrentTask->setView(new QListView(this));
 	uiAddTask.cmb_multiDownload->setView(new QListView(this));
-	for (int i = 1; i <= 8; ++i)
+	for (int i = 1; i <= 16; ++i)
 	{
 		uiMain.cmb_concurrentTask->addItem(QString::number(i));
 	}
@@ -280,7 +281,7 @@ void NetworkTool::onUpdateDefaultValue()
 				QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
 					.arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
 				uiAddTask.lineEdit_url->setText(strUrl);
-				uiAddTask.lineEdit_uploadFile->setText("resources/test/VerComp.dat");
+				uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
 			}
 			else if (uiAddTask.cb_get->isChecked())
 			{
@@ -305,7 +306,7 @@ void NetworkTool::onUpdateDefaultValue()
 				QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
 					.arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
 				uiAddTask.lineEdit_url->setText(strUrl);
-				uiAddTask.lineEdit_uploadFile->setText("resources/test/VerComp.dat");
+				uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
 			}
 			else if (uiAddTask.cb_delete->isChecked())
 			{
@@ -323,13 +324,13 @@ void NetworkTool::onUpdateDefaultValue()
 		{
 			if (uiAddTask.cb_download->isChecked())
 			{
-				//uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/tools/Git-1.8.1.2-preview20130201.exe");
-				uiAddTask.lineEdit_url->setText(QStringLiteral("ftp://ygdy8:ygdy8@yg45.dydytt.net:3161/阳光电影www.ygdy8.com.宝贝儿.HD.1080p.国语中英双字.mp4"));
+				uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/tools/Git-1.8.1.2-preview20130201.exe");
+				//uiAddTask.lineEdit_url->setText(QStringLiteral("ftp://ygdy8:ygdy8@yg45.dydytt.net:3161/阳光电影www.ygdy8.com.宝贝儿.HD.1080p.国语中英双字.mp4"));
 				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
 			}
 			else if (uiAddTask.cb_upload->isChecked())
 			{
-				uiAddTask.lineEdit_uploadFile->setText("resources/test/VerComp.dat");
+				uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
 				uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/incoming/QtUploadTest.dat");
 			}
 			else if (uiAddTask.cb_get->isChecked())
@@ -439,33 +440,33 @@ void NetworkTool::onDownload()
 		return;
 	}
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypeDownload;
-	request.bShowProgress = uiAddTask.cb_showProgress->isChecked();
-	request.strReqArg = strSavePath;
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypeDownload;
+	req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
+	req.strReqArg = strSavePath;
 	if (!uiAddTask.lineEdit_filename->text().isEmpty())
 	{
-		request.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
+		req.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
 	}
 	if (uiAddTask.cb_multiDownload->isChecked())
 	{
-		request.bMultiDownloadMode = true;
-		request.nDownloadThreadCount = uiAddTask.cmb_multiDownload->currentText().toInt();
+		req.bMultiDownloadMode = true;
+		req.nDownloadThreadCount = uiAddTask.cmb_multiDownload->currentText().toInt();
 	}
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
@@ -491,24 +492,24 @@ void NetworkTool::onUpload()
 		return;
 	}
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypeUpload;
-	request.strReqArg = strUploadFilePath; //本地文件路径
-	request.bShowProgress = uiAddTask.cb_showProgress->isChecked();
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypeUpload;
+	req.strReqArg = strUploadFilePath; //本地文件路径
+	req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
@@ -525,22 +526,22 @@ void NetworkTool::onGetRequest()
 		return;
 	}
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypeGet;
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypeGet;
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
@@ -566,26 +567,64 @@ void NetworkTool::onPostRequest()
 		return;
 	}
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypePost;
-	request.strReqArg = strArg;
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypePost;
+	req.strReqArg = strArg;
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+#ifdef Test_Performance
+	int count = 1000;
+
+	BatchRequestTask requests;
+	requests.resize(count);
+	for (int i = 0; i < count; ++i)
+	{
+		requests[i] = req;
+	}
+	quint64 batchId = 0;
+	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
 	{
+		m_mapBatchTotalSize.insert(batchId, requests.size());
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
+			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
+
+		QVector<QVariant> vec;
+		vec.resize(requests.size());
+		int i = 0;
+		foreach(const RequestTask& r, requests)
+		{
+#if _MSC_VER >= 1700
+			vec[i] = std::move(QVariant::fromValue(r));
+#else
+			vec[i] = QVariant::fromValue(r);
+#endif
+			i++;
+		}
+		m_pListViewDoing->insert(vec);
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
+#else
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
+	if (nullptr != pReply)
+	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
+		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+			this, SLOT(onRequestFinished(const RequestTask &)));
+
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
+		m_pListViewDoing->update();
+		switchTaskView(true);
+	}
+#endif // 1
 }
 
 void NetworkTool::onPutRequest()
@@ -619,24 +658,25 @@ void NetworkTool::onPutRequest()
 	const QByteArray& bytes = file.readAll();
 	file.close();
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypePut;
-	request.strReqArg = QString::fromUtf8(bytes);
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypePut;
+	req.strReqArg = QString::fromUtf8(bytes);
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
+		switchTaskView(true);
 	}
 }
 
@@ -651,22 +691,22 @@ void NetworkTool::onDeleteRequest()
 		return;
 	}
 
-	appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypeDelete;
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypeDelete;
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
@@ -683,22 +723,22 @@ void NetworkTool::onHeadRequest()
 		return;
 	}
 
-	appendMsg(m_timeStart.toString() + " - Start task[" + strUrl + "]");
-
 	QUrl urlHost(strUrl);
 	Q_ASSERT(urlHost.isValid());
 
-	RequestTask request;
-	request.url = urlHost;
-	request.eType = eTypeHead;
+	RequestTask req;
+	req.url = urlHost;
+	req.eType = eTypeHead;
 
-	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(request);
+	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
+		appendMsg(m_timeStart.toString() + " - Start task[" + strUrl + "]");
+
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(request));
+		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
 		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
@@ -744,7 +784,7 @@ void NetworkTool::onBatchRequest()
 	}
 
 	BatchRequestTask requests;
-	RequestTask request;
+	RequestTask req;
 	QStringList strlst;
 	foreach(const QString& strline, strlstLine)
 	{
@@ -760,9 +800,9 @@ void NetworkTool::onBatchRequest()
 
 		QUrl urlHost(strUrlStandard);
 		Q_ASSERT(urlHost.isValid());
-		request.url = urlHost;
-		request.eType = RequestType(strlst[1].toInt());
-		switch (request.eType)
+		req.url = urlHost;
+		req.eType = RequestType(strlst[1].toInt());
+		switch (req.eType)
 		{
 		case eTypeDownload:
 			{
@@ -780,20 +820,20 @@ void NetworkTool::onBatchRequest()
 				url = url.adjusted(QUrl::RemoveAuthority);
 				url = url.adjusted(QUrl::RemoveScheme);
 				const QString& strDir = strSaveDir + url.toString();
-				request.strReqArg = strDir;
-				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-				request.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+				req.strReqArg = strDir;
+				req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+				req.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
 			}
 		case eTypeUpload:
 			{
-				request.strReqArg = strArg;
-				request.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
+				req.strReqArg = strArg;
+				req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
 			}
 			break;
 		case eTypePost:
 		case eTypePut:
 			{
-				request.strReqArg = strArg;
+				req.strReqArg = strArg;
 			}
 			break;
 		case eTypeGet:
@@ -805,32 +845,36 @@ void NetworkTool::onBatchRequest()
 		}
 
 #if _MSC_VER >= 1700
-		requests.append(std::move(request));
+		requests.append(std::move(req));
 #else
-		requests.append(request);
+		requests.append(req);
 #endif
 	}
 	quint64 batchId;
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
 	{
-		m_mapBatchTotalSize.insert(batchId, requests.size());
-		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-			this, SLOT(onRequestFinished(const RequestTask &)));
-
 		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
-		QVector<QVariant> tasks;
-		foreach(const RequestTask& req, requests)
+		m_mapBatchTotalSize.insert(batchId, requests.size());
+
+		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+			this, SLOT(onRequestFinished(const RequestTask &)));
+
+		QVector<QVariant> vec;
+		vec.resize(requests.size());
+		int i = 0;
+		foreach(const RequestTask& r, requests)
 		{
 #if _MSC_VER >= 1700
-			tasks.append(std::move(QVariant::fromValue(req)));
+			vec[i] = std::move(QVariant::fromValue(r));
 #else
-			tasks.append(QVariant::fromValue(req));
+			vec[i] = QVariant::fromValue(r);
 #endif
+			i++;
 		}
-		m_pListViewDoing->insert(tasks);
+		m_pListViewDoing->insert(vec);
 		m_pListViewDoing->update();
 		m_pWidgetAddBatch->hide();
 		switchTaskView(true);
@@ -878,8 +922,14 @@ void NetworkTool::onBatchMixedTask()
 //bSuccess：	任务是否成功
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
-	appendMsg(QTime::currentTime().toString() + " - Task finished. IsSuccess["
-		+ QString::number(request.bSuccess) + "] url[" + request.url.url() + "]");
+	if (request.bSuccess)
+	{
+		appendMsg(QTime::currentTime().toString() + " - Task finished[Success]. url[" + request.url.url() + "]", false);
+	}
+	else
+	{
+		appendMsg(QTime::currentTime().toString() + " - Task finished[Failed]. url[" + request.url.url() + "]", false);
+	}
 
 	if (!request.bytesContent.isEmpty())
 	{
@@ -908,7 +958,6 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 	strMsg = QString("Time elapsed: %1s. Speed: %2/s")
 	.arg(sec).arg(bytes2String(uiSpeed));
 	}
-
 	appendMsg(strMsg);*/
 
 	bool bBatch = (request.uiBatchId > 0);
@@ -917,25 +966,22 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 		if (request.bSuccess)
 		{
 			m_mapBatchSuccessSize[request.uiBatchId] = m_mapBatchSuccessSize.value(request.uiBatchId) + 1;
-			qDebug() << "Success. Batch[" + QString::number(request.uiBatchId)
-				+ "] [" + QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
-				+ "/" + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "]";
 		}
 		else
 		{
 			m_mapBatchFailedSize[request.uiBatchId] = m_mapBatchFailedSize.value(request.uiBatchId) + 1;
-			qDebug() << "Failed. Batch[" + QString::number(request.uiBatchId)
-				+ "] [" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId))
-				+ "/" + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "]";
 		}
+
+		qDebug() << "Batch[" + QString::number(request.uiBatchId)
+			+ "] Total["
+			+ QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success["
+			+ QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
+			+ "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]";
 
 		if (m_mapBatchSuccessSize.value(request.uiBatchId) + m_mapBatchFailedSize.value(request.uiBatchId) == m_mapBatchTotalSize.value(request.uiBatchId)
 			|| (request.bAbortBatchWhileOneFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
 		{
-			appendMsg("Batch finished. Total["
-				+ QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success["
-				+ QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
-				+ "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]");
+			appendMsg(QTime::currentTime().toString() + " - Batch finished. Id[" + QString::number(request.uiBatchId) + "]");
 
 			m_mapBatchSuccessSize.remove(request.uiBatchId);
 			m_mapBatchFailedSize.remove(request.uiBatchId);
@@ -1161,14 +1207,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 	RequestTask task;
 	if (request.uiId == ALL_TASK_ID && request.bCancel)
 	{
-		for (int i = 0; i < m_vecVariant.size(); ++i)
-		{
-			task = m_vecVariant[i].value<RequestTask>();
-			task.bFinished = request.bFinished;
-			task.bCancel = request.bCancel;
-			task.bSuccess = request.bSuccess;
-			m_vecVariant[i] = QVariant::fromValue(task);
-		}
+		clear();
 	}
 	else if (request.bCancel && request.uiBatchId > 0)
 	{
@@ -1177,10 +1216,8 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 			task = m_vecVariant[i].value<RequestTask>();
 			if (task.uiBatchId == request.uiBatchId)
 			{
-				task.bFinished = request.bFinished;
-				task.bCancel = request.bCancel;
-				task.bSuccess = request.bSuccess;
-				m_vecVariant[i] = QVariant::fromValue(task);
+				m_vecVariant.remove(i);
+				break;
 			}
 		}
 	}

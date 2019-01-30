@@ -56,12 +56,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkrequest.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_networkrequestthread.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_networkrequestthread.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_networkuploadrequest.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -81,9 +75,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="networkrequest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="networkrequestthread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="networkuploadrequest.cpp">
@@ -113,6 +104,15 @@
     <ClCompile Include="ClassMemoryTracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="networkrunnable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_networkrunnable.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_networkrunnable.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\network_global.h">
@@ -141,9 +141,6 @@
     <CustomBuild Include="networkrequest.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="networkrequestthread.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="networkuploadrequest.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -154,6 +151,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="networkmtdownloadrequest.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="networkrunnable.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

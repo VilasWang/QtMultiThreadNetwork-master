@@ -118,7 +118,7 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_networkrequest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_networkrequestthread.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_networkrunnable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_networkuploadrequest.cpp">
@@ -142,7 +142,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkrequest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_networkrequestthread.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_networkrunnable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_networkuploadrequest.cpp">
@@ -154,7 +154,7 @@
     <ClCompile Include="networkmanager.cpp" />
     <ClCompile Include="networkreply.cpp" />
     <ClCompile Include="networkrequest.cpp" />
-    <ClCompile Include="networkrequestthread.cpp" />
+    <ClCompile Include="networkrunnable.cpp" />
     <ClCompile Include="networkuploadrequest.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,15 +193,15 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG_USELOG4CPLUS -D_WINDLL -D_UNICODE  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
-    <CustomBuild Include="networkrequestthread.h">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing networkrequestthread.h...</Message>
+    <CustomBuild Include="networkrunnable.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG_USELOG4CPLUS -D_WINDLL -D_UNICODE  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkrequestthread.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG_USELOG4CPLUS -D%(PreprocessorDefinitions) "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG_USELOG4CPLUS -D_WINDLL -D_UNICODE  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG_USELOG4CPLUS -D%(PreprocessorDefinitions) "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
