@@ -733,7 +733,7 @@ void NetworkTool::onHeadRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
-		appendMsg(m_timeStart.toString() + " - Start task[" + strUrl + "]");
+		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
 
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
@@ -997,15 +997,10 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 
 void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal)
 {
-	if (m_pListViewDoing)
-	{
-		m_pListViewDoing->onUpdateTaskProgress(taskId, bytesReceived, bytesTotal);
-	}
 }
 
 void NetworkTool::onUploadProgress(quint64 taskId, qint64 bytesSent, qint64 bytesTotal)
 {
-	
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
@@ -1189,8 +1184,11 @@ void TaskListView::onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qi
 		TaskDelegate *pdelegate = dynamic_cast<TaskDelegate *>(delegate);
 		if (pdelegate)
 		{
-			pdelegate->setProgress(taskId, p);
-			update();
+			if (pdelegate->progress(taskId) < p)
+			{
+				pdelegate->setProgress(taskId, p);
+				update();
+			}
 		}
 	}
 }
@@ -1379,4 +1377,9 @@ bool TaskDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 void TaskDelegate::setProgress(quint64 id, int progress)
 {
 	m_mapProgress[id] = progress;
+}
+
+int TaskDelegate::progress(quint64 id)
+{
+	return m_mapProgress.value(id);
 }

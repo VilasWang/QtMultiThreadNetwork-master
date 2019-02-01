@@ -87,8 +87,6 @@ private:
 	qint64 m_nbytesSent;
 	qint64 m_nBytesTotalUpload;
 	QString m_strTotalUpload;
-
-	QTime m_timeStart;
 };
 
 class QLabelEx : public QLabel
@@ -145,6 +143,7 @@ public:
 		const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 	void setProgress(quint64, int);
+	int progress(quint64);
 
 protected:
 	bool editorEvent(QEvent *event, QAbstractItemModel *model,
