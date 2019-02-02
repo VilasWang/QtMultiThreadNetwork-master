@@ -20,7 +20,7 @@ public:
 	explicit NetworkMTDownloadRequest(QObject *parent = 0);
 	~NetworkMTDownloadRequest();
 
-public Q_SLOTS:
+	public Q_SLOTS:
 	void start() Q_DECL_OVERRIDE;
 	void abort() Q_DECL_OVERRIDE;
 
@@ -38,15 +38,15 @@ private:
 	void startMTDownload();
 
 private:
-	std::shared_ptr<QFile> m_pFile;
 	QNetworkAccessManager *m_pNetworkManager;
 	QNetworkReply *m_pReply;
 
+	QUrl m_url;
+	QString m_strDstFilePath;
+	qint64 m_nFileSize;
+
 	QMap<int, std::shared_ptr<Downloader>> m_mapDownloader;
 	int m_nThreadCount;//分割成多少段下载
-
-	QUrl m_url;
-	qint64 m_nFileSize;
 	int m_nSuccessNum;
 	int m_nFailedNum;
 
@@ -77,11 +77,11 @@ public:
 	~Downloader();
 
 	bool startDownload(const QUrl &url,
-		QFile* file,
-		QNetworkAccessManager* pNetworkManager,
-		qint64 startPoint = 0,
-		qint64 endPoint = -1,
-		bool bShowProgress = false);
+					   const QString& strDstFile,
+					   QNetworkAccessManager* pNetworkManager,
+					   qint64 startPoint = 0,
+					   qint64 endPoint = -1,
+					   bool bShowProgress = false);
 
 	void abort();
 
@@ -97,15 +97,14 @@ Q_SIGNALS:
 private:
 	QPointer<QNetworkAccessManager> m_pNetworkManager;
 	QNetworkReply *m_pNetworkReply;
-	QPointer <QFile> m_pFile;
 	QUrl m_url;
-	mutable QMutex m_mutex;
+	HANDLE m_hFile;
+	QString m_strDstFilePath;
 
 	bool m_bAbortManual;
 	QString m_strError;
 
 	const int m_nIndex;
-	qint64 m_nHaveDoneBytes;
 	qint64 m_nStartPoint;
 	qint64 m_nEndPoint;
 	bool m_bShowProgress;
