@@ -271,7 +271,7 @@ void NetworkTool::onUpdateDefaultValue()
 		{
 			if (uiAddTask.cb_download->isChecked())
 			{
-				QString strUrl = "https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.13-winx64.zip";
+				QString strUrl = "http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip";
 				//QString strUrl = "http://8dx.pc6.com/xzx6/curl_v7.61.1.zip";
 				uiAddTask.lineEdit_url->setText(strUrl);
 				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
@@ -316,7 +316,7 @@ void NetworkTool::onUpdateDefaultValue()
 			}
 			else if (uiAddTask.cb_head->isChecked())
 			{
-				uiAddTask.lineEdit_url->setText("http://forspeed.onlinedown.net/down/warcraftiii1.24bbzh.rar");
+				uiAddTask.lineEdit_url->setText("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
 			}
 		}
 		//FTP

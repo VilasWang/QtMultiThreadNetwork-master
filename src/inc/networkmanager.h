@@ -78,9 +78,10 @@ private Q_SLOTS:
 public:
 	bool event(QEvent *pEvent) Q_DECL_OVERRIDE;
 
-protected:
+private:
 	NetworkManager(QObject *parent = 0);
 	~NetworkManager();
+	Q_DISABLE_COPY(NetworkManager);
 
 private:
 	void init();
@@ -93,7 +94,6 @@ private:
 		qint64 iBytes, qint64 iTotalBytes, bool bDownload);
 
 private:
-	Q_DISABLE_COPY(NetworkManager);
 	QScopedPointer<NetworkManagerPrivate> d_ptr;
 	static NetworkManager* ms_pInstance;
 	static bool ms_bIntialized;

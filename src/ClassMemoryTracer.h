@@ -78,6 +78,7 @@ public:
 
 private:
 	ClassMemoryTracer() {}
+	~ClassMemoryTracer() {}
 	ClassMemoryTracer(const ClassMemoryTracer &) {}
 	ClassMemoryTracer &operator=(const ClassMemoryTracer &) {}
 
