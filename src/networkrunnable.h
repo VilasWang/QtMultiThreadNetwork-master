@@ -23,9 +23,12 @@ public:
 	//结束事件循环以释放任务线程，使其变成空闲状态,并且会自动结束正在执行的请求
 	void quit();
 
+	void disConnectReplyResult();
+
 Q_SIGNALS:
 	void requestFinished(const RequestTask &);
 	void exitEventLoop();
+	void aboutToDelete();
 
 private Q_SLOTS:
 	void onRequestFinished(bool, const QByteArray&);

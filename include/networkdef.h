@@ -138,6 +138,7 @@ namespace NetworkEvent
 	const QEvent::Type WaitForIdleThread = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("WaitForIdleThread"));
 	const QEvent::Type ReplyResult = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("ReplyResult"));
 	const QEvent::Type NetworkProgress = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
+	const QEvent::Type DestroyRunnable = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("DestroyRunnable"));
 }
 
 //等待空闲线程事件
@@ -175,6 +176,14 @@ public:
 	quint64 uiBatchId;
 	qint64 iBtyes;
 	qint64 iTotalBtyes;
+};
+
+//通知结果事件
+class DestroyRunnableEvent : public QEvent
+{
+public:
+	DestroyRunnableEvent() : QEvent(QEvent::Type(NetworkEvent::ReplyResult)), uiId(0) {}
+	quint64 uiId;
 };
 
 #pragma pack(pop)

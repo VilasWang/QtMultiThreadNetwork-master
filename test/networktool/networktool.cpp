@@ -17,7 +17,7 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-#define Test_Performance
+///#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
@@ -271,8 +271,7 @@ void NetworkTool::onUpdateDefaultValue()
 		{
 			if (uiAddTask.cb_download->isChecked())
 			{
-				QString strUrl = "http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip";
-				//QString strUrl = "http://8dx.pc6.com/xzx6/curl_v7.61.1.zip";
+				QString strUrl = "http://8dx.pc6.com/xzx6/curl_v7.61.1.zip";
 				uiAddTask.lineEdit_url->setText(strUrl);
 				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
 			}

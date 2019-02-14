@@ -149,10 +149,10 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkuploadrequest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="networkmtdownloadrequest.cpp" />
     <ClCompile Include="networkcommonrequest.cpp" />
     <ClCompile Include="networkdownloadrequest.cpp" />
     <ClCompile Include="networkmanager.cpp" />
+    <ClCompile Include="networkmtdownloadrequest.cpp" />
     <ClCompile Include="networkreply.cpp" />
     <ClCompile Include="networkrequest.cpp" />
     <ClCompile Include="networkrunnable.cpp" />
