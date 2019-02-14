@@ -106,14 +106,11 @@ QVariant ListModel::data(const QModelIndex & index, int role /* = Qt::DisplayRol
 
 void ListModel::clear()
 {
-	if (m_vecVariant.size() > 0)
-	{
-		beginRemoveRows(QModelIndex(), 0, m_vecVariant.size() - 1);
-		m_vecVariant.clear();
-		endRemoveRows();
+	beginResetModel();
+	m_vecVariant.clear();
+	endResetModel();
 
-		emit sizeChanged(m_vecVariant.size());
-	}
+	emit sizeChanged(m_vecVariant.size());
 }
 
 void ListModel::insert(const QVariant& var)

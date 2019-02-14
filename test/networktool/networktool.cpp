@@ -17,7 +17,7 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-///#define Test_Performance
+//#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
@@ -600,7 +600,7 @@ void NetworkTool::onPostRequest()
 		foreach(const RequestTask& r, requests)
 		{
 #if _MSC_VER >= 1700
-			vec[i] = std::move(QVariant::fromValue(r));
+			vec[i] = QVariant::fromValue(r);
 #else
 			vec[i] = QVariant::fromValue(r);
 #endif
@@ -1208,13 +1208,30 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 	}
 	else if (request.bCancel && request.uiBatchId > 0)
 	{
-		for (int i = 0; i < m_vecVariant.size(); ++i)
+		int nSizePre = m_vecVariant.size();
+		auto iter = m_vecVariant.begin();
+		for (; iter != m_vecVariant.end();)
 		{
-			task = m_vecVariant[i].value<RequestTask>();
+			task = iter->value<RequestTask>();
 			if (task.uiBatchId == request.uiBatchId)
 			{
-				m_vecVariant.remove(i);
-				break;
+				iter = m_vecVariant.erase(iter);
+			}
+			else
+			{
+				++iter;
+			}
+		}
+		int nSizeAft = m_vecVariant.size();
+		if (nSizeAft != nSizePre)
+		{
+			if (nSizeAft > 0)
+			{
+				resetAll(m_vecVariant);
+			}
+			else
+			{
+				clear();
 			}
 		}
 	}
