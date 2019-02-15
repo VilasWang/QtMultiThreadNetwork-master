@@ -600,7 +600,7 @@ void NetworkTool::onPostRequest()
 		foreach(const RequestTask& r, requests)
 		{
 #if _MSC_VER >= 1700
-			vec[i] = QVariant::fromValue(r);
+			vec[i] = std::move(QVariant::fromValue(r));
 #else
 			vec[i] = QVariant::fromValue(r);
 #endif

@@ -32,7 +32,7 @@ enum RequestType
 	eTypeUnknown = -1,
 };
 
-#define ALL_TASK_ID 0xFFFF
+#define ALL_TASK_ID 0xFFFFFFFF
 //«Î«ÛΩ·ππ
 struct RequestTask
 {
