@@ -272,6 +272,7 @@ void NetworkTool::onUpdateDefaultValue()
 			if (uiAddTask.cb_download->isChecked())
 			{
 				QString strUrl = "http://8dx.pc6.com/xzx6/curl_v7.61.1.zip";
+				//QString strUrl = "https://1.na.dl.wireshark.org/win64/Wireshark-win64-2.6.6.exe";
 				uiAddTask.lineEdit_url->setText(strUrl);
 				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
 			}
