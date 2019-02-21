@@ -168,7 +168,7 @@ void NetworkTool::initConnecting()
 	});
 	connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("请参考默认的批处理请求配置文件。文件位置（工程目录/test/networktool/help/Vercomp2.dat）"), QMessageBox::Ok);
+			QStringLiteral("请参考默认的批处理请求配置文件。文件位置（工程目录/test/networktool/help/Vercomp.dat）"), QMessageBox::Ok);
 	});
 	connect(uiMain.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
 		this, [=](const QString &strText) {
@@ -325,7 +325,6 @@ void NetworkTool::onUpdateDefaultValue()
 			if (uiAddTask.cb_download->isChecked())
 			{
 				uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/tools/Git-1.8.1.2-preview20130201.exe");
-				//uiAddTask.lineEdit_url->setText(QStringLiteral("ftp://ygdy8:ygdy8@yg45.dydytt.net:3161/阳光电影www.ygdy8.com.宝贝儿.HD.1080p.国语中英双字.mp4"));
 				uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
 			}
 			else if (uiAddTask.cb_upload->isChecked())
