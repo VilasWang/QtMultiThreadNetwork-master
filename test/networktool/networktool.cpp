@@ -453,7 +453,7 @@ void NetworkTool::onDownload()
 	}
 	if (uiAddTask.cb_multiDownload->isChecked())
 	{
-		req.bMultiDownloadMode = true;
+		req.eType = eTypeMTDownload;
 		req.nDownloadThreadCount = uiAddTask.cmb_multiDownload->currentText().toInt();
 	}
 
@@ -804,6 +804,7 @@ void NetworkTool::onBatchRequest()
 		switch (req.eType)
 		{
 		case eTypeDownload:
+		case eTypeMTDownload:
 			{
 				QString strSaveDir = strArg;
 				if (strSaveDir.isEmpty())

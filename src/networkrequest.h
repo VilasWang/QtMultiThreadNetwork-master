@@ -39,11 +39,12 @@ protected:
 	QString m_strError;
 };
 
+//工厂类
 class NetworkRequestFactory
 {
 public:
 	///根据类型创建request对象
-	static std::unique_ptr<NetworkRequest> createRequestInstance(const RequestType& type, bool bMultiDownloadMode = false);
+	static std::unique_ptr<NetworkRequest> create(const RequestType& type);
 };
 
 inline bool isHttpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0); }

@@ -10,24 +10,26 @@
 #pragma pack(push, _CRT_PACKING)
 
 // 本模块支持的协议：HTTP(S)/FTP
-// 本模块支持的HTTP协议请求方法：GET/POST/PUT/DELETE/HEAD
+// 本模块支持的HTTP(s)协议请求方法：GET/POST/PUT/DELETE/HEAD
 
 enum RequestType
 {
-	// Download（支持http和ftp）
+	// Download（支持http(s)和ftp）
 	eTypeDownload = 0,
-	// Upload（支持http和ftp）
-	eTypeUpload,
-	// GET方式请求（支持http和ftp）
-	eTypeGet,
-	// POST方式请求（仅支持http）
-	eTypePost,
-	// PUT方式请求（支持http和ftp）
-	eTypePut,
-	// DELETE方式请求（仅支持http）
-	eTypeDelete,
-	// HEAD方式请求（仅支持http）
-	eTypeHead,
+	// Multi-Thread Download（支持http(s)）
+	eTypeMTDownload = 1,
+	// Upload（支持http(s)和ftp）
+	eTypeUpload = 2,
+	// GET方式请求（支持http(s)和ftp）
+	eTypeGet = 3,
+	// POST方式请求（支持http(s)）
+	eTypePost = 4,
+	// PUT方式请求（支持http(s)和ftp）
+	eTypePut = 5,
+	// DELETE方式请求（支持http(s)）
+	eTypeDelete = 6,
+	// HEAD方式请求（支持http(s)）
+	eTypeHead = 7,
 
 	eTypeUnknown = -1,
 };
@@ -62,13 +64,12 @@ struct RequestTask
 	// 任务失败后，是否再尝试请求一次，默认为false.
 	bool bTryAgainWhileFailed;
 
-	// 批量请求失败一个就终止整批请求，默认为true.
+	// 批量请求失败一个就终止整批请求，默认为false.
 	bool bAbortBatchWhileOneFailed;
 
 	// 多线程下载模式(需服务器支持)
 	//	 多线程下载模式下，一个文件由多个下载通道同时下载.
 	//	 需要先获取http head的Content-Length，所以需要服务器的支持.
-	bool bMultiDownloadMode;
 	// n个下载通道(默认是5)(取值范围2-10)
 	quint16 nDownloadThreadCount;
 
@@ -103,8 +104,7 @@ struct RequestTask
 		bSuccess = false;
 		bShowProgress = false;
 		bTryAgainWhileFailed = false;
-		bAbortBatchWhileOneFailed = true;
-		bMultiDownloadMode = false;
+		bAbortBatchWhileOneFailed = false;
 		nDownloadThreadCount = 5;
 	}
 };
