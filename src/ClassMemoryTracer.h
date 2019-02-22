@@ -40,8 +40,12 @@ public:
 	{
 		const char *name = typeid(T).name();
 		std::string str(name);
-		
-		Locker<Lock> locker(m_lock);
+		if (str.empty())
+		{
+			return;
+		}
+
+		m_lock->lock();
 		auto iter = s_mapRefConstructor.find(str);
 		if (iter == s_mapRefConstructor.end())
 		{
@@ -51,6 +55,7 @@ public:
 		{
 			s_mapRefConstructor[str] = ++iter->second;
 		}
+		m_lock->unlock();
 	}
 
 	template <class T>
@@ -58,8 +63,12 @@ public:
 	{
 		const char *name = typeid(T).name();
 		std::string str(name);
-		
-		Locker<Lock> locker(m_lock);
+		if (str.empty())
+		{
+			return;
+		}
+
+		m_lock->lock();
 		auto iter = s_mapRefDestructor.find(str);
 		if (iter == s_mapRefDestructor.end())
 		{
@@ -69,6 +78,7 @@ public:
 		{
 			s_mapRefDestructor[str] = ++iter->second;
 		}
+		m_lock->unlock();
 	}
 
 	static void printInfo();
@@ -80,7 +90,11 @@ private:
 	ClassMemoryTracer &operator=(const ClassMemoryTracer &);
 
 private:
-	static Lock m_lock;
+#if _MSC_VER >= 1700
+	static std::unique_ptr<Lock> m_lock;
+#else
+	static std::shared_ptr<Lock> m_lock;
+#endif
 	static TClassRefCount s_mapRefConstructor;
 	static TClassRefCount s_mapRefDestructor;
 };

@@ -2,6 +2,11 @@
 #include "Log4cplusWrapper.h"
 #include <sstream>
 
+#if _MSC_VER >= 1700
+std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
+#else
+std::shared_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
+#endif
 TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
 TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 
@@ -21,11 +26,10 @@ std::string intToString(const int n)
 void ClassMemoryTracer::printInfo()
 {
 	std::string str;
+	Locker<Lock> locker(*m_lock.get());
 
 	try
 	{
-		Locker<Lock> locker(m_lock);
-
 		str = "ClassMemoryTracer[Constructor]\n";
 		Log_Debug(str);
 
