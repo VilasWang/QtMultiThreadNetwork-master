@@ -23,16 +23,13 @@ TRACE_CLASS_PRINT();
 #pragma once
 #include <windows.h>
 #include <memory>
+#include <string>
 #include <map>
 #if _MSC_VER >= 1700
 #include <atomic>
 #endif
 
-#if _MSC_VER >= 1700
-typedef std::map<std::string, std::atomic<int>> TClassRefCount;
-#else
 typedef std::map<std::string, int> TClassRefCount;
-#endif
 
 class Lock;
 class ClassMemoryTracer
@@ -53,7 +50,7 @@ public:
 		{
 			s_mapRefConstructor[str] = ++iter->second;
 		}
-		m_lock->unLock();
+		m_lock->unlock();
 	}
 
 	template <class T>
@@ -71,7 +68,7 @@ public:
 		{
 			s_mapRefDestructor[str] = ++iter->second;
 		}
-		m_lock->unLock();
+		m_lock->unlock();
 	}
 
 	static void printInfo();
@@ -79,8 +76,8 @@ public:
 private:
 	ClassMemoryTracer() {}
 	~ClassMemoryTracer() {}
-	ClassMemoryTracer(const ClassMemoryTracer &) {}
-	ClassMemoryTracer &operator=(const ClassMemoryTracer &) {}
+	ClassMemoryTracer(const ClassMemoryTracer &);
+	ClassMemoryTracer &operator=(const ClassMemoryTracer &);
 
 private:
 	static std::unique_ptr<Lock> m_lock;
@@ -91,15 +88,59 @@ private:
 class Lock
 {
 public:
-	Lock(void);
-	~Lock(void);
+	Lock();
+	~Lock();
 
 public:
-	bool lock();
-	bool unLock();
+	void lock();
+	void unlock();
+
+private:
+	Lock(const Lock &);
+	Lock &operator=(const Lock &);
 
 private:
 	CRITICAL_SECTION m_cs;
+};
+
+template<class _Lock>
+class Locker
+{
+public:
+	explicit Locker(_Lock& lock)
+		: m_lock(lock)
+	{
+		m_lock.lock();
+	}
+
+	Locker(_Lock& lock, bool bShared)
+		: m_lock(lock)
+	{
+		m_lock.lock(bShared);
+	}
+
+#if _MSC_VER >= 1700
+	~Locker() _NOEXCEPT
+#else
+	~Locker()
+#endif
+	{
+		m_lock.unlock();
+	}
+
+#if _MSC_VER >= 1700
+	Locker(const Locker&) = delete;
+	Locker& operator=(const Locker&) = delete;
+#endif
+
+private:
+#if _MSC_VER < 1700
+	Locker(const Locker&);
+	Locker& operator=(const Locker&);
+#endif
+
+private:
+	_Lock& m_lock;
 };
 
 

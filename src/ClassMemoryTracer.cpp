@@ -1,15 +1,15 @@
 #include "ClassMemoryTracer.h"
-//#include "Log4cplusWrapper.h"
+#include "Log4cplusWrapper.h"
 #include <sstream>
 
 std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
 TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
 TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 
-void printLog(std::string str)
+void Log_Debug(std::string str)
 {
 	OutputDebugStringA(str.c_str());
-	//LOG_INFO(str);
+	LOG_INFO(str);
 }
 
 std::string intToString(const int n)
@@ -21,55 +21,75 @@ std::string intToString(const int n)
 
 void ClassMemoryTracer::printInfo()
 {
-	m_lock->lock();
-	std::string str = "ClassMemoryTracer[Constructor]\n";
-	printLog(str);
-	std::string str2;
-	auto iter = s_mapRefConstructor.cbegin();
-	for (; iter != s_mapRefConstructor.cend(); ++iter)
-	{
-		str2 = iter->first;
-		str2 += ": ";
-		str2 += intToString(iter->second);
-		str2 += "\n";
-		printLog(str2);
+	std::string str;
 
-	}
-	printLog(str);
-
-	str = "ClassMemoryTracer[Destructor]\n";
-	printLog(str);
-	auto iter1 = s_mapRefDestructor.cbegin();
-	for (; iter1 != s_mapRefDestructor.cend(); ++iter1)
+	try
 	{
-		str2 = iter1->first;
-		str2 += ": ";
-		str2 += intToString(iter1->second);
-		str2 += "\n";
-		printLog(str2);
+		Locker<Lock> locker(*m_lock.get());
+
+		str = "ClassMemoryTracer[Constructor]\n";
+		Log_Debug(str);
+
+		auto iter = s_mapRefConstructor.cbegin();
+		for (; iter != s_mapRefConstructor.cend(); ++iter)
+		{
+			str = iter->first;
+			str += ": ";
+			str += intToString(iter->second);
+			str += "\n";
+			Log_Debug(str);
+
+		}
+		str = "ClassMemoryTracer[Constructor]\n";
+		Log_Debug(str);
+
+		str = "ClassMemoryTracer[Destructor]\n";
+		Log_Debug(str);
+
+		auto iter1 = s_mapRefDestructor.cbegin();
+		for (; iter1 != s_mapRefDestructor.cend(); ++iter1)
+		{
+			str = iter1->first;
+			str += ": ";
+			str += intToString(iter1->second);
+			str += "\n";
+			Log_Debug(str);
+		}
+		str = "ClassMemoryTracer[Destructor]\n";
+		Log_Debug(str);
 	}
-	printLog(str);
-	m_lock->unLock();
+	catch (std::exception* e)
+	{
+		str = "ClassMemoryTracer::printInfo() exception: ";
+		str += std::string(e->what());
+		str += "\n";
+		Log_Debug(str);
+	}
+	catch (...)
+	{
+		str = "ClassMemoryTracer::printInfo() exception: ";
+		str += intToString(GetLastError());
+		str += "\n";
+		Log_Debug(str);
+	}
 }
 
-Lock::Lock(void)
+Lock::Lock()
 {
 	InitializeCriticalSection(&m_cs);
 }
 
-Lock::~Lock(void)
+Lock::~Lock()
 {
 	DeleteCriticalSection(&m_cs);
 }
 
-bool Lock::lock()
+void Lock::lock()
 {
 	EnterCriticalSection(&m_cs);
-	return true;
 }
 
-bool Lock::unLock()
+void Lock::unlock()
 {
 	LeaveCriticalSection(&m_cs);
-	return true;
 }
