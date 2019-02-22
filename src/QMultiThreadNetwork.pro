@@ -7,18 +7,19 @@ TARGET = QMultiThreadNetwork
 QT += core network
 INCLUDEPATH += . \
             $$PWD/../include \
-            $$PWD/../log4cplus/log4cplus-1.1.3-rc4/include
+            $$PWD/../log4cplus/include
 
-DEFINES += QMT_NETWORK_LIB
+DEFINES += QMT_NETWORK_LIB LOG_USELOG4CPLUS
 staticlib: DEFINES += QMT_NETWORK_STATIC
 
 # Input
-HEADERS += NetworkBigFileDownloadRequest.h \
-           NetworkCommonRequest.h \
+HEADERS += NetworkMTDownloadRequest.h \
            NetworkDownloadRequest.h \
-           NetworkRequest.h \
-           NetworkRequestThread.h \
            NetworkUploadRequest.h \
+           NetworkCommonRequest.h \
+           NetworkRequest.h \
+           networkrunnable.h \
+           ClassMemoryTracer.h \
            $$PWD/../include/Log4cplusWrapper.h \
            $$PWD/../include/Network_Global.h \
            $$PWD/../include/NetworkDef.h \
@@ -26,25 +27,28 @@ HEADERS += NetworkBigFileDownloadRequest.h \
            $$PWD/../include/NetworkReply.h
 
 SOURCES += dllmain.cpp \
-           NetworkBigFileDownloadRequest.cpp \
+           NetworkMTDownloadRequest.cpp \
            NetworkCommonRequest.cpp \
            NetworkDownloadRequest.cpp \
+           NetworkUploadRequest.cpp \
            NetworkManager.cpp \
            NetworkReply.cpp \
            NetworkRequest.cpp \
-           NetworkRequestThread.cpp \
-           NetworkUploadRequest.cpp
+           networkrunnable.cpp \
+           ClassMemoryTracer.cpp
 
 CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
         DESTDIR = $$PWD/../bin/Debug
 	LIBPATH += $$PWD/../lib/Debug
-	LIBS += -llog4cplusUD
+        LIBPATH += $$PWD/../log4cplus/lib
+        LIBS += -llog4cplusd
 
 } else {
         DESTDIR = $$PWD/../bin/Release
 	LIBPATH += $$PWD/../lib/Release
-	LIBS += -llog4cplusU
+        LIBPATH += $$PWD/../log4cplus/lib
+        LIBS += -llog4cplus
 }
 
 win32 {
