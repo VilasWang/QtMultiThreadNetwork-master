@@ -2,7 +2,6 @@
 #include "Log4cplusWrapper.h"
 #include <sstream>
 
-std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
 TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
 TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 
@@ -25,7 +24,7 @@ void ClassMemoryTracer::printInfo()
 
 	try
 	{
-		Locker<Lock> locker(*m_lock.get());
+		Locker<Lock> locker(m_lock);
 
 		str = "ClassMemoryTracer[Constructor]\n";
 		Log_Debug(str);
