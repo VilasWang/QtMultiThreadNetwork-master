@@ -129,3 +129,12 @@ if (nullptr != pReply)
 		this, SLOT(onRequestFinished(const RequestTask &)));
 }
 ```
+
+>stop single request, stop batch requests or stop all requests
+> 
+
+```cpp
+NetworkManager::globalInstance()->stopRequest(1000);
+NetworkManager::globalInstance()->stopBatchRequests(5);
+NetworkManager::globalInstance()->stopAllRequest();
+```
