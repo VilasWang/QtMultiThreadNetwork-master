@@ -1281,33 +1281,50 @@ QSize TaskDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIn
 QString getTypeString(RequestType eType)
 {
 	QString strType;
-	if (eType == eTypeDownload)
+	switch (eType)
 	{
-		strType = QStringLiteral("下载");
-	}
-	else if (eType == eTypeUpload)
-	{
-		strType = QStringLiteral("上传");
-	}
-	else if (eType == eTypeGet)
-	{
-		strType = QLatin1String("GET");
-	}
-	else if (eType == eTypePost)
-	{
-		strType = QLatin1String("POST");
-	}
-	else if (eType == eTypePut)
-	{
-		strType = QLatin1String("PUT");
-	}
-	else if (eType == eTypeDelete)
-	{
-		strType = QLatin1String("DELETE");
-	}
-	else if (eType == eTypeHead)
-	{
-		strType = QLatin1String("HEAD");
+	case eTypeDownload:
+		{
+			strType = QStringLiteral("下载");
+		}
+		break;
+	case eTypeMTDownload:
+		{
+			strType = QStringLiteral("MT下载");
+		}
+		break;
+	case eTypeUpload:
+		{
+			strType = QStringLiteral("上传");
+		}
+		break;
+	case eTypeGet:
+		{
+			strType = QStringLiteral("GET");
+		}
+		break;
+	case eTypePost:
+		{
+			strType = QStringLiteral("POST");
+		}
+		break;
+	case eTypePut:
+		{
+			strType = QStringLiteral("PUT");
+		}
+		break;
+	case eTypeDelete:
+		{
+			strType = QStringLiteral("DELETE");
+		}
+		break;
+	case eTypeHead:
+		{
+			strType = QStringLiteral("HEAD");
+		}
+		break;
+	default:
+		break;
 	}
 	return strType;
 }
