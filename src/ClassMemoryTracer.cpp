@@ -1,5 +1,4 @@
 #include "ClassMemoryTracer.h"
-#include "Log4cplusWrapper.h"
 #include <sstream>
 
 #if _MSC_VER >= 1700
@@ -13,7 +12,6 @@ TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 void Log_Debug(std::string str)
 {
 	OutputDebugStringA(str.c_str());
-	LOG_INFO(str);
 }
 
 std::string intToString(const int n)
@@ -26,7 +24,7 @@ std::string intToString(const int n)
 void ClassMemoryTracer::printInfo()
 {
 	std::string str;
-	Locker<Lock> locker(*m_lock.get());
+	Locker2<Lock> locker(*m_lock.get());
 
 	try
 	{

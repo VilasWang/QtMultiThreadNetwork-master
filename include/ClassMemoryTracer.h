@@ -25,9 +25,6 @@ TRACE_CLASS_PRINT();
 #include <memory>
 #include <string>
 #include <map>
-#if _MSC_VER >= 1700
-#include <atomic>
-#endif
 
 typedef std::map<std::string, int> TClassRefCount;
 
@@ -118,39 +115,39 @@ private:
 };
 
 template<class _Lock>
-class Locker
+class Locker2
 {
 public:
-	explicit Locker(_Lock& lock)
+	explicit Locker2(_Lock& lock)
 		: m_lock(lock)
 	{
 		m_lock.lock();
 	}
 
-	Locker(_Lock& lock, bool bShared)
+	Locker2(_Lock& lock, bool bShared)
 		: m_lock(lock)
 	{
 		m_lock.lock(bShared);
 	}
 
 #if _MSC_VER >= 1700
-	~Locker() _NOEXCEPT
+	~Locker2() _NOEXCEPT
 #else
-	~Locker()
+	~Locker2()
 #endif
 	{
 		m_lock.unlock();
 	}
 
 #if _MSC_VER >= 1700
-	Locker(const Locker&) = delete;
-	Locker& operator=(const Locker&) = delete;
+	Locker2(const Locker2&) = delete;
+	Locker2& operator=(const Locker2&) = delete;
 #endif
 
 private:
 #if _MSC_VER < 1700
-	Locker(const Locker&);
-	Locker& operator=(const Locker&);
+	Locker2(const Locker2&);
+	Locker2& operator=(const Locker2&);
 #endif
 
 private:

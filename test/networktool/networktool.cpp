@@ -850,6 +850,12 @@ void NetworkTool::onBatchRequest()
 		requests.append(req);
 #endif
 	}
+
+#ifdef Test_Performance
+	for (int i = 0; i < 100; ++i)
+	{
+#endif // #ifdef Test_Performance
+
 	quint64 batchId;
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
@@ -879,6 +885,10 @@ void NetworkTool::onBatchRequest()
 		m_pWidgetAddBatch->hide();
 		switchTaskView(true);
 	}
+
+#ifdef Test_Performance
+	}
+#endif // #ifdef Test_Performance
 }
 
 void NetworkTool::onBatchMixedTask()
