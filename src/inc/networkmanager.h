@@ -79,7 +79,7 @@ public:
 	bool event(QEvent *pEvent) Q_DECL_OVERRIDE;
 
 private:
-	NetworkManager(QObject *parent = 0);
+	explicit NetworkManager(QObject *parent = 0);
 	~NetworkManager();
 	Q_DISABLE_COPY(NetworkManager);
 

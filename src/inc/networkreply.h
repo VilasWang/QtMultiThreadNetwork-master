@@ -11,7 +11,7 @@ class NETWORK_EXPORT NetworkReply : public QObject
 	Q_OBJECT;
 
 public:
-	explicit NetworkReply(bool bBatch, QObject *parent = 0);
+	NetworkReply(bool bBatch, QObject *parent = 0);
 	~NetworkReply();
 
 	bool isBatchRequest() const { return m_bBatch; }

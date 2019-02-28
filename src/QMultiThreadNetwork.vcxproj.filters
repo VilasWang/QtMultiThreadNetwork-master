@@ -124,9 +124,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Log4cplusWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\ClassMemoryTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
