@@ -8,7 +8,6 @@
 
 class ListModel;
 class ListDelegate;
-
 class Listview : public QListView
 {
 	Q_OBJECT

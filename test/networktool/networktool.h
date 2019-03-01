@@ -34,7 +34,6 @@ public:
 	void onDeleteRequest();
 	void onHeadRequest();
 	void onBatchRequest();
-	void onBatchMixedTask();
 	void onRequestFinished(const RequestTask &);
 
 	void onDownloadProgress(quint64, qint64, qint64);

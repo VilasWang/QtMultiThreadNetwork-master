@@ -591,7 +591,7 @@ void NetworkTool::onPostRequest()
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
+		appendMsg(QTime::currentTime().toString() + " - Start batch, uiBatchId["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
 		QVector<QVariant> vec;
@@ -732,7 +732,7 @@ void NetworkTool::onHeadRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
 	{
-		appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+		appendMsg(QTime::currentTime().toString() + " - Start[" + strUrl + "]");
 
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
@@ -860,7 +860,7 @@ void NetworkTool::onBatchRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
 	{
-		appendMsg(QTime::currentTime().toString() + " - Start batch request, uiBatchId["
+		appendMsg(QTime::currentTime().toString() + " - Start batch, uiBatchId["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
 		m_mapBatchTotalSize.insert(batchId, requests.size());
@@ -891,9 +891,9 @@ void NetworkTool::onBatchRequest()
 #endif // #ifdef Test_Performance
 }
 
-void NetworkTool::onBatchMixedTask()
-{
 #if 0
+void NetworkTool::onTest()
+{
 	//下载
 	QStringList strlstUrlDownload;
 	strlstUrlDownload.append("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
@@ -925,8 +925,8 @@ void NetworkTool::onBatchMixedTask()
 	//DELETE
 	strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
 		.arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
-#endif
 }
+#endif
 
 //request:		任务信息
 //bSuccess：	任务是否成功
@@ -934,11 +934,11 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 {
 	if (request.bSuccess)
 	{
-		appendMsg(QTime::currentTime().toString() + " - Task finished[Success]. url[" + request.url.url() + "]", false);
+		appendMsg(QTime::currentTime().toString() + " - Finished[Success]. url[" + request.url.url() + "]", false);
 	}
 	else
 	{
-		appendMsg(QTime::currentTime().toString() + " - Task finished[Failed]. url[" + request.url.url() + "]", false);
+		appendMsg(QTime::currentTime().toString() + " - Finished[Failed]. url[" + request.url.url() + "]", false);
 	}
 
 	if (!request.bytesContent.isEmpty())

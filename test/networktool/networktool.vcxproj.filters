@@ -77,7 +77,7 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="listview.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

@@ -77,7 +77,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;NDEBUG;QT_NO_DEBUG;QT_CORE_LIB;QT_NETWORK_LIB;QMT_NETWORK_LIB;TRACE_CLASS_MEMORY_ENABLED;LOG4CPLUS_ENABLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;NDEBUG;QT_NO_DEBUG;QT_CORE_LIB;QT_NETWORK_LIB;QMT_NETWORK_LIB;TRACE_CLASS_MEMORY_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtNetwork;$(SolutionDir)\include;$(SolutionDir)\log4cplus\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -170,7 +170,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkmanager.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="..\include\networkreply.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -180,7 +180,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkreply.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <ClInclude Include="..\include\network_global.h" />
     <CustomBuild Include="networkuploadrequest.h">
@@ -191,7 +191,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkuploadrequest.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkrunnable.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -201,7 +201,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -211,7 +211,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkrequest.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkdownloadrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -221,7 +221,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkdownloadrequest.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkcommonrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -231,7 +231,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkcommonrequest.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <CustomBuild Include="networkmtdownloadrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -241,7 +241,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing networkmtdownloadrequest.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -DLOG4CPLUS_ENABLE -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQMT_NETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I$(SolutionDir)\include" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
