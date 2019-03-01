@@ -29,8 +29,8 @@ QWidget:disabled{color:#909090;}
 QLineEdit{border:0px;padding:0px 3px 0px 3px;background-color:#191919;}
 QCheckBox,QLabel{border:0px;}
 QCheckBox::indicator{width:18px;height:18px;}
-QCheckBox::indicator:unchecked{border-image:url(resources/checkbox.png) 0 0 0 0 repeat repeat;}
-QCheckBox::indicator:checked{border-image:url(resources/checkbox.png) 72 0 0 0 repeat repeat;}
+QCheckBox::indicator:unchecked{border-image:url(://resources/checkbox.png) 0 0 0 0 repeat repeat;}
+QCheckBox::indicator:checked{border-image:url(://resources/checkbox.png) 72 0 0 0 repeat repeat;}
 QPushButton:hover{background-color:#636363;}
 QComboBox QAbstractItemView {outline: 0px;}
 QComboBox QAbstractItemView::item:selected {background-color: #636363;}

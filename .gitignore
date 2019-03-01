@@ -263,3 +263,4 @@ ModelManifest.xml
 /test/networktool/Release/NetworkTool.lastbuildstate
 *.unsuccessfulbuild
 /bin/Debug/QMultiThreadNetworkd.lib
+/bin/Release/QMultiThreadNetwork.lib

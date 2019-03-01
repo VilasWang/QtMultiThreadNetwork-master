@@ -9,32 +9,32 @@ INCLUDEPATH += . \
             $$PWD/inc \
             $$PWD/../log4cplus/include
 
-DEFINES += QMT_NETWORK_LIB LOG_USELOG4CPLUS
+DEFINES += UNICODE QMT_NETWORK_LIB
 staticlib: DEFINES += QMT_NETWORK_STATIC
 
 # Input
-HEADERS += NetworkMTDownloadRequest.h \
-           NetworkDownloadRequest.h \
-           NetworkUploadRequest.h \
-           NetworkCommonRequest.h \
-           NetworkRequest.h \
-           networkrunnable.h \
-           $$PWD/inc/ClassMemoryTracer.h \
+HEADERS += $$PWD/inc/ClassMemoryTracer.h \
            $$PWD/inc/Log4cplusWrapper.h \
-           $$PWD/inc/Network_Global.h \
-           $$PWD/inc/NetworkDef.h \
-           $$PWD/inc/NetworkManager.h \
-           $$PWD/inc/NetworkReply.h
+           $$PWD/inc/network_global.h \
+           $$PWD/inc/networkdef.h \
+           $$PWD/inc/networkmanager.h \
+           $$PWD/inc/networkreply.h \
+           networkrequest.h \
+           networkmtdownloadrequest.h \
+           networkdownloadrequest.h \
+           networkuploadrequest.h \
+           networkcommonrequest.h \
+           networkrunnable.h
 
 SOURCES += dllmain.cpp \
-           NetworkMTDownloadRequest.cpp \
-           NetworkCommonRequest.cpp \
-           NetworkDownloadRequest.cpp \
-           NetworkUploadRequest.cpp \
-           NetworkManager.cpp \
-           NetworkReply.cpp \
-           NetworkRequest.cpp \
+           networkrequest.cpp \
+           networkcommonrequest.cpp \
+           networkdownloadrequest.cpp \
+           networkmtdownloadrequest.cpp \
+           networkuploadrequest.cpp \
            networkrunnable.cpp \
+           networkreply.cpp \
+           networkmanager.cpp \
            ClassMemoryTracer.cpp
 
 CONFIG(debug, debug|release) {
@@ -45,6 +45,7 @@ CONFIG(debug, debug|release) {
         LIBS += -llog4cplusd
 
 } else {
+        DEFINES += NDEBUG
         DESTDIR = $$PWD/../bin/Release
 	LIBPATH += $$PWD/../lib/Release
         LIBPATH += $$PWD/../log4cplus/lib
@@ -52,7 +53,7 @@ CONFIG(debug, debug|release) {
 }
 
 win32 {
-    DEFINES += LOG_USELOG4CPLUS
+    DEFINES += WIN32 WIN64
     LIBS += -lkernel32 \
             -luser32 \
             -lgdi32 \
