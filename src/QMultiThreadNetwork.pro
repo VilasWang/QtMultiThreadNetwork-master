@@ -6,7 +6,7 @@ TEMPLATE = lib
 TARGET = QMultiThreadNetwork
 QT += core network
 INCLUDEPATH += . \
-            $$PWD/../include \
+            $$PWD/inc \
             $$PWD/../log4cplus/include
 
 DEFINES += QMT_NETWORK_LIB LOG_USELOG4CPLUS
@@ -19,12 +19,12 @@ HEADERS += NetworkMTDownloadRequest.h \
            NetworkCommonRequest.h \
            NetworkRequest.h \
            networkrunnable.h \
-           ClassMemoryTracer.h \
-           $$PWD/../include/Log4cplusWrapper.h \
-           $$PWD/../include/Network_Global.h \
-           $$PWD/../include/NetworkDef.h \
-           $$PWD/../include/NetworkManager.h \
-           $$PWD/../include/NetworkReply.h
+           $$PWD/inc/ClassMemoryTracer.h \
+           $$PWD/inc/Log4cplusWrapper.h \
+           $$PWD/inc/Network_Global.h \
+           $$PWD/inc/NetworkDef.h \
+           $$PWD/inc/NetworkManager.h \
+           $$PWD/inc/NetworkReply.h
 
 SOURCES += dllmain.cpp \
            NetworkMTDownloadRequest.cpp \
@@ -68,6 +68,6 @@ win32 {
     ##RC_ICONS = QtMultiThreadNetwork.ico
     QMAKE_TARGET_COMPANY = ""
     QMAKE_TARGET_DESCRIPTION = "Qt Multi-Threaded Network framework."
-    QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2015-2018 vilas wang, vilas900420@gmail.com"
+    QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2015-2019 vilas wang, vilas900420@gmail.com"
     QMAKE_TARGET_PRODUCT = "QtMultiThreadNetwork"
 }
