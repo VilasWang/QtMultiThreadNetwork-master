@@ -7,7 +7,7 @@ Qt multi-threaded network module
 
 
 > 
-Copyright © 2016-2018 Vilas Wang. All rights reserved.
+Copyright © 2016-2019 Vilas Wang. All rights reserved.
 
 ** QtMultiThreadNetwork is free libraries licensed under the term of LGPL v3.0.
 If you use QtMultiThreadNetwork or its constituent libraries, you must adhere to the terms of the license in question. **
