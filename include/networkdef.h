@@ -61,6 +61,8 @@ struct RequestTask
 	// 是否显示进度，默认为false.
 	bool bShowProgress;
 
+	bool bRemoveFileWhileExist;
+
 	// 任务失败后，是否再尝试请求一次，默认为false.
 	bool bTryAgainWhileFailed;
 
@@ -103,6 +105,7 @@ struct RequestTask
 		bCancel = false;
 		bSuccess = false;
 		bShowProgress = false;
+		bRemoveFileWhileExist = false;
 		bTryAgainWhileFailed = false;
 		bAbortBatchWhileOneFailed = false;
 		nDownloadThreadCount = 5;

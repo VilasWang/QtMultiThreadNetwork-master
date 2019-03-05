@@ -446,6 +446,7 @@ void NetworkTool::onDownload()
 	req.url = urlHost;
 	req.eType = eTypeDownload;
 	req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
+	req.bRemoveFileWhileExist = true;
 	req.strReqArg = strSavePath;
 	if (!uiAddTask.lineEdit_filename->text().isEmpty())
 	{
