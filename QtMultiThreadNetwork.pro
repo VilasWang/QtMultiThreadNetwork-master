@@ -1,9 +1,9 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += qmultithreadnetwork test
+SUBDIRS += qmultithreadnetwork samples
 qmultithreadnetwork.file = src/QMultiThreadNetwork.pro
-test.depends = qmultithreadnetwork
+samples.depends = qmultithreadnetwork
 
 OTHER_FILES += README.md
 #EssentialDepends = 

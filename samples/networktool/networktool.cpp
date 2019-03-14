@@ -17,7 +17,7 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-//#define Test_Performance
+#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
@@ -600,11 +600,7 @@ void NetworkTool::onPostRequest()
 		int i = 0;
 		foreach(const RequestTask& r, requests)
 		{
-#if _MSC_VER >= 1700
-			vec[i] = std::move(QVariant::fromValue(r));
-#else
 			vec[i] = QVariant::fromValue(r);
-#endif
 			i++;
 		}
 		m_pListViewDoing->insert(vec);
@@ -874,11 +870,7 @@ void NetworkTool::onBatchRequest()
 		int i = 0;
 		foreach(const RequestTask& r, requests)
 		{
-#if _MSC_VER >= 1700
-			vec[i] = std::move(QVariant::fromValue(r));
-#else
 			vec[i] = QVariant::fromValue(r);
-#endif
 			i++;
 		}
 		m_pListViewDoing->insert(vec);
