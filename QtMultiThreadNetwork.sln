@@ -6,29 +6,36 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QMultiThreadNetwork", "src\QMultiThreadNetwork.vcxproj", "{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkTool", "samples\networktool\networktool.vcxproj", "{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508} = {D869D753-7C3E-4EAC-B0FD-DBC8680CC508}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|Win32.Build.0 = Debug|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|x64.ActiveCfg = Debug|x64
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Debug|x64.Build.0 = Debug|x64
 		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|Win32.ActiveCfg = Release|Win32
 		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|Win32.Build.0 = Release|Win32
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|x64.ActiveCfg = Release|x64
+		{D869D753-7C3E-4EAC-B0FD-DBC8680CC508}.Release|x64.Build.0 = Release|x64
 		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|Win32.Build.0 = Debug|Win32
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|x64.ActiveCfg = Debug|x64
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Debug|x64.Build.0 = Debug|x64
 		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|Win32.ActiveCfg = Release|Win32
 		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|Win32.Build.0 = Release|Win32
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|x64.ActiveCfg = Release|x64
+		{F78079E4-5F91-4C4E-BD62-2436CFF8E6F2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = Qt5.11.3
+		Qt5Version = Qt5.6.3
 	EndGlobalSection
 EndGlobal
