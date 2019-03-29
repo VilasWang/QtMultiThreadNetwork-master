@@ -50,17 +50,19 @@ void Listview::setListModel(ListModel *pModel)
 
 void Listview::insert(const QVariant& var)
 {
-	if (m_pModel != nullptr)
+	if (m_pModel != nullptr && var.isValid())
 	{
 		m_pModel->insert(var);
+		update();
 	}
 }
 
 void Listview::insert(QVector<QVariant>& vec)
 {
-	if (m_pModel != nullptr)
+	if (m_pModel != nullptr && !vec.isEmpty())
 	{
 		m_pModel->insert(vec);
+		update();
 	}
 }
 
@@ -138,8 +140,8 @@ void ListModel::resetAll(const QVector<QVariant>& vec)
 {
 	if (vec.size() > 0)
 	{
-		beginInsertRows(QModelIndex(), 0, m_vecVariant.size() - 1);
-		m_vecVariant << vec;
+		beginInsertRows(QModelIndex(), 0, vec.size() - 1);
+		m_vecVariant = vec;
 		endInsertRows();
 
 		emit sizeChanged(m_vecVariant.size());

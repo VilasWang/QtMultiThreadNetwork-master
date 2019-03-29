@@ -34,7 +34,6 @@ enum RequestType
 	eTypeUnknown = -1,
 };
 
-#define ALL_TASK_ID 0xFFFFFFFF
 //«Î«ÛΩ·ππ
 struct RequestTask
 {
@@ -113,6 +112,19 @@ struct RequestTask
 };
 Q_DECLARE_METATYPE(RequestTask);
 typedef QVector<RequestTask> BatchRequestTask;
+
+
+#define ALL_TASK_ID 0xFFFFFFFF
+
+#if _MSC_VER >= 1700
+#define DECL_EQ_DELETE = delete
+#else
+#define DECL_EQ_DELETE
+#endif
+
+#define CLASS_DISABLE_COPY(Class) \
+	Class(const Class &) DECL_EQ_DELETE;\
+    Class &operator=(const Class &) DECL_EQ_DELETE;
 
 
 ////////////////// Event ////////////////////////////////////////////////////

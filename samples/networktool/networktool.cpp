@@ -17,7 +17,7 @@
 #include "NetworkManager.h"
 #include "NetworkReply.h"
 
-#define Test_Performance
+//#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
@@ -334,7 +334,7 @@ void NetworkTool::onUpdateDefaultValue()
 			}
 			else if (uiAddTask.cb_get->isChecked())
 			{
-				uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/incoming/UploadTest.dat");
+				uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/incoming/QtGetTest.dat");
 			}
 			else if (uiAddTask.cb_put->isChecked())
 			{
@@ -467,7 +467,6 @@ void NetworkTool::onDownload()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -510,7 +509,6 @@ void NetworkTool::onUpload()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -542,7 +540,6 @@ void NetworkTool::onGetRequest()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -604,7 +601,6 @@ void NetworkTool::onPostRequest()
 			i++;
 		}
 		m_pListViewDoing->insert(vec);
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 #else
@@ -617,7 +613,6 @@ void NetworkTool::onPostRequest()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 #endif // 1
@@ -671,7 +666,6 @@ void NetworkTool::onPutRequest()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -703,7 +697,6 @@ void NetworkTool::onDeleteRequest()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -735,7 +728,6 @@ void NetworkTool::onHeadRequest()
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
 		m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-		m_pListViewDoing->update();
 		switchTaskView(true);
 	}
 }
@@ -849,7 +841,7 @@ void NetworkTool::onBatchRequest()
 	}
 
 #ifdef Test_Performance
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 #endif // #ifdef Test_Performance
 
@@ -874,9 +866,8 @@ void NetworkTool::onBatchRequest()
 			i++;
 		}
 		m_pListViewDoing->insert(vec);
-		m_pListViewDoing->update();
-		m_pWidgetAddBatch->hide();
 		switchTaskView(true);
+		m_pWidgetAddBatch->hide();
 	}
 
 #ifdef Test_Performance
@@ -1255,7 +1246,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 				{
 					variant = m_vecVariant[i];
 					m_vecVariant.remove(i);
-					emit sizeChanged(m_vecVariant.size());
+					resetAll(m_vecVariant);
 				}
 				break;
 			}

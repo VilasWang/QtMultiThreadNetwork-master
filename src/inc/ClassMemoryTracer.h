@@ -56,7 +56,7 @@ public:
 	}
 
 	template <class T>
-	static void decRef()
+	static void release()
 	{
 		const char *name = typeid(T).name();
 		std::string str(name);
@@ -107,8 +107,13 @@ public:
 	void unlock();
 
 private:
-	Lock(const Lock &);
-	Lock &operator=(const Lock &);
+#if _MSC_VER >= 1700
+	Lock(const Lock&) = delete;
+	Lock& operator=(const Lock&) = delete;
+#else
+	Lock(const Lock&);
+	Lock& operator=(const Lock&);
+#endif
 
 private:
 	CRITICAL_SECTION m_cs;
@@ -139,13 +144,11 @@ public:
 		m_lock.unlock();
 	}
 
+private:
 #if _MSC_VER >= 1700
 	Locker2(const Locker2&) = delete;
 	Locker2& operator=(const Locker2&) = delete;
-#endif
-
-private:
-#if _MSC_VER < 1700
+#else
 	Locker2(const Locker2&);
 	Locker2& operator=(const Locker2&);
 #endif
@@ -165,7 +168,7 @@ private:
 
 #ifndef TRACE_CLASS_DESTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_DESTRUCTOR(T) ClassMemoryTracer::decRef<T>()
+#define TRACE_CLASS_DESTRUCTOR(T) ClassMemoryTracer::release<T>()
 #else
 #define TRACE_CLASS_DESTRUCTOR(T) __noop
 #endif
