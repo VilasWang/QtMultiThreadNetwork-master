@@ -23,55 +23,58 @@ std::string intToString(const int n)
 
 void ClassMemoryTracer::printInfo()
 {
-	std::string str;
 	Locker2<Lock> locker(*m_lock.get());
-
+	std::ostringstream oss;
 	try
 	{
-		str = "ClassMemoryTracer[Constructor]\n";
-		Log_Debug(str);
-
-		auto iter = s_mapRefConstructor.cbegin();
-		for (; iter != s_mapRefConstructor.cend(); ++iter)
+		if (!s_mapRefConstructor.empty())
 		{
-			str = iter->first;
-			str += ": ";
-			str += intToString(iter->second);
-			str += "\n";
-			Log_Debug(str);
+			oss << "ClassMemoryTracer[Constructor]\n";
 
+			auto iter = s_mapRefConstructor.cbegin();
+			for (; iter != s_mapRefConstructor.cend(); ++iter)
+			{
+				oss << iter->first;
+				oss << ": ";
+				oss << intToString(iter->second);
+				oss << "\n";
+			}
+			oss << "ClassMemoryTracer[Constructor]\n";
+			Log_Debug(oss.str());
 		}
-		str = "ClassMemoryTracer[Constructor]\n";
-		Log_Debug(str);
-
-		str = "ClassMemoryTracer[Destructor]\n";
-		Log_Debug(str);
-
-		auto iter1 = s_mapRefDestructor.cbegin();
-		for (; iter1 != s_mapRefDestructor.cend(); ++iter1)
+		
+		if (!s_mapRefDestructor.empty())
 		{
-			str = iter1->first;
-			str += ": ";
-			str += intToString(iter1->second);
-			str += "\n";
-			Log_Debug(str);
+			oss.str("");
+			oss << "ClassMemoryTracer[Destructor]\n";
+
+			auto iter1 = s_mapRefDestructor.cbegin();
+			for (; iter1 != s_mapRefDestructor.cend(); ++iter1)
+			{
+				oss << iter1->first;
+				oss << ": ";
+				oss << intToString(iter1->second);
+				oss << "\n";
+			}
+			oss << "ClassMemoryTracer[Destructor]\n";
+			Log_Debug(oss.str());
 		}
-		str = "ClassMemoryTracer[Destructor]\n";
-		Log_Debug(str);
 	}
 	catch (std::exception* e)
 	{
-		str = "ClassMemoryTracer::printInfo() exception: ";
-		str += std::string(e->what());
-		str += "\n";
-		Log_Debug(str);
+		oss.str("");
+		oss << "ClassMemoryTracer::printInfo() exception: "
+			<< std::string(e->what())
+			<< "\n";
+		Log_Debug(oss.str());
 	}
 	catch (...)
 	{
-		str = "ClassMemoryTracer::printInfo() exception: ";
-		str += intToString(GetLastError());
-		str += "\n";
-		Log_Debug(str);
+		oss.str("");
+		oss << "ClassMemoryTracer::printInfo() exception: "
+			<< intToString(GetLastError())
+			<< "\n";
+		Log_Debug(oss.str());
 	}
 }
 
