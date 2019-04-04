@@ -113,6 +113,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkreply.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="lock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -125,6 +128,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\networkdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\any.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\lock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\NonCopyable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

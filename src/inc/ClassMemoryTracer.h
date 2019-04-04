@@ -25,10 +25,10 @@ TRACE_CLASS_PRINT();
 #include <memory>
 #include <string>
 #include <map>
+#include "lock.h"
 
 typedef std::map<std::string, int> TClassRefCount;
 
-class Lock;
 class ClassMemoryTracer
 {
 public:
@@ -88,73 +88,12 @@ private:
 
 private:
 #if _MSC_VER >= 1700
-	static std::unique_ptr<Lock> m_lock;
+	static std::unique_ptr<CVC::Lock> m_lock;
 #else
-	static std::shared_ptr<Lock> m_lock;
+	static std::shared_ptr<CVC::Lock> m_lock;
 #endif
 	static TClassRefCount s_mapRefConstructor;
 	static TClassRefCount s_mapRefDestructor;
-};
-
-class Lock
-{
-public:
-	Lock();
-	~Lock();
-
-public:
-	void lock();
-	void unlock();
-
-private:
-#if _MSC_VER >= 1700
-	Lock(const Lock&) = delete;
-	Lock& operator=(const Lock&) = delete;
-#else
-	Lock(const Lock&);
-	Lock& operator=(const Lock&);
-#endif
-
-private:
-	CRITICAL_SECTION m_cs;
-};
-
-template<class _Lock>
-class Locker2
-{
-public:
-	explicit Locker2(_Lock& lock)
-		: m_lock(lock)
-	{
-		m_lock.lock();
-	}
-
-	Locker2(_Lock& lock, bool bShared)
-		: m_lock(lock)
-	{
-		m_lock.lock(bShared);
-	}
-
-#if _MSC_VER >= 1700
-	~Locker2() _NOEXCEPT
-#else
-	~Locker2()
-#endif
-	{
-		m_lock.unlock();
-	}
-
-private:
-#if _MSC_VER >= 1700
-	Locker2(const Locker2&) = delete;
-	Locker2& operator=(const Locker2&) = delete;
-#else
-	Locker2(const Locker2&);
-	Locker2& operator=(const Locker2&);
-#endif
-
-private:
-	_Lock& m_lock;
 };
 
 

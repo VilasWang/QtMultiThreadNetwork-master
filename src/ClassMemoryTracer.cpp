@@ -1,6 +1,8 @@
 #include "ClassMemoryTracer.h"
 #include <sstream>
 
+using namespace CVC;
+
 #if _MSC_VER >= 1700
 std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
 #else
@@ -23,7 +25,7 @@ std::string intToString(const int n)
 
 void ClassMemoryTracer::printInfo()
 {
-	Locker2<Lock> locker(*m_lock.get());
+	Locker<Lock> locker(*m_lock.get());
 	std::ostringstream oss;
 	try
 	{
@@ -76,24 +78,4 @@ void ClassMemoryTracer::printInfo()
 			<< "\n";
 		Log_Debug(oss.str());
 	}
-}
-
-Lock::Lock()
-{
-	InitializeCriticalSection(&m_cs);
-}
-
-Lock::~Lock()
-{
-	DeleteCriticalSection(&m_cs);
-}
-
-void Lock::lock()
-{
-	EnterCriticalSection(&m_cs);
-}
-
-void Lock::unlock()
-{
-	LeaveCriticalSection(&m_cs);
 }
