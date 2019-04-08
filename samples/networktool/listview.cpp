@@ -13,7 +13,10 @@ Listview::Listview(QWidget* parent/* = NULL*/)
 
 Listview::~Listview()
 {
-
+    if (m_pModel != nullptr)
+    {
+        m_pModel->clear();
+    }
 }
 
 void Listview::initView()

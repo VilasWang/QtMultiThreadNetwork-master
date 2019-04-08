@@ -258,6 +258,7 @@
   <ItemGroup>
     <ClInclude Include="inc\any.h" />
     <ClInclude Include="inc\ClassMemoryTracer.h" />
+    <ClInclude Include="inc\commondefine.h" />
     <ClInclude Include="inc\lock.h" />
     <ClInclude Include="inc\networkdef.h" />
     <CustomBuild Include="inc\networkmanager.h">

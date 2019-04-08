@@ -27,79 +27,75 @@ TRACE_CLASS_PRINT();
 #include <map>
 #include "lock.h"
 
-typedef std::map<std::string, int> TClassRefCount;
+namespace CVC {
+    typedef std::map<std::string, int> TClassRefCount;
 
-class ClassMemoryTracer
-{
-public:
-	template <class T>
-	static void addRef()
-	{
-		const char *name = typeid(T).name();
-		std::string str(name);
-		if (str.empty())
-		{
-			return;
-		}
+    class ClassMemoryTracer
+    {
+    public:
+        template <class T>
+        static void addRef()
+        {
+            const char *name = typeid(T).name();
+            std::string str(name);
+            if (str.empty())
+            {
+                return;
+            }
 
-		m_lock->lock();
-		auto iter = s_mapRefConstructor.find(str);
-		if (iter == s_mapRefConstructor.end())
-		{
-			s_mapRefConstructor[str] = 1;
-		}
-		else
-		{
-			s_mapRefConstructor[str] = ++iter->second;
-		}
-		m_lock->unlock();
-	}
+            CVC::Locker<CVC::Lock> locker(m_lock);
+            auto iter = s_mapRefConstructor.find(str);
+            if (iter == s_mapRefConstructor.end())
+            {
+                s_mapRefConstructor[str] = 1;
+            }
+            else
+            {
+                s_mapRefConstructor[str] = ++iter->second;
+            }
+        }
 
-	template <class T>
-	static void release()
-	{
-		const char *name = typeid(T).name();
-		std::string str(name);
-		if (str.empty())
-		{
-			return;
-		}
+        template <class T>
+        static void release()
+        {
+            const char *name = typeid(T).name();
+            std::string str(name);
+            if (str.empty())
+            {
+                return;
+            }
 
-		m_lock->lock();
-		auto iter = s_mapRefDestructor.find(str);
-		if (iter == s_mapRefDestructor.end())
-		{
-			s_mapRefDestructor[str] = 1;
-		}
-		else
-		{
-			s_mapRefDestructor[str] = ++iter->second;
-		}
-		m_lock->unlock();
-	}
+            CVC::Locker<CVC::Lock> locker(m_lock);
+            auto iter = s_mapRefDestructor.find(str);
+            if (iter == s_mapRefDestructor.end())
+            {
+                s_mapRefDestructor[str] = 1;
+            }
+            else
+            {
+                s_mapRefDestructor[str] = ++iter->second;
+            }
+        }
 
-	static void printInfo();
+        static void printInfo();
 
-private:
-	ClassMemoryTracer() {}
-	~ClassMemoryTracer() {}
-	ClassMemoryTracer(const ClassMemoryTracer &);
-	ClassMemoryTracer &operator=(const ClassMemoryTracer &);
+    private:
+        ClassMemoryTracer() {}
+        ~ClassMemoryTracer() {}
+        ClassMemoryTracer(const ClassMemoryTracer &);
+        ClassMemoryTracer &operator=(const ClassMemoryTracer &);
 
-private:
-#if _MSC_VER >= 1700
-	static std::unique_ptr<CVC::Lock> m_lock;
-#else
-	static std::shared_ptr<CVC::Lock> m_lock;
-#endif
-	static TClassRefCount s_mapRefConstructor;
-	static TClassRefCount s_mapRefDestructor;
-};
+    private:
+        static CVC::Lock m_lock;
+        static TClassRefCount s_mapRefConstructor;
+        static TClassRefCount s_mapRefDestructor;
+    };
+}
 
 
 #ifndef TRACE_CLASS_CONSTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CONSTRUCTOR(T) ClassMemoryTracer::addRef<T>()
+#define TRACE_CLASS_CONSTRUCTOR(T) CVC::ClassMemoryTracer::addRef<T>()
 #else
 #define TRACE_CLASS_CONSTRUCTOR(T) __noop
 #endif
@@ -107,7 +103,7 @@ private:
 
 #ifndef TRACE_CLASS_DESTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_DESTRUCTOR(T) ClassMemoryTracer::release<T>()
+#define TRACE_CLASS_DESTRUCTOR(T) CVC::ClassMemoryTracer::release<T>()
 #else
 #define TRACE_CLASS_DESTRUCTOR(T) __noop
 #endif
@@ -115,7 +111,7 @@ private:
 
 #ifndef TRACE_CLASS_PRINT
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_PRINT() ClassMemoryTracer::printInfo()
+#define TRACE_CLASS_PRINT() CVC::ClassMemoryTracer::printInfo()
 #else
 #define TRACE_CLASS_PRINT __noop
 #endif

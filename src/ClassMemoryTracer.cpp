@@ -3,11 +3,7 @@
 
 using namespace CVC;
 
-#if _MSC_VER >= 1700
-std::unique_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
-#else
-std::shared_ptr<Lock> ClassMemoryTracer::m_lock(new Lock);
-#endif
+Lock ClassMemoryTracer::m_lock;
 TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
 TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 
@@ -25,7 +21,7 @@ std::string intToString(const int n)
 
 void ClassMemoryTracer::printInfo()
 {
-	Locker<Lock> locker(*m_lock.get());
+	Locker<Lock> locker(m_lock);
 	std::ostringstream oss;
 	try
 	{

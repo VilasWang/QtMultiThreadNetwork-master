@@ -36,6 +36,7 @@ private:
 	bool fileAccessible(QFile *pFile) const;
 	bool removeFile(QFile *file);
 	void startMTDownload();
+    void clearDownloaders();
 
 private:
 	QNetworkAccessManager *m_pNetworkManager;

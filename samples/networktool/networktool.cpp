@@ -1175,12 +1175,12 @@ void TaskListView::onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qi
 		//qDebug() << taskId << bytesReceived << bytesTotal;
 		int p = bytesReceived * 100 / bytesTotal;
 		QAbstractItemDelegate *delegate = this->itemDelegate();
-		TaskDelegate *pdelegate = dynamic_cast<TaskDelegate *>(delegate);
-		if (pdelegate)
+		TaskDelegate *pDelegate = dynamic_cast<TaskDelegate *>(delegate);
+		if (pDelegate)
 		{
-			if (pdelegate->progress(taskId) < p)
+			if (pDelegate->progress(taskId) < p)
 			{
-				pdelegate->setProgress(taskId, p);
+				pDelegate->setProgress(taskId, p);
 				update();
 			}
 		}
@@ -1242,12 +1242,9 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 				task.bSuccess = request.bSuccess;
 				m_vecVariant[i] = QVariant::fromValue(task);
 
-				if (task.bSuccess)
-				{
-					variant = m_vecVariant[i];
-					m_vecVariant.remove(i);
-					resetAll(m_vecVariant);
-				}
+                variant = m_vecVariant[i];
+                m_vecVariant.remove(i);
+                resetAll(m_vecVariant);
 				break;
 			}
 		}
