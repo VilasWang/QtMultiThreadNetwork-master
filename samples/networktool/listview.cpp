@@ -149,6 +149,10 @@ void ListModel::resetAll(const QVector<QVariant>& vec)
 
 		emit sizeChanged(m_vecVariant.size());
 	}
+    else
+    {
+        clear();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

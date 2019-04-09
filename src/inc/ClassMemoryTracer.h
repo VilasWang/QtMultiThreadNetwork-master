@@ -22,7 +22,6 @@ TRACE_CLASS_PRINT();
 
 #pragma once
 #include <windows.h>
-#include <memory>
 #include <string>
 #include <map>
 #include "lock.h"
@@ -32,6 +31,11 @@ namespace CVC {
 
     class ClassMemoryTracer
     {
+    private:
+        static Lock m_lock;
+        static TClassRefCount s_mapRefConstructor;
+        static TClassRefCount s_mapRefDestructor;
+
     public:
         template <class T>
         static void addRef()
@@ -43,7 +47,7 @@ namespace CVC {
                 return;
             }
 
-            CVC::Locker<CVC::Lock> locker(m_lock);
+            Locker<Lock> locker(m_lock);
             auto iter = s_mapRefConstructor.find(str);
             if (iter == s_mapRefConstructor.end())
             {
@@ -65,7 +69,7 @@ namespace CVC {
                 return;
             }
 
-            CVC::Locker<CVC::Lock> locker(m_lock);
+            Locker<Lock> locker(m_lock);
             auto iter = s_mapRefDestructor.find(str);
             if (iter == s_mapRefDestructor.end())
             {
@@ -84,11 +88,6 @@ namespace CVC {
         ~ClassMemoryTracer() {}
         ClassMemoryTracer(const ClassMemoryTracer &);
         ClassMemoryTracer &operator=(const ClassMemoryTracer &);
-
-    private:
-        static CVC::Lock m_lock;
-        static TClassRefCount s_mapRefConstructor;
-        static TClassRefCount s_mapRefDestructor;
     };
 }
 

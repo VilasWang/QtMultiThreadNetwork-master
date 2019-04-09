@@ -1220,14 +1220,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 		int nSizeAft = m_vecVariant.size();
 		if (nSizeAft != nSizePre)
 		{
-			if (nSizeAft > 0)
-			{
-				resetAll(m_vecVariant);
-			}
-			else
-			{
-				clear();
-			}
+            resetAll(m_vecVariant);
 		}
 	}
 	else
@@ -1242,8 +1235,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 				task.bSuccess = request.bSuccess;
 				m_vecVariant[i] = QVariant::fromValue(task);
 
-                variant = m_vecVariant[i];
-                m_vecVariant.remove(i);
+                variant = m_vecVariant.takeAt(i);
                 resetAll(m_vecVariant);
 				break;
 			}

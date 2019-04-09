@@ -13,7 +13,8 @@ DEFINES += UNICODE QMT_NETWORK_LIB
 staticlib: DEFINES += QMT_NETWORK_STATIC
 
 # Input
-HEADERS += $$PWD/inc/ClassMemoryTracer.h \
+HEADERS += $$PWD/inc/lock.h \
+           $$PWD/inc/ClassMemoryTracer.h \
            $$PWD/inc/Log4cplusWrapper.h \
            $$PWD/inc/network_global.h \
            $$PWD/inc/networkdef.h \
@@ -35,6 +36,7 @@ SOURCES += dllmain.cpp \
            networkrunnable.cpp \
            networkreply.cpp \
            networkmanager.cpp \
+           lock.cpp \
            ClassMemoryTracer.cpp
 
 CONFIG(debug, debug|release) {
@@ -42,14 +44,14 @@ CONFIG(debug, debug|release) {
         DESTDIR = $$PWD/../bin/Debug
 	LIBPATH += $$PWD/../lib/Debug
         LIBPATH += $$PWD/../log4cplus/lib
-        LIBS += -llog4cplusd
+        #LIBS += -llog4cplusd
 
 } else {
         DEFINES += NDEBUG
         DESTDIR = $$PWD/../bin/Release
 	LIBPATH += $$PWD/../lib/Release
         LIBPATH += $$PWD/../log4cplus/lib
-        LIBS += -llog4cplus
+        #LIBS += -llog4cplus
 }
 
 win32 {

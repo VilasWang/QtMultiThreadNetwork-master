@@ -151,7 +151,8 @@ public:
         reset();
         m_Policy = x.m_Policy;
         m_Policy->move(&x.m_Value, &m_Value);
-        x.reset();
+        x.m_Policy = anyimpl::get_policy<anyimpl::empty_any>();
+        x.m_Value = NULL;
     }
 
     ~any() {
@@ -178,16 +179,17 @@ public:
         return assign(x);
     }
 
+    any& operator=(const any & x) {
+        return assign(x);
+    }
+
     any& operator=(any && x) {
         reset();
         m_Policy = x.m_Policy;
         m_Policy->move(&x.m_Value, &m_Value);
-        x.reset();
+        x.m_Policy = anyimpl::get_policy<anyimpl::empty_any>();
+        x.m_Value = NULL;
         return *this;
-    }
-
-    any& operator=(const any & x) {
-        return assign(x);
     }
 
     any& operator=(const char* x) {
