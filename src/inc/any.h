@@ -52,25 +52,25 @@ namespace anyimpl
     template<typename T>
     struct SmallValuePolicy_T : IPolicy
     {
-        virtual size_t get_size() override                { return sizeof(T); }
-        virtual void static_delete(void**)  override      {}
+        virtual size_t get_size() override                          { return sizeof(T); }
+        virtual void static_delete(void**) override                 {}
         virtual void copy_from_value(void const* src, void** dest) override { new(dest) T(*reinterpret_cast<T const*>(src)); }
-        virtual void clone(void* const* src, void** dest) override { *dest = *src; }
-        virtual void move (void* const* src, void** dest) override { *dest = *src; }
-        virtual void* get_value(void** src)   override             { return reinterpret_cast<void*>(src); }
-        virtual size_t get_typeid() const     override             { return typeid(T).hash_code(); }
+        virtual void clone(void* const* src, void** dest) override  { *dest = *src; }
+        virtual void move (void* const* src, void** dest) override  { *dest = *src; }
+        virtual void* get_value(void** src) override                { return reinterpret_cast<void*>(src); }
+        virtual size_t get_typeid() const override                  { return typeid(T).hash_code(); }
     };
 
     template<typename T>
     struct BigValuePolicy_T : IPolicy
     {
-        virtual size_t get_size()          override               { return sizeof(T); }
-        virtual void static_delete(void** x)     override         { if (*x) delete(*reinterpret_cast<T**>(x)); *x = NULL; }
+        virtual size_t get_size() override                          { return sizeof(T); }
+        virtual void static_delete(void** x) override               { if (*x) delete(*reinterpret_cast<T**>(x)); *x = NULL; }
         virtual void copy_from_value(void const* src, void** dest) override  { *dest = new T(*reinterpret_cast<T const*>(src)); }
-        virtual void clone(void* const* src, void** dest) override{ *dest = new T(**reinterpret_cast<T* const*>(src)); }
-        virtual void move(void* const* src, void** dest) override { (*reinterpret_cast<T**>(dest))->~T(); **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); }
-        virtual void* get_value(void** src)          override     { return *src; }
-        virtual size_t get_typeid() const            override    { return typeid(T).hash_code(); }
+        virtual void clone(void* const* src, void** dest) override  { *dest = new T(**reinterpret_cast<T* const*>(src)); }
+        virtual void move(void* const* src, void** dest) override   { (*reinterpret_cast<T**>(dest))->~T(); **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); }
+        virtual void* get_value(void** src) override                { return *src; }
+        virtual size_t get_typeid() const override                  { return typeid(T).hash_code(); }
     };
 
     template<typename T>

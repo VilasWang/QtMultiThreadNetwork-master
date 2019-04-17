@@ -26,15 +26,40 @@ TRACE_CLASS_PRINT();
 #include <map>
 #include "lock.h"
 
+
+#ifndef TRACE_CLASS_CONSTRUCTOR
+#ifdef TRACE_CLASS_MEMORY_ENABLED
+#define TRACE_CLASS_CONSTRUCTOR(T) CVC::ClassMemoryTracer::addRef<T>()
+#else
+#define TRACE_CLASS_CONSTRUCTOR(T) __noop
+#endif
+#endif
+
+#ifndef TRACE_CLASS_DESTRUCTOR
+#ifdef TRACE_CLASS_MEMORY_ENABLED
+#define TRACE_CLASS_DESTRUCTOR(T) CVC::ClassMemoryTracer::release<T>()
+#else
+#define TRACE_CLASS_DESTRUCTOR(T) __noop
+#endif
+#endif
+
+#ifndef TRACE_CLASS_PRINT
+#ifdef TRACE_CLASS_MEMORY_ENABLED
+#define TRACE_CLASS_PRINT() CVC::ClassMemoryTracer::printInfo()
+#else
+#define TRACE_CLASS_PRINT __noop
+#endif
+#endif
+
 namespace CVC {
-    typedef std::map<std::string, int> TClassRefCount;
 
     class ClassMemoryTracer
     {
     private:
-        static Lock m_lock;
+        typedef std::map<std::string, int> TClassRefCount;
         static TClassRefCount s_mapRefConstructor;
         static TClassRefCount s_mapRefDestructor;
+        static Lock m_lock;
 
     public:
         template <class T>
@@ -90,28 +115,3 @@ namespace CVC {
         ClassMemoryTracer &operator=(const ClassMemoryTracer &);
     };
 }
-
-
-#ifndef TRACE_CLASS_CONSTRUCTOR
-#ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CONSTRUCTOR(T) CVC::ClassMemoryTracer::addRef<T>()
-#else
-#define TRACE_CLASS_CONSTRUCTOR(T) __noop
-#endif
-#endif
-
-#ifndef TRACE_CLASS_DESTRUCTOR
-#ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_DESTRUCTOR(T) CVC::ClassMemoryTracer::release<T>()
-#else
-#define TRACE_CLASS_DESTRUCTOR(T) __noop
-#endif
-#endif
-
-#ifndef TRACE_CLASS_PRINT
-#ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_PRINT() CVC::ClassMemoryTracer::printInfo()
-#else
-#define TRACE_CLASS_PRINT __noop
-#endif
-#endif

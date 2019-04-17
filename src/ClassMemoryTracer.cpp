@@ -4,8 +4,8 @@
 using namespace CVC;
 
 Lock ClassMemoryTracer::m_lock;
-TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
-TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
+ClassMemoryTracer::TClassRefCount ClassMemoryTracer::s_mapRefConstructor;
+ClassMemoryTracer::TClassRefCount ClassMemoryTracer::s_mapRefDestructor;
 
 void Log_Debug(std::string str)
 {
