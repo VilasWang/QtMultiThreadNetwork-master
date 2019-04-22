@@ -168,7 +168,7 @@ void NetworkTool::initConnecting()
 	});
 	connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
 		QMessageBox::information(nullptr, "Tips",
-			QStringLiteral("请参考默认的批处理请求配置文件。文件位置（工程目录/test/networktool/help/Vercomp.dat）"), QMessageBox::Ok);
+			QStringLiteral("请参考默认的批处理请求配置文件。文件位置（工程目录/samples/networktool/help/Vercomp.dat）"), QMessageBox::Ok);
 	});
 	connect(uiMain.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
 		this, [=](const QString &strText) {
