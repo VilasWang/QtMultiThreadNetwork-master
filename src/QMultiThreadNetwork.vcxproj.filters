@@ -130,9 +130,6 @@
     <ClInclude Include="inc\networkdef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\any.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>

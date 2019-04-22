@@ -1115,10 +1115,11 @@ QString NetworkTool::getDefaultDownloadDir()
 }
 
 //////////////////////////////////////////////////////////////////////////
-template<typename T, typename TBase> class ClassIsDerived
+template<typename T, typename Base> 
+class ClassIsDerived
 {
 public:
-	static int t(TBase* base)
+	static int t(Base* base)
 	{
 		return 1;
 	}
@@ -1130,14 +1131,14 @@ public:
 
 	enum
 	{
-		Result = (sizeof(int) == sizeof(t((T*)NULL))),
+		Result = (sizeof(int) == sizeof(t((T*)NULL)))
 	};
 };
 
 
 //////////////////////////////////////////////////////////////////////////
-QLabelEx::QLabelEx(QWidget* parent)
-	: QLabel(parent)
+QLabelEx::QLabelEx(QWidget* parent) 
+    : QLabel(parent)
 {
 }
 

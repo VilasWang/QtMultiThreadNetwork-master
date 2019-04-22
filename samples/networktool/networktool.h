@@ -93,8 +93,8 @@ class QLabelEx : public QLabel
 	Q_OBJECT
 
 public:
-	explicit QLabelEx(QWidget* parent = NULL);
-	~QLabelEx() {}
+    explicit QLabelEx(QWidget* parent = NULL);
+	virtual ~QLabelEx() {}
 
 Q_SIGNALS:
 	void dbClicked();

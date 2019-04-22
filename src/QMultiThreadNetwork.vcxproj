@@ -256,7 +256,6 @@
     <ClCompile Include="networkuploadrequest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\any.h" />
     <ClInclude Include="inc\ClassMemoryTracer.h" />
     <ClInclude Include="inc\commondefine.h" />
     <ClInclude Include="inc\lock.h" />
