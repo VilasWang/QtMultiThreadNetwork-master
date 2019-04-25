@@ -43,11 +43,11 @@ TRACE_CLASS_PRINT();
 #endif
 #endif
 
-#ifndef TRACE_CLASS_PRINT
+#ifndef TRACE_CLASS_CHECK_LEAKS
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_PRINT() CVC::ClassMemoryTracer::printInfo()
+#define TRACE_CLASS_CHECK_LEAKS() CVC::ClassMemoryTracer::checkMemoryLeaks()
 #else
-#define TRACE_CLASS_PRINT __noop
+#define TRACE_CLASS_CHECK_LEAKS() __noop
 #endif
 #endif
 
@@ -56,57 +56,46 @@ namespace CVC {
     class ClassMemoryTracer
     {
     private:
-        typedef std::map<std::string, int> TClassRefCount;
-        static TClassRefCount s_mapRefConstructor;
-        static TClassRefCount s_mapRefDestructor;
+        typedef std::map<size_t, std::pair<std::string, int>> TClassRefCount;
+        static TClassRefCount s_mapRefCount;
         static Lock m_lock;
 
     public:
-        template <class T>
+        template <typename T>
         static void addRef()
         {
-            const char *name = typeid(T).name();
-            std::string str(name);
-            if (str.empty())
-            {
-                return;
-            }
+            const size_t hashcode = typeid(T).hash_code();
 
             Locker<Lock> locker(m_lock);
-            auto iter = s_mapRefConstructor.find(str);
-            if (iter == s_mapRefConstructor.end())
+            auto iter = s_mapRefCount.find(hashcode);
+            if (iter == s_mapRefCount.end())
             {
-                s_mapRefConstructor[str] = 1;
+                const char *name = typeid(T).name();
+                s_mapRefCount[hashcode] = std::make_pair<std::string, int>(std::string(name), 1);
             }
             else
             {
-                s_mapRefConstructor[str] = ++iter->second;
+                ++iter->second.second;
             }
         }
 
-        template <class T>
+        template <typename T>
         static void release()
         {
-            const char *name = typeid(T).name();
-            std::string str(name);
-            if (str.empty())
-            {
-                return;
-            }
+            const size_t hashcode = typeid(T).hash_code();
 
             Locker<Lock> locker(m_lock);
-            auto iter = s_mapRefDestructor.find(str);
-            if (iter == s_mapRefDestructor.end())
+            auto iter = s_mapRefCount.find(hashcode);
+            if (iter != s_mapRefCount.end())
             {
-                s_mapRefDestructor[str] = 1;
-            }
-            else
-            {
-                s_mapRefDestructor[str] = ++iter->second;
+                if (iter->second.second > 0)
+                {
+                    --iter->second.second;
+                }
             }
         }
 
-        static void printInfo();
+        static void checkMemoryLeaks();
 
     private:
         ClassMemoryTracer() {}

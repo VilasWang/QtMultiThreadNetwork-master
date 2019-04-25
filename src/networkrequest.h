@@ -4,11 +4,13 @@
 #include <QObject>
 #include <memory>
 #include "NetworkDef.h"
+#include "commondefine.h"
 #include "ClassMemoryTracer.h"
 
 class NetworkRequest : public QObject
 {
 	Q_OBJECT
+    REIMPL_CLASSNAME(NetworkRequest)
 
 public:
 	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false)

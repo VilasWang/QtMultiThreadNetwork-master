@@ -5,6 +5,7 @@
 #include <QNetworkReply>
 #include <QMutex>
 #include <QPointer>
+#include "commondefine.h"
 #include "NetworkRequest.h"
 
 class QFile;
@@ -72,6 +73,7 @@ private:
 class Downloader : public QObject
 {
 	Q_OBJECT
+    REIMPL_CLASSNAME(Downloader)
 
 public:
 	Downloader(int index, QObject *parent = 0);

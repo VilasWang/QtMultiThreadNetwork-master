@@ -9,3 +9,8 @@
 #define CLASS_DISABLE_COPY(Class) \
 	Class(const Class &) DECL_EQ_DELETE;\
     Class &operator=(const Class &) DECL_EQ_DELETE;
+
+
+#define REIMPL_CLASSNAME(Class) \
+    public: \
+        virtual char* class_name() { return #Class; }
