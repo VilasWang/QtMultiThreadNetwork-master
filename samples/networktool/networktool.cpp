@@ -13,9 +13,13 @@
 #include <QStandardPaths>
 #include <QPainter>
 #include <QScrollBar>
+#include <QPushButton>
+#include <QComboBox>
+#include <QTime>
 #include "networktool.h"
 #include "NetworkManager.h"
 #include "NetworkReply.h"
+
 
 //#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8

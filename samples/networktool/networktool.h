@@ -2,13 +2,15 @@
 #define INTERNET_H
 
 #include <QtWidgets/QMainWindow>
-#include <QTime>
+#include <QLabel>
 #include "ui_networktool.h"
 #include "ui_addBatchTask.h"
 #include "ui_addtask.h"
-#include "listview.h"
 #include "NetworkDef.h"
+#include "listview.h"
 
+class QWidget;
+class QButtonGroup;
 class TaskListView;
 class TaskModel;
 class QLabelEx;

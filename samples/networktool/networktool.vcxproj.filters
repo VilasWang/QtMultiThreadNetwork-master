@@ -61,36 +61,36 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="networktool.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="networktool.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="networktool.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="addtask.ui">
-      <Filter>Form Files</Filter>
+    <CustomBuild Include="listview.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="addBatchTask.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="listview.h">
-      <Filter>Header Files</Filter>
+    <CustomBuild Include="addtask.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="networktool.ui">
+      <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_networktool.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_addBatchTask.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_addtask.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_addBatchTask.h">
+    <ClInclude Include="GeneratedFiles\ui_networktool.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
