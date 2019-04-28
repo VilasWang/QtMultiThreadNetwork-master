@@ -266,3 +266,5 @@ ModelManifest.xml
 /bin/Release/QMultiThreadNetwork.lib
 /samples/networktool/GeneratedFiles
 /samples/networktool/log
+/bin/Debug/libeay32.dll
+/bin/Debug/ssleay32.dll

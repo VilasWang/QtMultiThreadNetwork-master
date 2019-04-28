@@ -26,9 +26,6 @@ public Q_SLOTS:
 	void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
 
 private:
-	QString getRequestTypeString() const;
-
-private:
 	QNetworkAccessManager *m_pNetworkManager;
 	QNetworkReply *m_pNetworkReply;
 };

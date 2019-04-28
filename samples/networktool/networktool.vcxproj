@@ -115,6 +115,9 @@
       <Version>
       </Version>
     </Link>
+    <PostBuildEvent>
+      <Command>copy .\resources ..\..\bin\$(Configuration)\resources</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -155,6 +158,9 @@
       </Version>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
+    <PostBuildEvent>
+      <Command>copy .\resources ..\..\bin\$(Configuration)\resources</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\Debug\moc_listview.cpp">

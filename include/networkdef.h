@@ -37,6 +37,11 @@ enum RequestType
 //请求结构
 struct RequestTask
 {
+    enum 
+    {
+        ALL_TASK = 0xFFFFFFFF
+    };
+
 	// 请求的类型：上传/下载/其他请求
 	RequestType eType;
 
@@ -114,7 +119,56 @@ Q_DECLARE_METATYPE(RequestTask);
 typedef QVector<RequestTask> BatchRequestTask;
 
 
-#define ALL_TASK_ID 0xFFFFFFFF
+inline QString getTypeString(RequestType eType)
+{
+    QString strType;
+    switch (eType)
+    {
+    case eTypeDownload:
+    {
+        strType = QStringLiteral("下载");
+    }
+    break;
+    case eTypeMTDownload:
+    {
+        strType = QStringLiteral("MT下载");
+    }
+    break;
+    case eTypeUpload:
+    {
+        strType = QStringLiteral("上传");
+    }
+    break;
+    case eTypeGet:
+    {
+        strType = QStringLiteral("GET");
+    }
+    break;
+    case eTypePost:
+    {
+        strType = QStringLiteral("POST");
+    }
+    break;
+    case eTypePut:
+    {
+        strType = QStringLiteral("PUT");
+    }
+    break;
+    case eTypeDelete:
+    {
+        strType = QStringLiteral("DELETE");
+    }
+    break;
+    case eTypeHead:
+    {
+        strType = QStringLiteral("HEAD");
+    }
+    break;
+    default:
+        break;
+    }
+    return strType;
+}
 
 
 ////////////////// Event ////////////////////////////////////////////////////

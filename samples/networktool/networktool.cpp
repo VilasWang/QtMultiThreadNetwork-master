@@ -39,7 +39,7 @@ NetworkTool::NetworkTool(QWidget *parent)
 	setWindowTitle(QStringLiteral("Qt Network Tool"));
 
 	initialize();
-	onUpdateDefaultValue();
+	onSetDefaultValue();
 }
 
 NetworkTool::~NetworkTool()
@@ -163,7 +163,7 @@ void NetworkTool::initConnecting()
 	connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
 		if (checked)
 		{
-			onUpdateDefaultValue();
+			onSetDefaultValue();
 		}
 	});
 	connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
@@ -214,8 +214,8 @@ void NetworkTool::initConnecting()
 	connect(m_pLblFinished, &QLabelEx::dbClicked, this, [=]() {
 		switchTaskView();
 	});
-	connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
-	connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onUpdateDefaultValue()));
+	connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onSetDefaultValue()));
+	connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onSetDefaultValue()));
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ void NetworkTool::switchTaskView(bool bForceDoing)
 	}
 }
 
-void NetworkTool::onUpdateDefaultValue()
+void NetworkTool::onSetDefaultValue()
 {
 	uiAddTask.lineEdit_url->clear();
 	uiAddTask.lineEdit_arg->clear();
@@ -589,7 +589,7 @@ void NetworkTool::onPostRequest()
 		connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
 			this, SLOT(onRequestFinished(const RequestTask &)));
 
-		appendMsg(QTime::currentTime().toString() + " - Start batch, uiBatchId["
+		appendMsg(QTime::currentTime().toString() + " - Start batch["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
 		QVector<QVariant> vec;
@@ -849,7 +849,7 @@ void NetworkTool::onBatchRequest()
 	NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
 	if (nullptr != pReply)
 	{
-		appendMsg(QTime::currentTime().toString() + " - Start batch, uiBatchId["
+		appendMsg(QTime::currentTime().toString() + " - Start batch["
 			+ QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
 		m_mapBatchTotalSize.insert(batchId, requests.size());
@@ -918,11 +918,11 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 {
 	if (request.bSuccess)
 	{
-		appendMsg(QTime::currentTime().toString() + " - Finished[Success]. url[" + request.url.url() + "]", false);
+		appendMsg(QTime::currentTime().toString() + " - Task[Success]. url[" + request.url.url() + "]", false);
 	}
 	else
 	{
-		appendMsg(QTime::currentTime().toString() + " - Finished[Failed]. url[" + request.url.url() + "]", false);
+		appendMsg(QTime::currentTime().toString() + " - Task[Failed]. url[" + request.url.url() + "]", false);
 	}
 
 	if (!request.bytesContent.isEmpty())
@@ -1114,27 +1114,6 @@ QString NetworkTool::getDefaultDownloadDir()
 	return QLatin1String("download/");
 }
 
-//////////////////////////////////////////////////////////////////////////
-template<typename T, typename Base> 
-class ClassIsDerived
-{
-public:
-	static int t(Base* base)
-	{
-		return 1;
-	}
-
-	static char t(void* t2)
-	{
-		return 0;
-	}
-
-	enum
-	{
-		Result = (sizeof(int) == sizeof(t((T*)NULL)))
-	};
-};
-
 
 //////////////////////////////////////////////////////////////////////////
 QLabelEx::QLabelEx(QWidget* parent) 
@@ -1198,7 +1177,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 {
 	QVariant variant;
 	RequestTask task;
-	if (request.uiId == ALL_TASK_ID && request.bCancel)
+	if (request.uiId == RequestTask::ALL_TASK && request.bCancel)
 	{
 		clear();
 	}
@@ -1260,57 +1239,6 @@ TaskDelegate::~TaskDelegate()
 QSize TaskDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	return QSize(310, 60);
-}
-
-QString getTypeString(RequestType eType)
-{
-	QString strType;
-	switch (eType)
-	{
-	case eTypeDownload:
-		{
-			strType = QStringLiteral("下载");
-		}
-		break;
-	case eTypeMTDownload:
-		{
-			strType = QStringLiteral("MT下载");
-		}
-		break;
-	case eTypeUpload:
-		{
-			strType = QStringLiteral("上传");
-		}
-		break;
-	case eTypeGet:
-		{
-			strType = QStringLiteral("GET");
-		}
-		break;
-	case eTypePost:
-		{
-			strType = QStringLiteral("POST");
-		}
-		break;
-	case eTypePut:
-		{
-			strType = QStringLiteral("PUT");
-		}
-		break;
-	case eTypeDelete:
-		{
-			strType = QStringLiteral("DELETE");
-		}
-		break;
-	case eTypeHead:
-		{
-			strType = QStringLiteral("HEAD");
-		}
-		break;
-	default:
-		break;
-	}
-	return strType;
 }
 
 void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const

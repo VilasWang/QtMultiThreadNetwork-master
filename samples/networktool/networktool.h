@@ -20,12 +20,12 @@ public:
 	NetworkTool(QWidget *parent = 0);
 	~NetworkTool();
 
-	public Q_SLOTS:
+public Q_SLOTS:
 	void onAddTask();
 	void onAbortTask();
 	void onAbortAllTask();
 
-	private Q_SLOTS:
+private Q_SLOTS:
 	void onDownload();
 	void onUpload();
 	void onGetRequest();
@@ -42,7 +42,7 @@ public:
 	void onBatchUploadProgress(quint64, qint64);
 	void onErrorMessage(const QString& error);
 
-	void onUpdateDefaultValue();
+	void onSetDefaultValue();
 	void onGetSaveDirectory();
 	void onGetUploadFile();
 	void onGetBatchTaskConfigFile();
