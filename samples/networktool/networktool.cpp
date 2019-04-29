@@ -22,7 +22,7 @@
 
 
 //#define TEST_EXTERNAL
-#define Test_Performance
+//#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
