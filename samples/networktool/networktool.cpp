@@ -21,7 +21,7 @@
 #include "NetworkReply.h"
 
 
-//#define Test_Performance
+#define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
@@ -577,7 +577,7 @@ void NetworkTool::onPostRequest()
 	req.strReqArg = strArg;
 
 #ifdef Test_Performance
-	int count = 1000;
+	int count = 100;
 
 	BatchRequestTask requests;
 	requests.resize(count);
