@@ -21,6 +21,7 @@
 #include "NetworkReply.h"
 
 
+//#define TEST_EXTERNAL
 #define Test_Performance
 #define DEFAULT_CONCURRENT_TASK		8
 #define DEFAULT_MTDOWNLOAD_COUNT	5
@@ -534,6 +535,10 @@ void NetworkTool::onGetRequest()
 	RequestTask req;
 	req.url = urlHost;
 	req.eType = eTypeGet;
+
+#ifdef TEST_EXTERNAL
+    req.mapRawHeader.insert(QByteArray("Authorization"), QByteArray("Bearer cn-f7ed4359-eb36-4d1d-ab7c-7d3b04d7f74b"));
+#endif
 
 	NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
 	if (nullptr != pReply)
