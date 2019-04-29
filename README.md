@@ -13,7 +13,8 @@ Copyright © 2016-2019 Vilas Wang. All rights reserved.
 If you use QtMultiThreadNetwork or its constituent libraries, you must adhere to the terms of the license in question. **
 
 
-目前该库只支持在windows平台下能编译成功。
+目前该库只支持在windows平台下编译成功。
+openssl x86 x64库下载地址：https://github.com/VilasWang/3rd_Dev_Library.git
 
 
 
