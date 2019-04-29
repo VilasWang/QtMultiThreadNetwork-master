@@ -4,13 +4,11 @@
 #include <QObject>
 #include "NetworkDef.h"
 #include "Network_Global.h"
-#include "commondefine.h"
 
 // 对象会自动销毁，不要主动销毁
 class NETWORK_EXPORT NetworkReply : public QObject
 {
 	Q_OBJECT
-    REIMPL_CLASSNAME(NetworkReply)
 
 public:
 	NetworkReply(bool bBatch, QObject *parent = 0);

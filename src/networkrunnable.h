@@ -4,12 +4,10 @@
 #include <QObject>
 #include <QRunnable>
 #include "NetworkDef.h"
-#include "commondefine.h"
 
 class NetworkRunnable : public QObject, public QRunnable
 {
 	Q_OBJECT
-    REIMPL_CLASSNAME(NetworkRunnable)
 
 public:
 	explicit NetworkRunnable(const RequestTask &, QObject *parent = 0);

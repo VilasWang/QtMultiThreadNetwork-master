@@ -136,12 +136,6 @@
     <ClInclude Include="inc\lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\NonCopyable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\commondefine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="networkcommonrequest.h">
