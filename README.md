@@ -166,8 +166,8 @@ foreach (const QString& strUrl, strlstUrl)
 {
 	task.url = QUrl(QDir::fromNativeSeparators(strUrl));
 	task.eTaskType = eTypeDownload;
+	task.strReqArg = "your save dir";
 	task.bShowProgress = true;
-	task.strRequestArg = "your save dir";
 	tasks.append(task);
 }
 ```
