@@ -2,10 +2,10 @@
 #define NETWORKBIGFLEDOWNLOADREQUEST_H
 
 #include <QObject>
-#include <QNetworkReply>
-#include <QMutex>
 #include <QPointer>
-#include "NetworkRequest.h"
+#include <QMutex>
+#include <QNetworkReply>
+#include "networkrequest.h"
 
 class QFile;
 class QNetworkAccessManager;

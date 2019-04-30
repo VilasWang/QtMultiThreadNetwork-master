@@ -3,9 +3,9 @@
 
 #include <QtCore/qglobal.h>
 
-#ifndef QMT_NETWORK_STATIC
+#ifndef QT_MTNETWORK_STATIC
 
-#ifdef QMT_NETWORK_LIB
+#ifdef QT_MTNETWORK_LIB
 # define NETWORK_EXPORT Q_DECL_EXPORT
 #else
 # define NETWORK_EXPORT Q_DECL_IMPORT

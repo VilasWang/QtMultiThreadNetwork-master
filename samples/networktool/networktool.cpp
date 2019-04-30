@@ -17,8 +17,8 @@
 #include <QComboBox>
 #include <QTime>
 #include "networktool.h"
-#include "NetworkManager.h"
-#include "NetworkReply.h"
+#include "networkmanager.h"
+#include "networkreply.h"
 
 
 //#define TEST_EXTERNAL

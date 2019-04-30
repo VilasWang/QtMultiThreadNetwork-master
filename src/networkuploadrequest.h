@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QNetworkReply>
-#include "NetworkRequest.h"
+#include "networkrequest.h"
 
 class QFile;
 class QNetworkAccessManager;

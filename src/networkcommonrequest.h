@@ -2,9 +2,8 @@
 #define NETWORKCOMMONREQUEST_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include "NetworkRequest.h"
+#include "networkrequest.h"
 
 class QNetworkAccessManager;
 

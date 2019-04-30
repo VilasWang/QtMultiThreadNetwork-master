@@ -20,7 +20,7 @@ That must be called in the main thread.
 #define NETWORKMANAGER_H
 
 #include <QObject>
-#include "NetworkReply.h"
+#include "networkreply.h"
 #include "NetworkDef.h"
 #include "Network_Global.h"
 
