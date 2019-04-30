@@ -4,7 +4,7 @@
 #include <QObject>
 #include <memory>
 #include "NetworkDef.h"
-#include "ClassMemoryTracer.h"
+#include "classmemorytracer.h"
 
 class NetworkRequest : public QObject
 {

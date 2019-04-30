@@ -72,12 +72,64 @@ NetworkManager::unInitialize();	//程序退出前调用
 >Any thread:
 > 
 
+>Download file:
+
 ```CPP
 RequestTask task;
-task.url = QUrl("your url");
 task.eType = eTypeDownload;
+task.url = QUrl("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
+task.strReqArg = "D:/Download";
 task.bShowProgress = true;
-task.strRequestArg = "your save dir";
+task.bRemoveFileWhileExist = true;
+task.bTryAgainWhileFailed = true;
+```
+
+>Upload file:
+
+```CPP
+RequestTask task;
+task.url = QUrl("http://127.0.0.1:80/_php/upload.php?filename=upload/test.txt");
+task.eType = eTypeUpload;
+task.strReqArg = "resources/checkbox.png"; //local file path
+task.bShowProgress = true;
+task.bTryAgainWhileFailed = true;
+```
+
+>GET method:
+
+```CPP
+RequestTask task;
+task.url = QUrl("http://m.kugou.com/singer/list/88?json=true");
+task.eType = eTypeGet;
+task.bTryAgainWhileFailed = true;
+```
+
+>POST method:
+
+```CPP
+RequestTask task;
+task.url = QUrl("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
+task.eType = eTypePost;
+task.strReqArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUATAB2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJAC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoAKwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBYAFEAbQAyAFUAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMQB0AGwARwBIADYAdAB1AGYAYQBxAEoAMwBnAFUARwA4AGoAdQA5AGsAOQBzAFoAYQB1AHAARwBjAE8ANABnADIAegBnADIANgB1AEcANwBoAHAAUwBHADIAVQANAAoAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMAA9AA==";
+task.bTryAgainWhileFailed = true;
+```
+
+>DELETE method:
+
+```CPP
+RequestTask task;
+task.url = QUrl("http://127.0.0.1:80/_php/delete.php?filename=upload/test.txt");
+task.eType = eTypeDelete;
+task.bTryAgainWhileFailed = true;
+```
+
+>HEAD method:
+
+```CPP
+RequestTask task;
+task.url = QUrl("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
+task.eType = eTypeHead;
+task.bTryAgainWhileFailed = true;
 ```
 
 >One request corresponding to one NetworkReply object

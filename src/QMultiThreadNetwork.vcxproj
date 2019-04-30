@@ -185,7 +185,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClassMemoryTracer.cpp" />
+    <ClCompile Include="classmemorytracer.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_networkcommonrequest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -262,7 +262,7 @@
     <ClCompile Include="networkuploadrequest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\ClassMemoryTracer.h" />
+    <ClInclude Include="inc\classmemorytracer.h" />
     <ClInclude Include="inc\lock.h" />
     <ClInclude Include="inc\networkdef.h" />
     <CustomBuild Include="inc\networkmanager.h">

@@ -71,9 +71,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkmtdownloadrequest.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="ClassMemoryTracer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_networkrunnable.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -119,12 +116,12 @@
     <ClCompile Include="lock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="classmemorytracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\ClassMemoryTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\network_global.h">
@@ -134,6 +131,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\lock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\classmemorytracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

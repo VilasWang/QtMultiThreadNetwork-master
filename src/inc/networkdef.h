@@ -73,7 +73,7 @@ struct RequestTask
 	// 批量请求失败一个就终止整批请求，默认为false.
 	bool bAbortBatchWhileOneFailed;
 
-	// 多线程下载模式(需服务器支持)
+	// 单文件多线程下载模式(需服务器支持) 注：eType为eTypeMTDownload时有效
 	//	 多线程下载模式下，一个文件由多个下载通道同时下载.
 	//	 需要先获取http head的Content-Length，所以需要服务器的支持.
 	// n个下载通道(默认是5)(取值范围2-10)
