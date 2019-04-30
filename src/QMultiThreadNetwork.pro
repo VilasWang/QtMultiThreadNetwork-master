@@ -9,12 +9,12 @@ INCLUDEPATH += . \
             $$PWD/inc \
             $$PWD/../log4cplus/include
 
-DEFINES += UNICODE QMT_NETWORK_LIB
-staticlib: DEFINES += QMT_NETWORK_STATIC
+DEFINES += UNICODE QT_MTNETWORK_LIB
+staticlib: DEFINES += QT_MTNETWORK_STATIC
 
 # Input
 HEADERS += $$PWD/inc/lock.h \
-           $$PWD/inc/ClassMemoryTracer.h \
+           $$PWD/inc/classmemorytracer.h \
            $$PWD/inc/Log4cplusWrapper.h \
            $$PWD/inc/network_global.h \
            $$PWD/inc/networkdef.h \
@@ -28,6 +28,8 @@ HEADERS += $$PWD/inc/lock.h \
            networkrunnable.h
 
 SOURCES += dllmain.cpp \
+	   lock.cpp \
+           classMemorytracer.cpp \
            networkrequest.cpp \
            networkcommonrequest.cpp \
            networkdownloadrequest.cpp \
@@ -35,9 +37,7 @@ SOURCES += dllmain.cpp \
            networkuploadrequest.cpp \
            networkrunnable.cpp \
            networkreply.cpp \
-           networkmanager.cpp \
-           lock.cpp \
-           ClassMemoryTracer.cpp
+           networkmanager.cpp
 
 CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
@@ -55,7 +55,7 @@ CONFIG(debug, debug|release) {
 }
 
 win32 {
-    DEFINES += WIN32 WIN64
+    DEFINES += WIN32
     LIBS += -lkernel32 \
             -luser32 \
             -lgdi32 \

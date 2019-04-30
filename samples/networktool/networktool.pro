@@ -29,6 +29,10 @@ CONFIG(debug, debug|release) {
         LIBS += -lQMultiThreadNetwork
 }
 
+win32 {
+    DEFINES += WIN32
+}
+
 RC_ICONS = resources/networktool.ico
 
 RESOURCES += \
