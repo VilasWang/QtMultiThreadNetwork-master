@@ -29,7 +29,7 @@ HEADERS += $$PWD/inc/lock.h \
 
 SOURCES += dllmain.cpp \
 	   lock.cpp \
-           classMemorytracer.cpp \
+           classmemorytracer.cpp \
            networkrequest.cpp \
            networkcommonrequest.cpp \
            networkdownloadrequest.cpp \

@@ -16,7 +16,7 @@ INCLUDEPATH += . \
 
 # Input
 HEADERS += networktool.h listview.h
-FORMS += networktool.ui addtask.ui addBatchTask.ui
+FORMS += networktool.ui addtask.ui addbatchtask.ui
 SOURCES += main.cpp networktool.cpp listview.cpp
 
 CONFIG(debug, debug|release) {

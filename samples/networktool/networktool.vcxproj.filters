@@ -70,13 +70,13 @@
     <CustomBuild Include="listview.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="addBatchTask.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="addtask.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="networktool.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="addbatchtask.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -84,13 +84,13 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_addBatchTask.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_addtask.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_networktool.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_addbatchtask.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
