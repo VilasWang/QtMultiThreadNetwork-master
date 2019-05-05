@@ -3,15 +3,18 @@
 
 #include <QObject>
 #include <memory>
+#include <QNetworkReply>
 #include "NetworkDef.h"
 #include "classmemorytracer.h"
 
+class QNetworkAccessManager;
 class NetworkRequest : public QObject
 {
 	Q_OBJECT
 
 public:
-	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false)
+	explicit NetworkRequest(QObject *parent = 0) : QObject(parent), m_bAbortManual(false), 
+        m_pNetworkManager(nullptr), m_pNetworkReply(nullptr)
 	{
 		TRACE_CLASS_CONSTRUCTOR(NetworkRequest);
 	}
@@ -37,6 +40,8 @@ protected:
 	bool m_bAbortManual;
 	QUrl m_redirectUrl;
 	QString m_strError;
+    QNetworkAccessManager *m_pNetworkManager;
+    QNetworkReply *m_pNetworkReply;
 };
 
 //π§≥ß¿‡

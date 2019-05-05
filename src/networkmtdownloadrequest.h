@@ -4,11 +4,9 @@
 #include <QObject>
 #include <QPointer>
 #include <QMutex>
-#include <QNetworkReply>
 #include "networkrequest.h"
 
 class QFile;
-class QNetworkAccessManager;
 class Downloader;
 
 //多线程下载请求(这里的线程是指下载的通道。一个文件被分成多个部分，由多个下载通道同时下载)
@@ -37,19 +35,17 @@ private:
 	bool removeFile(QFile *file);
 	void startMTDownload();
     void clearDownloaders();
+    void clearProgress();
 
 private:
-	QNetworkAccessManager *m_pNetworkManager;
-	QNetworkReply *m_pReply;
-
 	QUrl m_url;
 	QString m_strDstFilePath;
 	qint64 m_nFileSize;
 
 	QMap<int, std::shared_ptr<Downloader>> m_mapDownloader;
 	int m_nThreadCount;//分割成多少段下载
-	int m_nSuccessNum;
-	int m_nFailedNum;
+	int m_nSuccess;
+	int m_nFailed;
 
 	struct ProgressData
 	{
@@ -101,7 +97,6 @@ private:
 	QUrl m_url;
 	HANDLE m_hFile;
 	QString m_strDstFilePath;
-
 	bool m_bAbortManual;
 	QString m_strError;
 

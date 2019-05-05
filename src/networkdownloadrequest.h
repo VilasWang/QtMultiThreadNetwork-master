@@ -2,11 +2,9 @@
 #define NETWORKDOWNLOADREQUEST_H
 
 #include <QObject>
-#include <QNetworkReply>
 #include "networkrequest.h"
 
 class QFile;
-class QNetworkAccessManager;
 
 //œ¬‘ÿ«Î«Û
 class NetworkDownloadRequest : public NetworkRequest
@@ -34,8 +32,6 @@ private:
 
 private:
 	std::unique_ptr<QFile> m_pFile;
-	QNetworkAccessManager *m_pNetworkManager;
-	QNetworkReply *m_pNetworkReply;
 };
 
 #endif // NETWORKDOWNLOADREQUEST_H

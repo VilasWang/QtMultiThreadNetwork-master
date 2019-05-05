@@ -2,10 +2,8 @@
 #define NETWORKCOMMONREQUEST_H
 
 #include <QObject>
-#include <QNetworkReply>
 #include "networkrequest.h"
 
-class QNetworkAccessManager;
 
 //“ª∞„«Î«Û
 class NetworkCommonRequest : public NetworkRequest
@@ -23,10 +21,6 @@ public Q_SLOTS:
 	void onFinished();
 	void onError(QNetworkReply::NetworkError);
 	void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
-
-private:
-	QNetworkAccessManager *m_pNetworkManager;
-	QNetworkReply *m_pNetworkReply;
 };
 
 #endif // NETWORKCOMMONREQUEST_H

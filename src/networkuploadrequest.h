@@ -2,11 +2,9 @@
 #define NETWORKUPLOADREQUEST_H
 
 #include <QObject>
-#include <QNetworkReply>
 #include "networkrequest.h"
 
 class QFile;
-class QNetworkAccessManager;
 
 //上传请求
 class NetworkUploadRequest : public NetworkRequest
@@ -29,10 +27,6 @@ public Q_SLOTS:
 private:
 	//读取本地文件的内容
 	bool readLocalFile(const QString& strFilePath, QByteArray& bytes);
-
-private:
-	QNetworkAccessManager *m_pNetworkManager;
-	QNetworkReply *m_pNetworkReply;
 };
 
 #endif // NETWORKUPLOADREQUEST_H

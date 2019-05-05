@@ -268,3 +268,7 @@ ModelManifest.xml
 /samples/networktool/log
 /bin/Debug/libeay32.dll
 /bin/Debug/ssleay32.dll
+/bin/Win32/Debug/NetworkTool.exe
+/bin/Win32/Release/NetworkTool.exe
+/bin/Win32/Debug/QMultiThreadNetworkd.dll
+/bin/Win32/Release/QMultiThreadNetwork.dll
