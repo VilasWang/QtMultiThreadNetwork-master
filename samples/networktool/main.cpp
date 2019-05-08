@@ -5,9 +5,9 @@
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
-	a.setWindowIcon(QIcon("resources/networktool.ico"));
-	NetworkTool w;
-	w.show();
-	return a.exec();
+    QApplication a(argc, argv);
+    a.setWindowIcon(QIcon("resources/networktool.ico"));
+    NetworkTool w;
+    w.show();
+    return a.exec();
 }

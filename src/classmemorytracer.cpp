@@ -18,23 +18,23 @@ void Log_Debug(std::string str)
 
 std::string intToString(const int n)
 {
-	std::stringstream str;
-	str << n;
-	return str.str();
+    std::stringstream str;
+    str << n;
+    return str.str();
 }
 
 void ClassMemoryTracer::checkMemoryLeaks()
 {
-	Locker<Lock> locker(m_lock);
-	std::ostringstream oss;
-	try
-	{
+    Locker<Lock> locker(m_lock);
+    std::ostringstream oss;
+    try
+    {
         std::vector<std::string> vecString;
-		if (!s_mapRefCount.empty())
-		{
-			auto iter = s_mapRefCount.cbegin();
-			for (; iter != s_mapRefCount.cend(); ++iter)
-			{
+        if (!s_mapRefCount.empty())
+        {
+            auto iter = s_mapRefCount.cbegin();
+            for (; iter != s_mapRefCount.cend(); ++iter)
+            {
                 oss.str("");
                 if (iter->second.second > 0)
                 {
@@ -44,7 +44,7 @@ void ClassMemoryTracer::checkMemoryLeaks()
                     oss << " objects \n";
                     vecString.push_back(oss.str());
                 }
-			}
+            }
 
             if (!vecString.empty())
             {
@@ -53,22 +53,22 @@ void ClassMemoryTracer::checkMemoryLeaks()
                     Log_Debug(str);
                 });
             }
-		}
-	}
-	catch (std::exception* e)
-	{
-		oss.str("");
-		oss << "ClassMemoryTracer::checkMemoryLeaks() exception(std::exception): "
-			<< std::string(e->what())
-			<< "\n";
-		Log_Debug(oss.str());
-	}
-	catch (...)
-	{
-		oss.str("");
-		oss << "ClassMemoryTracer::checkMemoryLeaks() exception: "
-			<< intToString(GetLastError())
-			<< "\n";
-		Log_Debug(oss.str());
-	}
+        }
+    }
+    catch (std::exception* e)
+    {
+        oss.str("");
+        oss << "ClassMemoryTracer::checkMemoryLeaks() exception(std::exception): "
+            << std::string(e->what())
+            << "\n";
+        Log_Debug(oss.str());
+    }
+    catch (...)
+    {
+        oss.str("");
+        oss << "ClassMemoryTracer::checkMemoryLeaks() exception: "
+            << intToString(GetLastError())
+            << "\n";
+        Log_Debug(oss.str());
+    }
 }
