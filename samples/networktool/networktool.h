@@ -43,7 +43,7 @@ private Q_SLOTS:
     void onBatchDownloadProgress(quint64, qint64);
     void onBatchUploadProgress(quint64, qint64);
 
-    void onSetDefaultValue();
+    void onResetDefaultValue();
     void onGetSaveDirectory();
     void onGetUploadFile();
     void onGetBatchTaskConfigFile();

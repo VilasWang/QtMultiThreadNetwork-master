@@ -45,7 +45,6 @@ NetworkTool::NetworkTool(QWidget *parent)
     setWindowTitle(QStringLiteral("Qt Network Tool"));
 
     initialize();
-    onSetDefaultValue();
 }
 
 NetworkTool::~NetworkTool()
@@ -59,6 +58,7 @@ void NetworkTool::initialize()
 
     initCtrls();
     initConnecting();
+    onResetDefaultValue();
 }
 
 void NetworkTool::unIntialize()
@@ -169,7 +169,7 @@ void NetworkTool::initConnecting()
     connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
         if (checked)
         {
-            onSetDefaultValue();
+            onResetDefaultValue();
         }
     });
     connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
@@ -220,8 +220,8 @@ void NetworkTool::initConnecting()
     connect(m_pLblFinished, &QLabelEx::dbClicked, this, [=]() {
         switchTaskView();
     });
-    connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onSetDefaultValue()));
-    connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onSetDefaultValue()));
+    connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onResetDefaultValue()));
+    connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onResetDefaultValue()));
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ void NetworkTool::switchTaskView(bool bForceDoing)
     }
 }
 
-void NetworkTool::onSetDefaultValue()
+void NetworkTool::onResetDefaultValue()
 {
     uiAddTask.lineEdit_url->clear();
     uiAddTask.lineEdit_arg->clear();
@@ -277,13 +277,13 @@ void NetworkTool::onSetDefaultValue()
         {
             if (uiAddTask.cb_download->isChecked())
             {
-                QString strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.0.2.exe";
+                const QString& strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.0.2.exe";
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
             }
             else if (uiAddTask.cb_upload->isChecked())
             {
-                QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
+                const QString& strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
                     .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
@@ -294,7 +294,7 @@ void NetworkTool::onSetDefaultValue()
             }
             else if (uiAddTask.cb_post->isChecked())
             {
-                QString strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUATA"
+                const QString& strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUATA"
                     "B2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJ"
                     "AC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoA"
                     "KwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBY"
@@ -308,14 +308,14 @@ void NetworkTool::onSetDefaultValue()
             }
             else if (uiAddTask.cb_put->isChecked())
             {
-                QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
+                const QString& strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/VerComp_qt.dat")
                     .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
             }
             else if (uiAddTask.cb_delete->isChecked())
             {
-                QString strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
+                const QString& strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
                     .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
                 uiAddTask.lineEdit_url->setText(strUrl);
             }
@@ -389,7 +389,7 @@ void NetworkTool::onAbortTask()
     qDebug() << __FUNCTION__;
     uiMain.btn_abort->setEnabled(false);
 
-    QModelIndex index = m_pListViewDoing->currentIndex();
+    const QModelIndex& index = m_pListViewDoing->currentIndex();
     if (index.isValid())
     {
         const QVariant& var = index.data(Qt::DisplayRole);
@@ -423,7 +423,7 @@ void NetworkTool::onAbortAllTask()
 
 void NetworkTool::onDownload()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -432,7 +432,7 @@ void NetworkTool::onDownload()
         return;
     }
 
-    QString strSavePath = uiAddTask.lineEdit_saveDir->text().trimmed();
+    const QString& strSavePath = uiAddTask.lineEdit_saveDir->text().trimmed();
     if (strSavePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -475,7 +475,7 @@ void NetworkTool::onDownload()
 
 void NetworkTool::onUpload()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -484,7 +484,7 @@ void NetworkTool::onUpload()
         return;
     }
 
-    QString strUploadFilePath = uiAddTask.lineEdit_uploadFile->text().trimmed();
+    const QString& strUploadFilePath = uiAddTask.lineEdit_uploadFile->text().trimmed();
     if (strUploadFilePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -517,7 +517,7 @@ void NetworkTool::onUpload()
 
 void NetworkTool::onGetRequest()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -552,7 +552,7 @@ void NetworkTool::onGetRequest()
 
 void NetworkTool::onPostRequest()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -561,7 +561,7 @@ void NetworkTool::onPostRequest()
         return;
     }
 
-    QString strArg = uiAddTask.lineEdit_arg->text().trimmed();
+    const QString& strArg = uiAddTask.lineEdit_arg->text().trimmed();
     if (strArg.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -626,7 +626,7 @@ void NetworkTool::onPostRequest()
 
 void NetworkTool::onPutRequest()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -635,7 +635,7 @@ void NetworkTool::onPutRequest()
         return;
     }
 
-    QString strUploadFilePath = uiAddTask.lineEdit_uploadFile->text().trimmed();
+    const QString& strUploadFilePath = uiAddTask.lineEdit_uploadFile->text().trimmed();
     if (strUploadFilePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -678,7 +678,7 @@ void NetworkTool::onPutRequest()
 
 void NetworkTool::onDeleteRequest()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -709,7 +709,7 @@ void NetworkTool::onDeleteRequest()
 
 void NetworkTool::onHeadRequest()
 {
-    QString strUrl = uiAddTask.lineEdit_url->text().trimmed();
+    const QString& strUrl = uiAddTask.lineEdit_url->text().trimmed();
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -740,7 +740,7 @@ void NetworkTool::onHeadRequest()
 
 void NetworkTool::onBatchRequest()
 {
-    QString strFile = uiAddBatchTask.lineEdit_config->text().trimmed();
+    const QString& strFile = uiAddBatchTask.lineEdit_config->text().trimmed();
     if (strFile.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
@@ -790,7 +790,7 @@ void NetworkTool::onBatchRequest()
         }
 
         const QString& strUrlStandard = QDir::fromNativeSeparators(strlst[0]);
-        QString strArg = strlst[2];
+        const QString& strArg = strlst[2];
 
         QUrl urlHost(strUrlStandard);
         Q_ASSERT(urlHost.isValid());
@@ -893,7 +893,7 @@ void NetworkTool::onTest()
 
 
     //上传
-    QString strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/%3.jpg")
+    const QString& strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/%3.jpg")
         .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
     QStringList strlstFileUpload;
     strlstFileUpload.append("resources/test/1.png");
@@ -901,7 +901,7 @@ void NetworkTool::onTest()
     strlstFileUpload.append("resources/test/3.jpeg");
 
     //POST
-    QString strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUAT"
+    const QString& strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUAT"
         "AB2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJ"
         "AC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoA"
         "KwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBY"
@@ -998,7 +998,7 @@ void NetworkTool::onErrorMessage(const QString& error)
 
 void NetworkTool::onGetSaveDirectory()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    const QString& dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
         "/home",
         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
@@ -1010,7 +1010,7 @@ void NetworkTool::onGetSaveDirectory()
 
 void NetworkTool::onGetUploadFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+    const QString& fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
         "/desktop",
         tr("File (*.*)"));
 
@@ -1022,7 +1022,7 @@ void NetworkTool::onGetUploadFile()
 
 void NetworkTool::onGetBatchTaskConfigFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+    const QString& fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
         "/desktop",
         tr("File (*.dat)"));
 
@@ -1228,7 +1228,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
     painter->save();
     if (index.isValid())
     {
-        QRect rect = option.rect;
+        const QRect& rect = option.rect;
         QRect rtBg = rect;
         rtBg.setHeight(rect.height() - 1);
         if (option.state & QStyle::State_MouseOver || option.state & QStyle::State_Selected)
@@ -1252,7 +1252,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
             painter->setPen(Qt::white);
 
             QFontMetrics fm(font);
-            QRect boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url.toString());
+            const QRect& boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url.toString());
             painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url.toString());
             painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("类型（%1）")
                 .arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
