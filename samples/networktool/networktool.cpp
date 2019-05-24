@@ -277,8 +277,7 @@ void NetworkTool::onSetDefaultValue()
         {
             if (uiAddTask.cb_download->isChecked())
             {
-                QString strUrl = "http://8dx.pc6.com/xzx6/curl_v7.61.1.zip";
-                //QString strUrl = "https://1.na.dl.wireshark.org/win64/Wireshark-win64-2.6.6.exe";
+                QString strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.0.2.exe";
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
             }
@@ -923,45 +922,21 @@ void NetworkTool::onTest()
 //bSuccess：	任务是否成功
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
+    bool bBatch = (request.uiBatchId > 0);
     if (request.bSuccess)
     {
-        appendMsg(QTime::currentTime().toString() + " - Task[Success]. url[" + request.url.url() + "]", false);
+        appendMsg(QTime::currentTime().toString() + " - Task[Success]. url[" + request.url.url() + "]", !bBatch);
     }
     else
     {
-        appendMsg(QTime::currentTime().toString() + " - Task[Failed]. url[" + request.url.url() + "]", false);
+        appendMsg(QTime::currentTime().toString() + " - Task[Failed]. url[" + request.url.url() + "]", !bBatch);
     }
 
     if (!request.bytesContent.isEmpty())
     {
-        appendMsg(QString("[Content]\n") + request.bytesContent, false);
+        appendMsg(QString("[Content]\n") + request.bytesContent, !bBatch);
     }
 
-    /*int msec = m_timeStart.elapsed();
-    float sec = (float)msec / 1000;
-    quint64 uiSpeed = 0;
-    if (sec > 0)
-    {
-    if (request.bSuccess && request.eType == eTypeDownload && m_nBytesTotalDownload > 0)
-    {
-    uiSpeed = m_nBytesTotalDownload / sec;
-
-    }
-    else if (request.bSuccess && request.eType == eTypeUpload && m_nBytesTotalUpload > 0)
-    {
-    uiSpeed = m_nBytesTotalUpload / sec;
-    }
-    }
-
-    QString strMsg = QString("Time elapsed: %1s.").arg(sec);
-    if (uiSpeed > 0)
-    {
-    strMsg = QString("Time elapsed: %1s. Speed: %2/s")
-    .arg(sec).arg(bytes2String(uiSpeed));
-    }
-    appendMsg(strMsg);*/
-
-    bool bBatch = (request.uiBatchId > 0);
     if (bBatch)
     {
         if (request.bSuccess)
