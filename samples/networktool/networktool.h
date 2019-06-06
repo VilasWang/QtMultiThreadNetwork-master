@@ -38,8 +38,6 @@ private Q_SLOTS:
 
     void onRequestFinished(const RequestTask &);
     void onErrorMessage(const QString& error);
-    void onDownloadProgress(quint64, qint64, qint64);
-    void onUploadProgress(quint64, qint64, qint64);
     void onBatchDownloadProgress(quint64, qint64);
     void onBatchUploadProgress(quint64, qint64);
 
@@ -56,7 +54,12 @@ private:
 
     QString getDefaultDownloadDir();//获取系统默认下载目录
     QString bytes2String(qint64 bytes);
+
     void appendMsg(const QString& strMsg, bool bQDebug = true);
+    void appendStartTaskMsg(quint64 uiTaskid, const QString& strUrl);
+    void appendStartBatchTasksMsg(quint64 uiBatchid, int nTotalSize);
+    void appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody);
+
     void switchTaskView(bool bForceDoing = false);
     void reset();
 

@@ -44,6 +44,7 @@ QLineEdit,QComboBox,QProgressBar,QTextEdit{
 border-radius:0%;
 }
 QTextEdit{
+background-color:#1e1e1e;
 border:0px;
 }</string>
    </property>
@@ -63,61 +64,99 @@ border:0px;
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_abort">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="Line" name="line">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>10</y>
-      <width>61</width>
-      <height>31</height>
+      <x>330</x>
+      <y>-10</y>
+      <width>16</width>
+      <height>511</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <family>微软雅黑</family>
-     </font>
-    </property>
-    <property name="text">
-     <string>停止</string>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>20</y>
-      <width>131</width>
+      <y>70</y>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>同时进行的最大任务数：</string>
+     <string>输出消息</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="cmb_concurrentTask">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>20</y>
-      <width>91</width>
-      <height>22</height>
+      <x>360</x>
+      <y>10</y>
+      <width>250</width>
+      <height>42</height>
      </rect>
     </property>
-    <property name="currentText">
-     <string/>
-    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>同时进行的最大任务数：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmb_concurrentTask">
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="currentText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <widget class="QPushButton" name="btn_add">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>61</width>
-      <height>31</height>
+      <x>20</x>
+      <y>18</y>
+      <width>60</width>
+      <height>30</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>60</width>
+      <height>30</height>
+     </size>
     </property>
     <property name="font">
      <font>
@@ -134,11 +173,17 @@ border:0px;
     </property>
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>10</y>
-      <width>61</width>
-      <height>31</height>
+      <x>95</x>
+      <y>18</y>
+      <width>60</width>
+      <height>30</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>60</width>
+      <height>30</height>
+     </size>
     </property>
     <property name="font">
      <font>
@@ -149,17 +194,50 @@ border:0px;
      <string>批量添加</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btn_abort">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>18</y>
+      <width>60</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>60</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+     </font>
+    </property>
+    <property name="text">
+     <string>停止</string>
+    </property>
+   </widget>
    <widget class="QPushButton" name="btn_abortAll">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>10</y>
-      <width>61</width>
-      <height>31</height>
+      <x>245</x>
+      <y>18</y>
+      <width>60</width>
+      <height>30</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>60</width>
+      <height>30</height>
+     </size>
     </property>
     <property name="font">
      <font>
@@ -168,19 +246,6 @@ border:0px;
     </property>
     <property name="text">
      <string>停止所有</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>-10</y>
-      <width>16</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
     </property>
    </widget>
   </widget>

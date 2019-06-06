@@ -21,14 +21,21 @@
 #include "networkreply.h"
 
 
-//#define TEST_RAWHEADER
 //#define TEST_PERFORMANCE
+#define TEST_PERFORMANCE_COUNT      100
 
 #define DEFAULT_CONCURRENT_TASK		8
+#define MAX_CONCURRENT_TASK		    16
+#define MIN_CONCURRENT_TASK		    1
+
 #define DEFAULT_MTDOWNLOAD_COUNT	5
+#define MAX_MTDOWNLOAD_COUNT	    10
+#define MIN_MTDOWNLOAD_COUNT		2
+
 #define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  执行中的任务(%1)")
 #define FINISHED_TEXT_FORMAT		QString::fromStdWString(L"  已完成的任务(%1)")
-//Apache http本地服务器
+
+//Apache http 本地服务器
 #define HTTP_SERVER_IP				"127.0.0.1"
 #define HTTP_SERVER_PORT			"80"
 
@@ -80,11 +87,11 @@ void NetworkTool::initCtrls()
 
     uiMain.cmb_concurrentTask->setView(new QListView(this));
     uiAddTask.cmb_multiDownload->setView(new QListView(this));
-    for (int i = 1; i <= 16; ++i)
+    for (int i = MIN_CONCURRENT_TASK; i <= MAX_CONCURRENT_TASK; ++i)
     {
         uiMain.cmb_concurrentTask->addItem(QString::number(i));
     }
-    for (int i = 2; i <= 10; ++i)
+    for (int i = MIN_MTDOWNLOAD_COUNT; i <= MAX_MTDOWNLOAD_COUNT; ++i)
     {
         uiAddTask.cmb_multiDownload->addItem(QString::number(i));
     }
@@ -179,10 +186,7 @@ void NetworkTool::initConnecting()
     connect(uiMain.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
         this, [=](const QString &strText) {
         int num = strText.toInt();
-        if (num >= 1 && num <= 8)
-        {
-            NetworkManager::globalInstance()->setMaxThreadCount(num);
-        }
+        NetworkManager::globalInstance()->setMaxThreadCount(num);
     });
     connect(m_pListViewDoing, &QAbstractItemView::clicked, this, [=](const QModelIndex &index) {
         if (index.isValid())
@@ -463,7 +467,7 @@ void NetworkTool::onDownload()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -505,7 +509,7 @@ void NetworkTool::onUpload()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -533,14 +537,10 @@ void NetworkTool::onGetRequest()
     req.url = urlHost;
     req.eType = eTypeGet;
 
-#ifdef TEST_RAWHEADER
-    req.mapRawHeader.insert(QByteArray("Authorization"), QByteArray("Bearer cn-f7ed4359-eb36-4d1d-ab7c-7d3b04d7f74b"));
-#endif
-
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -579,7 +579,7 @@ void NetworkTool::onPostRequest()
     req.strReqArg = strArg;
 
 #ifdef TEST_PERFORMANCE
-    int count = 100;
+    int count = TEST_PERFORMANCE_COUNT;
 
     BatchRequestTask requests;
     requests.resize(count);
@@ -591,12 +591,11 @@ void NetworkTool::onPostRequest()
     NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
     if (nullptr != pReply)
     {
+        appendStartBatchTasksMsg(batchId, requests.size());
         m_mapBatchTotalSize.insert(batchId, requests.size());
+
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
-
-        appendMsg(QTime::currentTime().toString() + " - Start batch["
-            + QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
 
         QVector<QVariant> vec;
         vec.resize(requests.size());
@@ -613,7 +612,7 @@ void NetworkTool::onPostRequest()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -666,7 +665,7 @@ void NetworkTool::onPutRequest()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -697,7 +696,7 @@ void NetworkTool::onDeleteRequest()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start task[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -728,7 +727,7 @@ void NetworkTool::onHeadRequest()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
-        appendMsg(QTime::currentTime().toString() + " - Start[" + strUrl + "]");
+        appendStartTaskMsg(req.uiId, strUrl);
 
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
@@ -847,7 +846,7 @@ void NetworkTool::onBatchRequest()
     }
 
 #ifdef TEST_PERFORMANCE
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < TEST_PERFORMANCE_COUNT; ++i)
     {
 #endif // #ifdef TEST_PERFORMANCE
 
@@ -855,9 +854,7 @@ void NetworkTool::onBatchRequest()
         NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
         if (nullptr != pReply)
         {
-            appendMsg(QTime::currentTime().toString() + " - Start batch["
-                + QString::number(batchId) + "] Total[" + QString::number(requests.size()) + "]");
-
+            appendStartBatchTasksMsg(batchId, requests.size());
             m_mapBatchTotalSize.insert(batchId, requests.size());
 
             connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
@@ -881,61 +878,12 @@ void NetworkTool::onBatchRequest()
 #endif // #ifdef TEST_PERFORMANCE
 }
 
-#if 0
-void NetworkTool::onTest()
-{
-    //下载
-    QStringList strlstUrlDownload;
-    strlstUrlDownload.append("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
-    strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794680474993.jpeg");
-    strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794740247819.jpeg");
-    strlstUrlDownload.append("http://img.t.388g.com/jzd/201706/149794986284124.jpeg");
-
-
-    //上传
-    const QString& strUrl = QString("http://%1:%2/_php/upload.php?filename=upload/%3.jpg")
-        .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
-    QStringList strlstFileUpload;
-    strlstFileUpload.append("resources/test/1.png");
-    strlstFileUpload.append("resources/test/2.jpg");
-    strlstFileUpload.append("resources/test/3.jpeg");
-
-    //POST
-    const QString& strArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUAT"
-        "AB2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJ"
-        "AC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoA"
-        "KwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBY"
-        "AFEAbQAyAFUAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMQB0AGwARwBIADYA"
-        "dAB1AGYAYQBxAEoAMwBnAFUARwA4AGoAdQA5AGsAOQBzAFoAYQB1AHAARwBjAE8ANABnADIAegBn"
-        "ADIANgB1AEcANwBoAHAAUwBHADIAVQANAAoAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8A"
-        "NwAyAFQAMAA9AA==";
-
-    QUrl urlHost("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
-
-    //DELETE
-    strUrl = QString("http://%1:%2/_php/delete.php?filename=upload/1.jpg")
-        .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
-}
-#endif
-
 //request:		任务信息
 //bSuccess：	任务是否成功
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
     bool bBatch = (request.uiBatchId > 0);
-    if (request.bSuccess)
-    {
-        appendMsg(QTime::currentTime().toString() + " - Task[Success]. url[" + request.url.url() + "]", !bBatch);
-    }
-    else
-    {
-        appendMsg(QTime::currentTime().toString() + " - Task[Failed]. url[" + request.url.url() + "]", !bBatch);
-    }
-
-    if (!request.bytesContent.isEmpty())
-    {
-        appendMsg(QString("[Content]\n") + request.bytesContent, !bBatch);
-    }
+    appendTaskFinishMsg(request.uiId, bBatch, request.bSuccess, request.url.url(), request.bytesContent);
 
     if (bBatch)
     {
@@ -969,14 +917,6 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
-}
-
-void NetworkTool::onDownloadProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal)
-{
-}
-
-void NetworkTool::onUploadProgress(quint64 taskId, qint64 bytesSent, qint64 bytesTotal)
-{
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
@@ -1083,6 +1023,37 @@ void NetworkTool::appendMsg(const QString& strMsg, bool bQDebug)
 
         uiMain.textEdit_output->append(strMsg);
         uiMain.textEdit_output->append("");
+    }
+}
+
+void NetworkTool::appendStartTaskMsg(quint64 uiTaskid, const QString& strUrl)
+{
+    const QString& str = QString(" - Start task[id:%1][%2]").arg(uiTaskid).arg(strUrl);
+    appendMsg(QTime::currentTime().toString() + str);
+}
+
+void NetworkTool::appendStartBatchTasksMsg(quint64 uiBatchid, int nTotalSize)
+{
+    const QString& str = QString(" - Start batch tasks[id:%1], total[%2]").arg(uiBatchid).arg(nTotalSize);
+    appendMsg(QTime::currentTime().toString() + str);
+}
+
+void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody)
+{
+    if (bSuccess)
+    {
+        const QString& str = QString(" - Task[Success][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+        appendMsg(QTime::currentTime().toString() + str, !isBatch);
+    }
+    else
+    {
+        const QString& str = QString(" - Task[Failed][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+        appendMsg(QTime::currentTime().toString() + str, !isBatch);
+    }
+
+    if (!strBody.isEmpty())
+    {
+        appendMsg(QString("[Body][id:%1]\n").arg(uiTaskid) + strBody, !isBatch);
     }
 }
 
