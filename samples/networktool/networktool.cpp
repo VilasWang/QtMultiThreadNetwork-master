@@ -1042,7 +1042,7 @@ void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSucc
 {
     if (RequestTask::ALL_TASK == uiTaskid)
     {
-        const QString& str = QString(" - All Tasks cancel");
+        const QString& str = QString(" - All tasks cancelled!");
         appendMsg(QTime::currentTime().toString() + str, !isBatch);
     }
     else
