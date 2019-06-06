@@ -1040,15 +1040,23 @@ void NetworkTool::appendStartBatchTasksMsg(quint64 uiBatchid, int nTotalSize)
 
 void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody)
 {
-    if (bSuccess)
+    if (RequestTask::ALL_TASK == uiTaskid)
     {
-        const QString& str = QString(" - Task[Success][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+        const QString& str = QString(" - All Tasks cancel");
         appendMsg(QTime::currentTime().toString() + str, !isBatch);
     }
     else
     {
-        const QString& str = QString(" - Task[Failed][id:%1][%2]").arg(uiTaskid).arg(strUrl);
-        appendMsg(QTime::currentTime().toString() + str, !isBatch);
+        if (bSuccess)
+        {
+            const QString& str = QString(" - Task[Success][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+            appendMsg(QTime::currentTime().toString() + str, !isBatch);
+        }
+        else
+        {
+            const QString& str = QString(" - Task[Failed][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+            appendMsg(QTime::currentTime().toString() + str, !isBatch);
+        }
     }
 
     if (!strBody.isEmpty())
