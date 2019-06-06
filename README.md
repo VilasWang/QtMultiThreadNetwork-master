@@ -60,14 +60,16 @@ Qt多线程网络模块是对Qt Network的封装，并且结合线程池以实�
 >
 
 ```CPP
-NetworkManager::initialize();	//使用之前调用
-NetworkManager::unInitialize();	//程序退出前调用
+//使用之前调用
+NetworkManager::initialize();
+//程序退出前调用
+NetworkManager::unInitialize();
 ```
 
 
 
 
-### How to download a file by using Qt multi-threaded network module
+### How to download a file by using Qt multi-threaded network module? (Or otehr request?)
 
 >Any thread:
 > 
@@ -82,6 +84,13 @@ task.strReqArg = "D:/Download";
 task.bShowProgress = true;
 task.bRemoveFileWhileExist = true;
 task.bTryAgainWhileFailed = true;
+
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
+if (nullptr != pReply)
+{
+	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+		this, SLOT(onRequestFinished(const RequestTask &)));
+}
 ```
 
 >Upload file:
@@ -93,6 +102,13 @@ task.eType = eTypeUpload;
 task.strReqArg = "resources/checkbox.png"; //local file path
 task.bShowProgress = true;
 task.bTryAgainWhileFailed = true;
+
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
+if (nullptr != pReply)
+{
+	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+		this, SLOT(onRequestFinished(const RequestTask &)));
+}
 ```
 
 >GET method:
@@ -102,6 +118,13 @@ RequestTask task;
 task.url = QUrl("http://m.kugou.com/singer/list/88?json=true");
 task.eType = eTypeGet;
 task.bTryAgainWhileFailed = true;
+
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
+if (nullptr != pReply)
+{
+	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+		this, SLOT(onRequestFinished(const RequestTask &)));
+}
 ```
 
 >POST method:
@@ -112,6 +135,13 @@ task.url = QUrl("https://passportservice.7fgame.com/HttpService/PlatService.ashx
 task.eType = eTypePost;
 task.strReqArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUATAB2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJAC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoAKwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBYAFEAbQAyAFUAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMQB0AGwARwBIADYAdAB1AGYAYQBxAEoAMwBnAFUARwA4AGoAdQA5AGsAOQBzAFoAYQB1AHAARwBjAE8ANABnADIAegBnADIANgB1AEcANwBoAHAAUwBHADIAVQANAAoAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMAA9AA==";
 task.bTryAgainWhileFailed = true;
+
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
+if (nullptr != pReply)
+{
+	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+		this, SLOT(onRequestFinished(const RequestTask &)));
+}
 ```
 
 >DELETE method:
@@ -121,6 +151,13 @@ RequestTask task;
 task.url = QUrl("http://127.0.0.1:80/_php/delete.php?filename=upload/test.txt");
 task.eType = eTypeDelete;
 task.bTryAgainWhileFailed = true;
+
+NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
+if (nullptr != pReply)
+{
+	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+		this, SLOT(onRequestFinished(const RequestTask &)));
+}
 ```
 
 >HEAD method:
@@ -130,12 +167,7 @@ RequestTask task;
 task.url = QUrl("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
 task.eType = eTypeHead;
 task.bTryAgainWhileFailed = true;
-```
 
->One request corresponding to one NetworkReply object
-> 
-
-```CPP
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
@@ -145,15 +177,9 @@ if (nullptr != pReply)
 ```
 
 
-### How to download a batch of files by using Qt multi-threaded network module (such as updating application)
+### How to download a batch of files by using Qt multi-threaded network module? (such as updating application)
 
 ```cpp
-connect(NetworkManager::globalInstance(), &NetworkManager::downloadProgress,
-	this, &NetworkTool::onDownloadProgress);
-	
-connect(NetworkManager::globalInstance(), &NetworkManager::uploadProgress,
-	this, &NetworkTool::onUploadProgress);
-	
 connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress,
 	this, &NetworkTool::onBatchDownloadProgress);
 	
@@ -186,11 +212,28 @@ if (nullptr != pReply)
 }
 ```
 
->stop single request, stop batch requests or stop all requests
+
+### How to stop request?
+
+>stop single request
 > 
 
 ```cpp
-NetworkManager::globalInstance()->stopRequest(1000);
-NetworkManager::globalInstance()->stopBatchRequests(5);
+quint64 uiTaskId = 1;
+NetworkManager::globalInstance()->stopRequest(uiTaskId);
+```
+
+>stop a batch of requests
+> 
+
+```cpp
+quint64 uiTaskBatchId = 1;
+NetworkManager::globalInstance()->stopBatchRequests(uiTaskBatchId);
+```
+
+>stop a batch of requests
+> 
+
+```cpp
 NetworkManager::globalInstance()->stopAllRequest();
 ```
