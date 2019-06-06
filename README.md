@@ -62,6 +62,7 @@ Qt多线程网络模块是对Qt Network的封装，并且结合线程池以实�
 ```CPP
 //使用之前调用
 NetworkManager::initialize();
+
 //程序退出前调用
 NetworkManager::unInitialize();
 ```
