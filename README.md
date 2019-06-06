@@ -72,11 +72,7 @@ NetworkManager::unInitialize();
 
 ### How to download a file by using Qt multi-threaded network module? (Or otehr request?)
 
->Any thread:
-> 
-
 >Download file:
-
 ```CPP
 RequestTask task;
 task.eType = eTypeDownload;
@@ -95,7 +91,6 @@ if (nullptr != pReply)
 ```
 
 >Upload file:
-
 ```CPP
 RequestTask task;
 task.url = QUrl("http://127.0.0.1:80/_php/upload.php?filename=upload/test.txt");
@@ -113,7 +108,6 @@ if (nullptr != pReply)
 ```
 
 >GET method:
-
 ```CPP
 RequestTask task;
 task.url = QUrl("http://m.kugou.com/singer/list/88?json=true");
@@ -129,7 +123,6 @@ if (nullptr != pReply)
 ```
 
 >POST method:
-
 ```CPP
 RequestTask task;
 task.url = QUrl("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
@@ -146,7 +139,6 @@ if (nullptr != pReply)
 ```
 
 >DELETE method:
-
 ```CPP
 RequestTask task;
 task.url = QUrl("http://127.0.0.1:80/_php/delete.php?filename=upload/test.txt");
@@ -162,7 +154,6 @@ if (nullptr != pReply)
 ```
 
 >HEAD method:
-
 ```CPP
 RequestTask task;
 task.url = QUrl("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
@@ -201,7 +192,6 @@ foreach (const QString& strUrl, strlstUrl)
 
 >A batch of requests corresponding to one NetworkReply object
 > 
-
 ```cpp
 quint64 uiBatchId = 0;
 NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(tasks, uiBatchId);
@@ -218,7 +208,6 @@ if (nullptr != pReply)
 
 >stop single request
 > 
-
 ```cpp
 quint64 uiTaskId = 1;
 NetworkManager::globalInstance()->stopRequest(uiTaskId);
@@ -226,7 +215,6 @@ NetworkManager::globalInstance()->stopRequest(uiTaskId);
 
 >stop a batch of requests
 > 
-
 ```cpp
 quint64 uiTaskBatchId = 1;
 NetworkManager::globalInstance()->stopBatchRequests(uiTaskBatchId);
@@ -234,7 +222,6 @@ NetworkManager::globalInstance()->stopBatchRequests(uiTaskBatchId);
 
 >stop a batch of requests
 > 
-
 ```cpp
 NetworkManager::globalInstance()->stopAllRequest();
 ```
