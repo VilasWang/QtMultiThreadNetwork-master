@@ -21,7 +21,7 @@
 #include "networkreply.h"
 
 
-//#define TEST_PERFORMANCE
+#define TEST_PERFORMANCE
 #define TEST_PERFORMANCE_COUNT      100
 
 #define DEFAULT_CONCURRENT_TASK		8
@@ -1176,8 +1176,8 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
                 task.bSuccess = request.bSuccess;
                 m_vecVariant[i] = QVariant::fromValue(task);
 
-                variant = m_vecVariant.takeAt(i);
-                resetAll(m_vecVariant);
+                variant = m_vecVariant[i];
+                remove(i);
                 break;
             }
         }

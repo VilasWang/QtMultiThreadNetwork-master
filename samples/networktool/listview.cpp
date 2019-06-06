@@ -8,18 +8,15 @@ Listview::Listview(QWidget* parent/* = NULL*/)
     , m_pModel(nullptr)
     , m_pDelegate(nullptr)
 {
-    initView();
+    initListView();
 }
 
 Listview::~Listview()
 {
-    if (m_pModel != nullptr)
-    {
-        m_pModel->clear();
-    }
+    reset();
 }
 
-void Listview::initView()
+void Listview::initListView()
 {
     setFrameShape(QFrame::NoFrame);
     setSpacing(0);
@@ -69,11 +66,30 @@ void Listview::insert(QVector<QVariant>& vec)
     }
 }
 
-void Listview::resetAll(QVector<QVariant>& vec)
+void Listview::remove(const QVariant& var)
+{
+    if (m_pModel != nullptr && var.isValid())
+    {
+        m_pModel->remove(var);
+        update();
+    }
+}
+
+void Listview::remove(int row)
+{
+    if (m_pModel != nullptr && row >= 0)
+    {
+        m_pModel->remove(row);
+        update();
+    }
+}
+
+void Listview::clear()
 {
     if (m_pModel != nullptr)
     {
-        m_pModel->resetAll(vec);
+        m_pModel->clear();
+        update();
     }
 }
 
@@ -120,11 +136,14 @@ void ListModel::clear()
 
 void ListModel::insert(const QVariant& var)
 {
-    beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size());
-    m_vecVariant << var;
-    endInsertRows();
+    if (var.isValid())
+    {
+        beginInsertRows(QModelIndex(), m_vecVariant.size(), m_vecVariant.size());
+        m_vecVariant << var;
+        endInsertRows();
 
-    emit sizeChanged(m_vecVariant.size());
+        emit sizeChanged(m_vecVariant.size());
+    }
 }
 
 void ListModel::insert(QVector<QVariant>& vec)
@@ -139,10 +158,39 @@ void ListModel::insert(QVector<QVariant>& vec)
     }
 }
 
+void ListModel::remove(const QVariant& var)
+{
+    if (var.isValid() && m_vecVariant.contains(var))
+    {
+        int index = m_vecVariant.indexOf(var);
+        Q_ASSERT(index < rowCount());
+        beginRemoveRows(QModelIndex(), index, index);
+        m_vecVariant.removeOne(var);
+        endRemoveRows();
+
+        emit sizeChanged(m_vecVariant.size());
+    }
+}
+
+void ListModel::remove(int row)
+{
+    if (row >= 0 && m_vecVariant.size() > row)
+    {
+        beginRemoveRows(QModelIndex(), row, row);
+        m_vecVariant.remove(row);
+        endRemoveRows();
+
+        emit sizeChanged(m_vecVariant.size());
+    }
+}
+
 void ListModel::resetAll(const QVector<QVariant>& vec)
 {
     if (vec.size() > 0)
     {
+        beginResetModel();
+        endResetModel();
+
         beginInsertRows(QModelIndex(), 0, vec.size() - 1);
         m_vecVariant = vec;
         endInsertRows();

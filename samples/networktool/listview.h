@@ -19,12 +19,15 @@ public:
 public:
     void setListDelegate(ListDelegate *);
     void setListModel(ListModel *);
+
     void insert(const QVariant&);
     void insert(QVector<QVariant>& vec);
-    void resetAll(QVector<QVariant>&);
+    void remove(const QVariant&);
+    void remove(int row);
+    void clear();
 
 private:
-    void initView();
+    void initListView();
 
 private:
     QPointer<ListModel> m_pModel;
@@ -40,14 +43,16 @@ public:
     virtual ~ListModel();
 
 protected:
-    int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+    int rowCount(const QModelIndex & parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
 public:
     void insert(const QVariant&);
     void insert(QVector<QVariant>& vec);
-    void resetAll(const QVector<QVariant>&);
+    void remove(const QVariant&);
+    void remove(int row);
     void clear();
+    void resetAll(const QVector<QVariant>& vec);
 
 Q_SIGNALS:
     void sizeChanged(int);
