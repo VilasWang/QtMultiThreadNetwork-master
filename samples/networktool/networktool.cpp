@@ -157,12 +157,14 @@ void NetworkTool::initConnecting()
             this->height() / 2 - m_pWidgetAddTask->height() / 2);
         m_pWidgetAddTask->show();
         m_pWidgetAddTask->raise();
+        uiMain.btn_add->setEnabled(false);
     });
     connect(uiMain.btn_addBatch, &QPushButton::clicked, m_pWidgetAddBatch, [=] {
         m_pWidgetAddBatch->move(this->width() / 2 - m_pWidgetAddBatch->width() / 2,
             this->height() / 2 - m_pWidgetAddBatch->height() / 2);
         m_pWidgetAddBatch->show();
         m_pWidgetAddBatch->raise();
+        uiMain.btn_addBatch->setEnabled(false);
     });
     connect(uiMain.btn_abort, SIGNAL(clicked()), this, SLOT(onAbortTask()));
     connect(uiMain.btn_abortAll, SIGNAL(clicked()), this, SLOT(onAbortAllTask()));
@@ -170,7 +172,7 @@ void NetworkTool::initConnecting()
     connect(uiAddTask.btn_browser2, SIGNAL(clicked()), this, SLOT(onGetUploadFile()));
     connect(uiAddBatchTask.btn_browser, SIGNAL(clicked()), this, SLOT(onGetBatchTaskConfigFile()));
     connect(uiAddTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddTask()));
-    connect(uiAddBatchTask.btn_start, SIGNAL(clicked()), this, SLOT(onBatchRequest()));
+    connect(uiAddBatchTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddBatchTasks()));
     connect(uiAddTask.btn_close, SIGNAL(clicked()), m_pWidgetAddTask, SLOT(hide()));
     connect(uiAddBatchTask.btn_close, SIGNAL(clicked()), m_pWidgetAddBatch, SLOT(hide()));
     connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
@@ -356,6 +358,7 @@ void NetworkTool::onResetDefaultValue()
 
 void NetworkTool::onAddTask()
 {
+    m_pWidgetAddTask->hide();
     if (uiAddTask.cb_download->isChecked())
     {
         onDownload();
@@ -385,8 +388,15 @@ void NetworkTool::onAddTask()
         onHeadRequest();
     }
 
-    m_pWidgetAddTask->hide();
     uiMain.btn_add->setEnabled(true);
+}
+
+void NetworkTool::onAddBatchTasks()
+{
+    m_pWidgetAddBatch->hide();
+    onBatchRequest();
+
+    uiMain.btn_addBatch->setEnabled(true);
 }
 
 void NetworkTool::onAbortTask()
@@ -585,39 +595,6 @@ void NetworkTool::onPostRequest()
     req.eType = eTypePost;
     req.strReqArg = strArg;
 
-#ifdef TEST_PERFORMANCE
-    int count = TEST_PERFORMANCE_EXEC_COUNT;
-
-    BatchRequestTask requests;
-    requests.resize(count);
-    for (int i = 0; i < count; ++i)
-    {
-        requests[i] = req;
-    }
-    quint64 batchId = 0;
-    NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
-    if (nullptr != pReply)
-    {
-        appendStartBatchTasksMsg(batchId, requests.size());
-        m_mapBatchTotalSize.insert(batchId, requests.size());
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
-
-#ifndef TEST_PERFORMANCE
-        QVector<QVariant> vec;
-        vec.resize(requests.size());
-        int i = 0;
-        foreach(const RequestTask& r, requests)
-        {
-            vec[i] = QVariant::fromValue(r);
-            i++;
-        }
-        m_pListViewDoing->insert(vec);
-        switchTaskView(true);
-#endif
-    }
-#else
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
@@ -631,7 +608,6 @@ void NetworkTool::onPostRequest()
         switchTaskView(true);
 #endif
     }
-#endif // 1
 }
 
 void NetworkTool::onPutRequest()
@@ -834,6 +810,7 @@ void NetworkTool::onBatchRequest()
             req.strReqArg = strDir;
             req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
             req.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+            req.bRemoveFileWhileExist = true;
         }
         case eTypeUpload:
         {
@@ -889,7 +866,6 @@ void NetworkTool::onBatchRequest()
             m_pListViewDoing->insert(vec);
             switchTaskView(true);
 #endif
-            m_pWidgetAddBatch->hide();
         }
 
 #ifdef TEST_PERFORMANCE
@@ -932,12 +908,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
     }
 
-#ifndef TEST_PERFORMANCE
+//#ifndef TEST_PERFORMANCE
     if (m_pListViewDoing)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
-#endif // !TEST_PERFORMANCE
+//#endif // !TEST_PERFORMANCE
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)

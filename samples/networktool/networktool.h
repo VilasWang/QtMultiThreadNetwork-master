@@ -24,6 +24,7 @@ public:
 
 private Q_SLOTS:
     void onAddTask();
+    void onAddBatchTasks();
     void onAbortTask();
     void onAbortAllTask();
 
