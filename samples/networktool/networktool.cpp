@@ -21,8 +21,8 @@
 #include "networkreply.h"
 
 
-#define TEST_PERFORMANCE
-#define TEST_PERFORMANCE_COUNT      100
+//#define TEST_PERFORMANCE
+#define TEST_PERFORMANCE_EXEC_COUNT 100
 
 #define DEFAULT_CONCURRENT_TASK		8
 #define MAX_CONCURRENT_TASK		    16
@@ -226,6 +226,7 @@ void NetworkTool::initConnecting()
     });
     connect(bg_protocal, SIGNAL(buttonToggled(int, bool)), this, SLOT(onResetDefaultValue()));
     connect(bg_type, SIGNAL(buttonToggled(int, bool)), this, SLOT(onResetDefaultValue()));
+    connect(uiMain.btn_clear, &QAbstractButton::clicked, uiMain.textEdit_output, &QTextEdit::clear);
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -472,8 +473,10 @@ void NetworkTool::onDownload()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -514,8 +517,10 @@ void NetworkTool::onUpload()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -545,8 +550,10 @@ void NetworkTool::onGetRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -579,7 +586,7 @@ void NetworkTool::onPostRequest()
     req.strReqArg = strArg;
 
 #ifdef TEST_PERFORMANCE
-    int count = TEST_PERFORMANCE_COUNT;
+    int count = TEST_PERFORMANCE_EXEC_COUNT;
 
     BatchRequestTask requests;
     requests.resize(count);
@@ -597,6 +604,7 @@ void NetworkTool::onPostRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         QVector<QVariant> vec;
         vec.resize(requests.size());
         int i = 0;
@@ -607,6 +615,7 @@ void NetworkTool::onPostRequest()
         }
         m_pListViewDoing->insert(vec);
         switchTaskView(true);
+#endif
     }
 #else
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -617,8 +626,10 @@ void NetworkTool::onPostRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 #endif // 1
 }
@@ -670,8 +681,10 @@ void NetworkTool::onPutRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -701,8 +714,10 @@ void NetworkTool::onDeleteRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -732,8 +747,10 @@ void NetworkTool::onHeadRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
+#endif
     }
 }
 
@@ -846,7 +863,7 @@ void NetworkTool::onBatchRequest()
     }
 
 #ifdef TEST_PERFORMANCE
-    for (int i = 0; i < TEST_PERFORMANCE_COUNT; ++i)
+    for (int i = 0; i < TEST_PERFORMANCE_EXEC_COUNT; ++i)
     {
 #endif // #ifdef TEST_PERFORMANCE
 
@@ -860,6 +877,7 @@ void NetworkTool::onBatchRequest()
             connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
                 this, SLOT(onRequestFinished(const RequestTask &)));
 
+#ifndef TEST_PERFORMANCE
             QVector<QVariant> vec;
             vec.resize(requests.size());
             int i = 0;
@@ -870,6 +888,7 @@ void NetworkTool::onBatchRequest()
             }
             m_pListViewDoing->insert(vec);
             switchTaskView(true);
+#endif
             m_pWidgetAddBatch->hide();
         }
 
@@ -913,10 +932,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
     }
 
+#ifndef TEST_PERFORMANCE
     if (m_pListViewDoing)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
+#endif // !TEST_PERFORMANCE
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)

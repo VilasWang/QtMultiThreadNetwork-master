@@ -26,10 +26,6 @@ public:
 Q_SIGNALS:
     void requestFinished(const RequestTask &);
     void exitEventLoop();
-    void aboutToDelete();
-
-private Q_SLOTS:
-    void onRequestFinished(bool, const QByteArray&);
 
 private:
     Q_DISABLE_COPY(NetworkRunnable);
