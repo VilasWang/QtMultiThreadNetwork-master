@@ -186,7 +186,7 @@ foreach (const QString& strUrl, strlstUrl)
 	task.eTaskType = eTypeDownload;
 	task.strReqArg = "your save dir";
 	task.bShowProgress = true;
-	tasks.append(task);
+	tasks.append(std::move(task));
 }
 ```
 

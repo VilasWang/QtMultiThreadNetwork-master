@@ -832,11 +832,7 @@ void NetworkTool::onBatchRequest()
             break;
         }
 
-#if _MSC_VER >= 1700
         requests.append(std::move(req));
-#else
-        requests.append(req);
-#endif
     }
 
 #ifdef TEST_PERFORMANCE
