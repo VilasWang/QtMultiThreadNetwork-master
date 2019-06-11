@@ -1252,7 +1252,8 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
                 }
             }
 
-            if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress && (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload))
+            if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress 
+				&& (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload || stTask.eType == eTypeMTDownload))
             {
                 int p = m_mapProgress.value(stTask.uiId);
                 painter->fillRect(rect.left() + 180, rect.top() + 1, 102, 12, QBrush("#191919"));
