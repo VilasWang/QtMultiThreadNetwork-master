@@ -1,26 +1,45 @@
 #pragma once
-
 #include <windows.h>
 #include <memory>
 
-namespace CVC
-{
-    class Lock
+namespace VCUtility {
+    //Class CSLock - ¹Ø¼ü¶ÎËø
+    class CSLock
     {
     public:
-        Lock();
-        ~Lock();
+        CSLock();
+        ~CSLock();
 
-    public:
         void lock();
+        bool tryLock();
         void unlock();
 
     private:
-        Lock(const Lock&);
-        Lock& operator=(const Lock&);
+        CSLock(const CSLock &);
+        CSLock &operator=(const CSLock &);
 
     private:
         CRITICAL_SECTION m_cs;
+    };
+
+    //Class SRWLock - slim ¶ÁÐ´Ëø
+    class SRWLock
+    {
+    public:
+        SRWLock();
+        ~SRWLock();
+
+        void lock(bool bShared = false);
+        void unlock();
+
+    private:
+        SRWLock(const SRWLock &);
+        SRWLock &operator=(const SRWLock &);
+
+    private:
+        SRWLOCK m_lock;
+        long m_bSharedLocked;
+        long m_bExclusiveLocked;
     };
 
     template<class _Lock>

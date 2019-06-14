@@ -29,7 +29,7 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_CONSTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CONSTRUCTOR(T) CVC::ClassMemoryTracer::addRef<T>()
+#define TRACE_CLASS_CONSTRUCTOR(T) VCUtility::ClassMemoryTracer::addRef<T>()
 #else
 #define TRACE_CLASS_CONSTRUCTOR(T) __noop
 #endif
@@ -37,7 +37,7 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_DESTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_DESTRUCTOR(T) CVC::ClassMemoryTracer::release<T>()
+#define TRACE_CLASS_DESTRUCTOR(T) VCUtility::ClassMemoryTracer::release<T>()
 #else
 #define TRACE_CLASS_DESTRUCTOR(T) __noop
 #endif
@@ -45,20 +45,20 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_CHECK_LEAKS
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CHECK_LEAKS() CVC::ClassMemoryTracer::checkMemoryLeaks()
+#define TRACE_CLASS_CHECK_LEAKS() VCUtility::ClassMemoryTracer::checkMemoryLeaks()
 #else
 #define TRACE_CLASS_CHECK_LEAKS() __noop
 #endif
 #endif
 
-namespace CVC {
+namespace VCUtility {
 
     class ClassMemoryTracer
     {
     private:
         typedef std::map<size_t, std::pair<std::string, int>> TClassRefCount;
         static TClassRefCount s_mapRefCount;
-        static Lock m_lock;
+        static CSLock m_lock;
 
     public:
         template <typename T>
@@ -66,7 +66,7 @@ namespace CVC {
         {
             const size_t hashcode = typeid(T).hash_code();
 
-            Locker<Lock> locker(m_lock);
+            Locker<CSLock> locker(m_lock);
             auto iter = s_mapRefCount.find(hashcode);
             if (iter == s_mapRefCount.end())
             {
@@ -84,7 +84,7 @@ namespace CVC {
         {
             const size_t hashcode = typeid(T).hash_code();
 
-            Locker<Lock> locker(m_lock);
+            Locker<CSLock> locker(m_lock);
             auto iter = s_mapRefCount.find(hashcode);
             if (iter != s_mapRefCount.end())
             {
