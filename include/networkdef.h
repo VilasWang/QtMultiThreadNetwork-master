@@ -119,7 +119,7 @@ Q_DECLARE_METATYPE(RequestTask);
 typedef QVector<RequestTask> BatchRequestTask;
 
 
-inline QString getTypeString(RequestType eType)
+inline const QString getTypeString(RequestType eType)
 {
     QString strType;
     switch (eType)
@@ -174,13 +174,19 @@ inline QString getTypeString(RequestType eType)
 ////////////////// Event ////////////////////////////////////////////////////
 namespace QEventRegister
 {
-    template <class Type>
-    int regiesterEvent(const Type& eventName)
+    template <typename T>
+    int regiesterEvent(const T& eventName)
     {
-        typedef std::map<Type, int> TUserEventMap;
-        static TUserEventMap s_mapUserEvent;
+        static_assert(std::is_integral<T>::value
+            || std::is_base_of<std::string, T>::value
+            || std::is_base_of<std::wstring, T>::value
+            || std::is_base_of<QString, T>::value
+            || std::is_base_of<QLatin1String, T>::value, "T is a unsupported Type.");
 
-        TUserEventMap::const_iterator iter = s_mapUserEvent.find(eventName);
+        typedef std::map<T, int> UserEventMap;
+        static UserEventMap s_mapUserEvent;
+
+        UserEventMap::const_iterator iter = s_mapUserEvent.find(eventName);
         if (iter != s_mapUserEvent.cend())
         {
             return iter->second;

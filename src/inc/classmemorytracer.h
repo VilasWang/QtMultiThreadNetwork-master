@@ -1,7 +1,7 @@
-/*////////////////////////////////////////////////////////////////////
+/*
 @Brief:		追踪C++类的内存分配和释放
 @Author:	vilas wang
-@Contact:	QQ451930733|451930733@qq.com
+@Contact:	QQ451930733
 
 【用法】
 
@@ -18,7 +18,7 @@ A() { TRACE_CLASS_CONSTRUCTOR(A); }
 
 3: 最后等需要知道类内存分配和释放情况的时候(比如程序退出前)打印信息
 TRACE_CLASS_CHECK_LEAKS();
-///////////////////////////////////////////////////////////////////////////////////////*/
+*/
 
 #pragma once
 #include <windows.h>
@@ -64,6 +64,7 @@ namespace VCUtility {
         template <typename T>
         static void addRef()
         {
+            static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
             Locker<CSLock> locker(m_lock);
@@ -82,6 +83,7 @@ namespace VCUtility {
         template <typename T>
         static void release()
         {
+            static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
             Locker<CSLock> locker(m_lock);

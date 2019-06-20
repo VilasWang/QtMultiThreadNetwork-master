@@ -1,3 +1,9 @@
+/*
+@Brief:		windowsËø
+@Author:	vilas wang
+@Contact:	QQ451930733
+*/
+
 #pragma once
 #include <windows.h>
 #include <memory>

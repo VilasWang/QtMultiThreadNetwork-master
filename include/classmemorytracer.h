@@ -64,6 +64,7 @@ namespace VCUtility {
         template <typename T>
         static void addRef()
         {
+            static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
             Locker<CSLock> locker(m_lock);
@@ -82,6 +83,7 @@ namespace VCUtility {
         template <typename T>
         static void release()
         {
+            static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
             Locker<CSLock> locker(m_lock);
