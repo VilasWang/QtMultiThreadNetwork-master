@@ -119,7 +119,7 @@ Q_DECLARE_METATYPE(RequestTask);
 typedef QVector<RequestTask> BatchRequestTask;
 
 
-inline const QString getTypeString(RequestType eType)
+inline const QString getTypeString(const RequestType eType)
 {
     QString strType;
     switch (eType)

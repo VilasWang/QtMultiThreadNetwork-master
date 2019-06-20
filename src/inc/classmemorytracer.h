@@ -29,7 +29,7 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_CONSTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CONSTRUCTOR(T) VCUtility::ClassMemoryTracer::addRef<T>()
+#define TRACE_CLASS_CONSTRUCTOR(T) VCUtil::ClassMemoryTracer::addRef<T>()
 #else
 #define TRACE_CLASS_CONSTRUCTOR(T) __noop
 #endif
@@ -37,7 +37,7 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_DESTRUCTOR
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_DESTRUCTOR(T) VCUtility::ClassMemoryTracer::release<T>()
+#define TRACE_CLASS_DESTRUCTOR(T) VCUtil::ClassMemoryTracer::release<T>()
 #else
 #define TRACE_CLASS_DESTRUCTOR(T) __noop
 #endif
@@ -45,13 +45,13 @@ TRACE_CLASS_CHECK_LEAKS();
 
 #ifndef TRACE_CLASS_CHECK_LEAKS
 #ifdef TRACE_CLASS_MEMORY_ENABLED
-#define TRACE_CLASS_CHECK_LEAKS() VCUtility::ClassMemoryTracer::checkMemoryLeaks()
+#define TRACE_CLASS_CHECK_LEAKS() VCUtil::ClassMemoryTracer::checkMemoryLeaks()
 #else
 #define TRACE_CLASS_CHECK_LEAKS() __noop
 #endif
 #endif
 
-namespace VCUtility {
+namespace VCUtil {
 
     class ClassMemoryTracer
     {

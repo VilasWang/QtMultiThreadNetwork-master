@@ -8,7 +8,8 @@
 #include <windows.h>
 #include <memory>
 
-namespace VCUtility {
+namespace VCUtil {
+
     //Class CSLock - ¹Ø¼ü¶ÎËø
     class CSLock
     {
@@ -16,9 +17,9 @@ namespace VCUtility {
         CSLock();
         ~CSLock();
 
-        void lock();
-        bool tryLock();
-        void unlock();
+        virtual void lock();
+        virtual bool tryLock();
+        virtual void unlock();
 
     private:
         CSLock(const CSLock &);
@@ -35,8 +36,9 @@ namespace VCUtility {
         SRWLock();
         ~SRWLock();
 
-        void lock(bool bShared = false);
-        void unlock();
+        virtual void lock(bool bShared = false);
+        virtual bool tryLock(bool bShared = false);
+        virtual void unlock();
 
     private:
         SRWLock(const SRWLock &);

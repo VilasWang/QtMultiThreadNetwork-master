@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace VCUtility
+namespace VCUtil
 {
     CSLock ClassMemoryTracer::m_lock;
     ClassMemoryTracer::TClassRefCount ClassMemoryTracer::s_mapRefCount;

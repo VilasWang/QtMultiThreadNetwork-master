@@ -2,7 +2,7 @@
 #include "Lock.h"
 #include <winnt.h>
 
-using namespace VCUtility;
+using namespace VCUtil;
 
 CSLock::CSLock()
 {
@@ -16,7 +16,7 @@ CSLock::~CSLock()
 
 bool CSLock::tryLock()
 {
-    return (bool)TryEnterCriticalSection(&m_cs);
+    return TryEnterCriticalSection(&m_cs);
 }
 
 void CSLock::lock()
@@ -40,6 +40,22 @@ SRWLock::SRWLock()
 SRWLock::~SRWLock()
 {
     unlock();
+}
+
+bool SRWLock::tryLock(bool bShared)
+{
+    BOOL success = FALSE;
+    if (bShared)
+    {
+        success = TryAcquireSRWLockShared(&m_lock);
+        InterlockedExchange(&m_bSharedLocked, TRUE);
+    }
+    else
+    {
+        success = TryAcquireSRWLockExclusive(&m_lock);
+        InterlockedExchange(&m_bExclusiveLocked, TRUE);
+    }
+    return (bool)success;
 }
 
 void SRWLock::lock(bool bShared)
