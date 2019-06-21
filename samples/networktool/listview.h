@@ -21,7 +21,7 @@ public:
     void setListModel(ListModel *);
 
     void insert(const QVariant&);
-    void insert(QVector<QVariant>& vec);
+    void insert(const QVector<QVariant>& vec);
     void remove(const QVariant&);
     void remove(int row);
     void clear();
@@ -48,7 +48,7 @@ protected:
 
 public:
     void insert(const QVariant&);
-    void insert(QVector<QVariant>& vec);
+    void insert(const QVector<QVariant>& vec);
     void remove(const QVariant&);
     void remove(int row);
     void clear();

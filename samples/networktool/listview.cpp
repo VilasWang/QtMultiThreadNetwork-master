@@ -57,7 +57,7 @@ void Listview::insert(const QVariant& var)
     }
 }
 
-void Listview::insert(QVector<QVariant>& vec)
+void Listview::insert(const QVector<QVariant>& vec)
 {
     if (m_pModel != nullptr && !vec.isEmpty())
     {
@@ -146,7 +146,7 @@ void ListModel::insert(const QVariant& var)
     }
 }
 
-void ListModel::insert(QVector<QVariant>& vec)
+void ListModel::insert(const QVector<QVariant>& vec)
 {
     if (vec.size() > 0)
     {
