@@ -1,4 +1,4 @@
-#ifndef NETWORKBIGFLEDOWNLOADREQUEST_H
+О╩©#ifndef NETWORKBIGFLEDOWNLOADREQUEST_H
 #define NETWORKBIGFLEDOWNLOADREQUEST_H
 
 #include <QObject>
@@ -7,7 +7,7 @@
 #include "networkrequest.h"
 
 class QFile;
-//сцсзобтьнд╪Чё╗╩Рнд╪Ч╣др╩╡©╥жё╘
+//Г■╗Д╨▌Д╦▀Х╫╫Ф√┤Д╩╤О╪┬Ф┬√Ф√┤Д╩╤Г └Д╦─И┐╗Е┬├О╪┴
 class Downloader : public QObject
 {
     Q_OBJECT
@@ -49,7 +49,7 @@ private:
     bool m_bShowProgress;
 };
 
-//╤ЮоъЁлобтьгКгС(уБюО╣доъЁлйгж╦обть╣дм╗╣ю║ёр╩╦Жнд╪Ч╠╩╥жЁи╤Ю╦Ж╡©╥жё╛си╤Ю╦Жобтьм╗╣юм╛й╠обть)
+//Е╓ Г╨©Г╗▀Д╦▀Х╫╫Х╞╥Ф╠┌(Х©≥И┤▄Г └Г╨©Г╗▀Ф≤╞Ф▄┤Д╦▀Х╫╫Г └И─ И│⌠Ц─┌Д╦─Д╦╙Ф√┤Д╩╤Х╒╚Е┬├Ф┬░Е╓ Д╦╙И┐╗Е┬├О╪▄Г■╠Е╓ Д╦╙Д╦▀Х╫╫И─ И│⌠Е░▄Ф≈╤Д╦▀Х╫╫)
 class NetworkMTDownloadRequest : public NetworkRequest
 {
     Q_OBJECT;
@@ -67,7 +67,7 @@ public Q_SLOTS:
 
 private:
     bool requestFileSize(QUrl url);
-    //╦Ы╬щнд╪ЧцШ╢╢╫╗╠╬╣ьнд╪Ч
+    //Ф═╧Ф█╝Ф√┤Д╩╤Е░█Е┬⌡Е╩╨Ф°╛Е°╟Ф√┤Д╩╤
     bool createLocalFile();
     bool fileAccessible(QFile *pFile) const;
     bool removeFile(QFile *file);
@@ -81,7 +81,7 @@ private:
     qint64 m_nFileSize;
 
     std::map<int, std::unique_ptr<Downloader>> m_mapDownloader;
-    int m_nThreadCount;//╥ж╦НЁи╤Юиы╤нобть
+    int m_nThreadCount;//Е┬├Е┴╡Ф┬░Е╓ Е╟▒Ф╝╣Д╦▀Х╫╫
     int m_nSuccess;
     int m_nFailed;
 

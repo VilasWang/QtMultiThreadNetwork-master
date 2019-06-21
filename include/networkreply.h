@@ -1,11 +1,11 @@
-#ifndef NETWORKREPLY_H
+ï»¿#ifndef NETWORKREPLY_H
 #define NETWORKREPLY_H
 
 #include <QObject>
-#include "NetworkDef.h"
-#include "Network_Global.h"
+#include "networkdef.h"
+#include "network_global.h"
 
-// ¶ÔÏó»á×Ô¶¯Ïú»Ù£¬²»ÒªÖ÷¶¯Ïú»Ù
+// å¯¹è±¡ä¼šè‡ªåŠ¨é”€æ¯ï¼Œä¸è¦ä¸»åŠ¨é”€æ¯
 class NETWORK_EXPORT NetworkReply : public QObject
 {
     Q_OBJECT

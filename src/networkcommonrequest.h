@@ -1,11 +1,11 @@
-#ifndef NETWORKCOMMONREQUEST_H
+ï»¿#ifndef NETWORKCOMMONREQUEST_H
 #define NETWORKCOMMONREQUEST_H
 
 #include <QObject>
 #include "networkrequest.h"
 
 
-//Ò»°ãÇëÇó
+//ä¸€èˆ¬è¯·æ±‚
 class NetworkCommonRequest : public NetworkRequest
 {
     Q_OBJECT;

@@ -1,4 +1,4 @@
-#ifndef INTERNET_H
+﻿#ifndef INTERNET_H
 #define INTERNET_H
 
 #include <QtWidgets/QMainWindow>
@@ -6,7 +6,7 @@
 #include "ui_networktool.h"
 #include "ui_addBatchTask.h"
 #include "ui_addtask.h"
-#include "NetworkDef.h"
+#include "networkdef.h"
 #include "listview.h"
 
 class QWidget;
@@ -53,7 +53,7 @@ private:
     void initCtrls();
     void initConnecting();
 
-    QString getDefaultDownloadDir();//��ȡϵͳĬ������Ŀ¼
+    QString getDefaultDownloadDir();//获取系统默认下载目录
     QString bytes2String(qint64 bytes);
 
     void appendMsg(const QString& strMsg, bool bQDebug = true);

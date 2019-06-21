@@ -1,4 +1,4 @@
-#ifndef NETWORKUPLOADREQUEST_H
+ï»¿#ifndef NETWORKUPLOADREQUEST_H
 #define NETWORKUPLOADREQUEST_H
 
 #include <QObject>
@@ -6,7 +6,7 @@
 
 class QFile;
 
-//ÉÏ´«ÇëÇó
+//ä¸Šä¼ è¯·æ±‚
 class NetworkUploadRequest : public NetworkRequest
 {
     Q_OBJECT;
@@ -21,7 +21,7 @@ public Q_SLOTS:
     void onUploadProgress(qint64, qint64);
 
 private:
-    //¶ÁÈ¡±¾µØÎÄ¼şµÄÄÚÈİ
+    //è¯»å–æœ¬åœ°æ–‡ä»¶çš„å†…å®¹
     bool readLocalFile(const QString& strFilePath, QByteArray& bytes);
 };
 

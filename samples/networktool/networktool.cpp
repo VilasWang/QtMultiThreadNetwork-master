@@ -1,4 +1,4 @@
-#include <QDebug>
+ï»¿#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QDir>
@@ -32,10 +32,10 @@
 #define MAX_MTDOWNLOAD_COUNT	    10
 #define MIN_MTDOWNLOAD_COUNT		2
 
-#define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  Ö´ĞĞÖĞµÄÈÎÎñ(%1)")
-#define FINISHED_TEXT_FORMAT		QString::fromStdWString(L"  ÒÑÍê³ÉµÄÈÎÎñ(%1)")
+#define TASKING_TEXT_FORMAT			QString::fromStdWString(L"  æ‰§è¡Œä¸­çš„ä»»åŠ¡(%1)")
+#define FINISHED_TEXT_FORMAT		QString::fromStdWString(L"  å·²å®Œæˆçš„ä»»åŠ¡(%1)")
 
-//Apache http ±¾µØ·şÎñÆ÷
+//Apache http æœ¬åœ°æœåŠ¡å™¨
 #define HTTP_SERVER_IP				"127.0.0.1"
 #define HTTP_SERVER_PORT			"80"
 
@@ -183,7 +183,7 @@ void NetworkTool::initConnecting()
     });
     connect(uiAddBatchTask.btn_help, &QAbstractButton::clicked, this, [=]() {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Çë²Î¿¼Ä¬ÈÏµÄÅú´¦ÀíÇëÇóÅäÖÃÎÄ¼ş¡£ÎÄ¼şÎ»ÖÃ£¨¹¤³ÌÄ¿Â¼/samples/networktool/help/Vercomp.dat£©"), QMessageBox::Ok);
+            QStringLiteral("è¯·å‚è€ƒé»˜è®¤çš„æ‰¹å¤„ç†è¯·æ±‚é…ç½®æ–‡ä»¶ã€‚æ–‡ä»¶ä½ç½®ï¼ˆå·¥ç¨‹ç›®å½•/samples/networktool/help/Vercomp.datï¼‰"), QMessageBox::Ok);
     });
     connect(uiMain.cmb_concurrentTask, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
         this, [=](const QString &strText) {
@@ -414,7 +414,7 @@ void NetworkTool::onAbortTask()
             if (stTask.uiBatchId > 0)
             {
                 if (QMessageBox::Yes == QMessageBox::information(nullptr, "Tips",
-                    QStringLiteral("¸ÃÈÎÎñÎªÅú´¦ÀíÈÎÎñ£¬ÊÇ·ñÖÕÖ¹ÕûÅúÈÎÎñ£¿ Ñ¡ÔñÊÇÖÕÖ¹ÕûÅúÈÎÎñ£¬·ñÔòÖÕÖ¹¸ÃÈÎÎñ¡£"), QMessageBox::Yes | QMessageBox::No))
+                    QStringLiteral("è¯¥ä»»åŠ¡ä¸ºæ‰¹å¤„ç†ä»»åŠ¡ï¼Œæ˜¯å¦ç»ˆæ­¢æ•´æ‰¹ä»»åŠ¡ï¼Ÿ é€‰æ‹©æ˜¯ç»ˆæ­¢æ•´æ‰¹ä»»åŠ¡ï¼Œå¦åˆ™ç»ˆæ­¢è¯¥ä»»åŠ¡ã€‚"), QMessageBox::Yes | QMessageBox::No))
                 {
                     NetworkManager::globalInstance()->stopBatchRequests(stTask.uiBatchId);
                     return;
@@ -442,7 +442,7 @@ void NetworkTool::onDownload()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -451,7 +451,7 @@ void NetworkTool::onDownload()
     if (strSavePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("ÎÄ¼ş±£´æÎ»ÖÃ²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("æ–‡ä»¶ä¿å­˜ä½ç½®ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -496,7 +496,7 @@ void NetworkTool::onUpload()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -505,7 +505,7 @@ void NetworkTool::onUpload()
     if (strUploadFilePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("ÉÏ´«ÎÄ¼ş²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("ä¸Šä¼ æ–‡ä»¶ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -516,7 +516,7 @@ void NetworkTool::onUpload()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeUpload;
-    req.strReqArg = strUploadFilePath; //±¾µØÎÄ¼şÂ·¾¶
+    req.strReqArg = strUploadFilePath; //æœ¬åœ°æ–‡ä»¶è·¯å¾„
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -540,7 +540,7 @@ void NetworkTool::onGetRequest()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -573,7 +573,7 @@ void NetworkTool::onPostRequest()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -582,7 +582,7 @@ void NetworkTool::onPostRequest()
     if (strArg.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("²ÎÊı²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("å‚æ•°ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -616,7 +616,7 @@ void NetworkTool::onPutRequest()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -625,7 +625,7 @@ void NetworkTool::onPutRequest()
     if (strUploadFilePath.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("ÉÏ´«ÎÄ¼ş²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("ä¸Šä¼ æ–‡ä»¶ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -634,7 +634,7 @@ void NetworkTool::onPutRequest()
     if (!file.exists() || !file.open(QIODevice::ReadOnly))
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("ÉÏ´«ÎÄ¼ş²»´æÔÚ»òÕßÒÑ±»Õ¼ÓÃ"), QMessageBox::Ok);
+            QStringLiteral("ä¸Šä¼ æ–‡ä»¶ä¸å­˜åœ¨æˆ–è€…å·²è¢«å ç”¨"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -670,7 +670,7 @@ void NetworkTool::onDeleteRequest()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -703,7 +703,7 @@ void NetworkTool::onHeadRequest()
     if (strUrl.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Á´½ÓµØÖ·²»ÄÜÎª¿Õ£¬ÏêÇéÇë²Î¿¼Ê¹ÓÃËµÃ÷"), QMessageBox::Ok);
+            QStringLiteral("é“¾æ¥åœ°å€ä¸èƒ½ä¸ºç©ºï¼Œè¯¦æƒ…è¯·å‚è€ƒä½¿ç”¨è¯´æ˜"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -736,7 +736,7 @@ void NetworkTool::onBatchRequest()
     if (strFile.isEmpty())
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("Åú´¦ÀíÅäÖÃÎÄ¼ş²»ÄÜÎª¿Õ£¬Çëµã»÷°ïÖúËµÃ÷°´Å¥²é¿´ĞÅÏ¢"), QMessageBox::Ok);
+            QStringLiteral("æ‰¹å¤„ç†é…ç½®æ–‡ä»¶ä¸èƒ½ä¸ºç©ºï¼Œè¯·ç‚¹å‡»å¸®åŠ©è¯´æ˜æŒ‰é’®æŸ¥çœ‹ä¿¡æ¯"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -764,7 +764,7 @@ void NetworkTool::onBatchRequest()
     else
     {
         QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("´ò¿ªÅú´¦ÀíÅäÖÃÎÄ¼şÊ§°Ü£¡"), QMessageBox::Ok);
+            QStringLiteral("æ‰“å¼€æ‰¹å¤„ç†é…ç½®æ–‡ä»¶å¤±è´¥ï¼"), QMessageBox::Ok);
         reset();
         return;
     }
@@ -869,8 +869,8 @@ void NetworkTool::onBatchRequest()
 #endif // #ifdef TEST_PERFORMANCE
 }
 
-//request:		ÈÎÎñĞÅÏ¢
-//bSuccess£º	ÈÎÎñÊÇ·ñ³É¹¦
+//request:		ä»»åŠ¡ä¿¡æ¯
+//bSuccessï¼š	ä»»åŠ¡æ˜¯å¦æˆåŠŸ
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
     bool bBatch = (request.uiBatchId > 0);
@@ -915,13 +915,13 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
 {
     //const QString& str = bytes2String(bytes);
-    //appendMsg(QStringLiteral("ÅúÈÎÎñ[%1]   ÏÂÔØ£º%2").arg(batchId).arg(bytes), false);
+    //appendMsg(QStringLiteral("æ‰¹ä»»åŠ¡[%1]   ä¸‹è½½ï¼š%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onBatchUploadProgress(quint64 batchId, qint64 bytes)
 {
     //const QString& str = bytes2String(bytes);
-    //appendMsg(QStringLiteral("ÅúÈÎÎñ[%1]   ÉÏ´«£º%2").arg(batchId).arg(bytes), false);
+    //appendMsg(QStringLiteral("æ‰¹ä»»åŠ¡[%1]   ä¸Šä¼ ï¼š%2").arg(batchId).arg(bytes), false);
 }
 
 void NetworkTool::onErrorMessage(const QString& error)
@@ -1226,14 +1226,14 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
             QFontMetrics fm(font);
             const QRect& boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url.toString());
             painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url.toString());
-            painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("ÀàĞÍ£¨%1£©")
+            painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("ç±»å‹ï¼ˆ%1ï¼‰")
                 .arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 
             if (stTask.bCancel)
             {
                 painter->setPen(Qt::red);
                 painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
-                    QStringLiteral("ÒÑÈ¡Ïû"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+                    QStringLiteral("å·²å–æ¶ˆ"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
             }
             else if (stTask.bFinished)
             {
@@ -1242,13 +1242,13 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
                 {
                     painter->setPen(Qt::green);
                     painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
-                        QStringLiteral("ÒÑÍê³É"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+                        QStringLiteral("å·²å®Œæˆ"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
                 }
                 else
                 {
                     painter->setPen(Qt::red);
                     painter->drawText(QRect(rect.left() + 100, rect.top(), 60, 14),
-                        QStringLiteral("ÈÎÎñ³ö´í"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+                        QStringLiteral("ä»»åŠ¡å‡ºé”™"), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
                 }
             }
 

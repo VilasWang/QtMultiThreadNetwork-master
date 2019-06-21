@@ -1,4 +1,4 @@
-#ifndef listview_h
+﻿#ifndef listview_h
 #define listview_h
 
 #include <QStyledItemDelegate>

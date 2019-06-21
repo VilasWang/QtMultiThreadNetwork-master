@@ -1,4 +1,4 @@
-
+﻿
 #include "listview.h"
 #include <qDebug>
 #include <QScrollBar>

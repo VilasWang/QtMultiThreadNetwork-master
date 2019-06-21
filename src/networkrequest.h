@@ -1,10 +1,10 @@
-#ifndef NETWORKREQUEST_H
+ï»¿#ifndef NETWORKREQUEST_H
 #define NETWORKREQUEST_H
 
 #include <QObject>
 #include <memory>
 #include <QNetworkReply>
-#include "NetworkDef.h"
+#include "networkdef.h"
 #include "classmemorytracer.h"
 
 
@@ -18,7 +18,7 @@ public:
     virtual ~NetworkRequest();
 
     void setRequestTask(const RequestTask &request) { m_request = request; }
-    //ÊÇ·ñÖØ¶¨Ïò
+    //æ˜¯å¦é‡å®šå‘
     bool redirected() const { return (m_redirectUrl.isValid() && m_redirectUrl != m_request.url); }
 
     QString error() const { return m_strError; }
@@ -43,11 +43,11 @@ protected:
     QNetworkReply *m_pNetworkReply;
 };
 
-//¹¤³§Àà
+//å·¥å‚ç±»
 class NetworkRequestFactory
 {
 public:
-    ///¸ù¾İÀàĞÍ´´½¨request¶ÔÏó
+    ///æ ¹æ®ç±»å‹åˆ›å»ºrequestå¯¹è±¡
     static std::unique_ptr<NetworkRequest> create(const RequestType& type);
 };
 

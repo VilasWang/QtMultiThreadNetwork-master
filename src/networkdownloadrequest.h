@@ -1,4 +1,4 @@
-#ifndef NETWORKDOWNLOADREQUEST_H
+ï»¿#ifndef NETWORKDOWNLOADREQUEST_H
 #define NETWORKDOWNLOADREQUEST_H
 
 #include <QObject>
@@ -6,7 +6,7 @@
 
 class QFile;
 
-//ÏÂÔØÇëÇó
+//ä¸‹è½½è¯·æ±‚
 class NetworkDownloadRequest : public NetworkRequest
 {
     Q_OBJECT;
@@ -22,7 +22,7 @@ public Q_SLOTS:
     void onDownloadProgress(qint64 iReceived, qint64 iTotal);
 
 private:
-    //¸ù¾İÎÄ¼şÃû´´½¨±¾µØÎÄ¼ş£¬ÎÄ¼ş´æÔÚÔòÉ¾³ı
+    //æ ¹æ®æ–‡ä»¶ååˆ›å»ºæœ¬åœ°æ–‡ä»¶ï¼Œæ–‡ä»¶å­˜åœ¨åˆ™åˆ é™¤
     bool createLocalFile();
     bool fileAccessible(QFile *pFile) const;
     bool removeFile(QFile *file);

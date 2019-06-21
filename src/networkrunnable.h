@@ -1,9 +1,9 @@
-#ifndef NETWORKRUNNABLE_H
+ï»¿#ifndef NETWORKRUNNABLE_H
 #define NETWORKRUNNABLE_H
 
 #include <QObject>
 #include <QRunnable>
-#include "NetworkDef.h"
+#include "networkdef.h"
 
 class NetworkRunnable : public QObject, public QRunnable
 {
@@ -13,14 +13,14 @@ public:
     explicit NetworkRunnable(const RequestTask &, QObject *parent = 0);
     ~NetworkRunnable();
 
-    //Ö´ĞĞQThreadPool::start(QRunnable) »òÕß QThreadPool::tryStart(QRunnable)Ö®ºó»á×Ô¶¯µ÷ÓÃ
+    //æ‰§è¡ŒQThreadPool::start(QRunnable) æˆ–è€… QThreadPool::tryStart(QRunnable)ä¹‹åä¼šè‡ªåŠ¨è°ƒç”¨
     virtual void run() Q_DECL_OVERRIDE;
 
     quint64 requsetId() const;
     quint64 batchId() const;
     const RequestTask task() const { return m_task; }
 
-    //½áÊøÊÂ¼şÑ­»·ÒÔÊÍ·ÅÈÎÎñÏß³Ì£¬Ê¹Æä±ä³É¿ÕÏĞ×´Ì¬,²¢ÇÒ»á×Ô¶¯½áÊøÕıÔÚÖ´ĞĞµÄÇëÇó
+    //ç»“æŸäº‹ä»¶å¾ªç¯ä»¥é‡Šæ”¾ä»»åŠ¡çº¿ç¨‹ï¼Œä½¿å…¶å˜æˆç©ºé—²çŠ¶æ€,å¹¶ä¸”ä¼šè‡ªåŠ¨ç»“æŸæ­£åœ¨æ‰§è¡Œçš„è¯·æ±‚
     void quit();
 
 Q_SIGNALS:

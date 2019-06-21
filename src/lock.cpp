@@ -1,5 +1,4 @@
-//#include "stdafx.h"
-#include "Lock.h"
+﻿#include "lock.h"
 #include <winnt.h>
 
 using namespace VCUtil;

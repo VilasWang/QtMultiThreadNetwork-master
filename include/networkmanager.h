@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 @Brief:			Qt multi-threaded network module
 @Author:		vilas wang
 @Contact:		QQ451930733
@@ -21,8 +21,8 @@ That must be called in the main thread.
 
 #include <QObject>
 #include "networkreply.h"
-#include "NetworkDef.h"
-#include "Network_Global.h"
+#include "networkdef.h"
+#include "network_global.h"
 
 class QEvent;
 class NetworkManagerPrivate;
@@ -32,33 +32,33 @@ class NETWORK_EXPORT NetworkManager : public QObject
     Q_DECLARE_PRIVATE(NetworkManager)
 
 public:
-    // ³õÊ¼»¯ºÍ·´³õÊ¼»¯±ØĞëÔÚÖ÷Ïß³ÌÖĞµ÷ÓÃ
+    // åˆå§‹åŒ–å’Œååˆå§‹åŒ–å¿…é¡»åœ¨ä¸»çº¿ç¨‹ä¸­è°ƒç”¨
     static void initialize();
     static void unInitialize();
-    // ÊÇ·ñÒÑ¾­³õÊ¼»¯
+    // æ˜¯å¦å·²ç»åˆå§‹åŒ–
     static bool isInitialized();
 
     static NetworkManager* globalInstance();
     static void deleteInstance();
-    // ÊÇ·ñÒÑ¾­ÊµÀı»¯
+    // æ˜¯å¦å·²ç»å®ä¾‹åŒ–
     static bool isInstantiated();
 
 public:
-    // NetworkReply¶ÔÏó»áÔÚÇëÇó½áÊøºó×Ô¶¯Ïú»Ù£¬ÓÃ»§²»ÓÃÖ÷¶¯Ïú»Ù
-    // Ìí¼Óµ¥¸öÇëÇóÈÎÎñ£¨Èô·µ»Ønullptr£¬±íÊ¾urlÎŞĞ§£©
+    // NetworkReplyå¯¹è±¡ä¼šåœ¨è¯·æ±‚ç»“æŸåè‡ªåŠ¨é”€æ¯ï¼Œç”¨æˆ·ä¸ç”¨ä¸»åŠ¨é”€æ¯
+    // æ·»åŠ å•ä¸ªè¯·æ±‚ä»»åŠ¡ï¼ˆè‹¥è¿”å›nullptrï¼Œè¡¨ç¤ºurlæ— æ•ˆï¼‰
     NetworkReply *addRequest(RequestTask& task);
 
-    // Ìí¼ÓÅúÁ¿ÇëÇóÈÎÎñ
+    // æ·»åŠ æ‰¹é‡è¯·æ±‚ä»»åŠ¡
     NetworkReply *addBatchRequest(BatchRequestTask& tasks, quint64 &uiBatchId);
 
-    // Í£Ö¹ËùÓĞµÄÇëÇóÈÎÎñ
+    // åœæ­¢æ‰€æœ‰çš„è¯·æ±‚ä»»åŠ¡
     void stopAllRequest();
-    // Í£Ö¹Ö¸¶¨batchidµÄÅú´ÎÇëÇóÈÎÎñ
+    // åœæ­¢æŒ‡å®šbatchidçš„æ‰¹æ¬¡è¯·æ±‚ä»»åŠ¡
     void stopBatchRequests(quint64 uiBatchId);
-    // Í£Ö¹Ä³¸öÇëÇóÈÎÎñ
+    // åœæ­¢æŸä¸ªè¯·æ±‚ä»»åŠ¡
     void stopRequest(quint64 uiTaskId);
 
-    // ÉèÖÃÏß³Ì³Ø×î´óÏß³ÌÊı£¨´Ó1-16¸ö, Ä¬ÈÏ5Ïß³Ì£©
+    // è®¾ç½®çº¿ç¨‹æ± æœ€å¤§çº¿ç¨‹æ•°ï¼ˆä»1-16ä¸ª, é»˜è®¤5çº¿ç¨‹ï¼‰
     bool setMaxThreadCount(int iMax);
     int maxThreadCount();
 

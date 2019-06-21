@@ -1,5 +1,5 @@
-/*
-@Brief:		windowsËø
+ï»¿/*
+@Brief:		windowsé”
 @Author:	vilas wang
 @Contact:	QQ451930733
 */
@@ -10,7 +10,7 @@
 
 namespace VCUtil {
 
-    //Class CSLock - ¹Ø¼ü¶ÎËø
+    //Class CSLock - å…³é”®æ®µé”
     class CSLock
     {
     public:
@@ -29,7 +29,7 @@ namespace VCUtil {
         CRITICAL_SECTION m_cs;
     };
 
-    //Class SRWLock - slim ¶ÁĞ´Ëø
+    //Class SRWLock - slim è¯»å†™é”
     class SRWLock
     {
     public:

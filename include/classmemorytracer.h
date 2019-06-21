@@ -1,14 +1,14 @@
-/*
-@Brief:		×·×ÙC++ÀàµÄÄÚ´æ·ÖÅäºÍÊÍ·Å
+ï»¿/*
+@Brief:		è¿½è¸ªC++ç±»çš„å†…å­˜åˆ†é…å’Œé‡Šæ”¾
 @Author:	vilas wang
 @Contact:	QQ451930733
 
-¡¾ÓÃ·¨¡¿
+ã€ç”¨æ³•ã€‘
 
-1£ºÔ¤¶¨ÒåºêTRACE_CLASS_MEMORY_ENABLED
+1ï¼šé¢„å®šä¹‰å®TRACE_CLASS_MEMORY_ENABLED
 
-2£ºÔÚÐèÒª×·×ÙµÄÀàµÄ¹¹Ôìº¯ÊýºÍÎö¹¹º¯Êý´ò±ê¼Ç
-Àý£º
+2ï¼šåœ¨éœ€è¦è¿½è¸ªçš„ç±»çš„æž„é€ å‡½æ•°å’Œæžæž„å‡½æ•°æ‰“æ ‡è®°
+ä¾‹ï¼š
 Class A
 {
 public:
@@ -16,7 +16,7 @@ A() { TRACE_CLASS_CONSTRUCTOR(A); }
 ~A() { TRACE_CLASS_DESTRUCTOR(A); }
 }
 
-3: ×îºóµÈÐèÒªÖªµÀÀàÄÚ´æ·ÖÅäºÍÊÍ·ÅÇé¿öµÄÊ±ºò(±ÈÈç³ÌÐòÍË³öÇ°)´òÓ¡ÐÅÏ¢
+3: æœ€åŽç­‰éœ€è¦çŸ¥é“ç±»å†…å­˜åˆ†é…å’Œé‡Šæ”¾æƒ…å†µçš„æ—¶å€™(æ¯”å¦‚ç¨‹åºé€€å‡ºå‰)æ‰“å°ä¿¡æ¯
 TRACE_CLASS_CHECK_LEAKS();
 */
 

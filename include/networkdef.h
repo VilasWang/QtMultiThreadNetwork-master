@@ -1,4 +1,4 @@
-#ifndef NETWORKDEF_H
+ï»¿#ifndef NETWORKDEF_H
 #define NETWORKDEF_H
 
 #include <QUrl>
@@ -9,32 +9,32 @@
 
 #pragma pack(push, _CRT_PACKING)
 
-// ±¾Ä£¿éÖ§³ÖµÄĞ­Òé£ºHTTP(S)/FTP
-// ±¾Ä£¿éÖ§³ÖµÄHTTP(s)Ğ­ÒéÇëÇó·½·¨£ºGET/POST/PUT/DELETE/HEAD
+// æœ¬æ¨¡å—æ”¯æŒçš„åè®®ï¼šHTTP(S)/FTP
+// æœ¬æ¨¡å—æ”¯æŒçš„HTTP(s)åè®®è¯·æ±‚æ–¹æ³•ï¼šGET/POST/PUT/DELETE/HEAD
 
 enum RequestType
 {
-    // Download£¨Ö§³Öhttp(s)ºÍftp£©
+    // Downloadï¼ˆæ”¯æŒhttp(s)å’Œftpï¼‰
     eTypeDownload = 0,
-    // Multi-Thread Download£¨Ö§³Öhttp(s)£©
+    // Multi-Thread Downloadï¼ˆæ”¯æŒhttp(s)ï¼‰
     eTypeMTDownload = 1,
-    // Upload£¨Ö§³Öhttp(s)ºÍftp£©
+    // Uploadï¼ˆæ”¯æŒhttp(s)å’Œftpï¼‰
     eTypeUpload = 2,
-    // GET·½Ê½ÇëÇó£¨Ö§³Öhttp(s)ºÍftp£©
+    // GETæ–¹å¼è¯·æ±‚ï¼ˆæ”¯æŒhttp(s)å’Œftpï¼‰
     eTypeGet = 3,
-    // POST·½Ê½ÇëÇó£¨Ö§³Öhttp(s)£©
+    // POSTæ–¹å¼è¯·æ±‚ï¼ˆæ”¯æŒhttp(s)ï¼‰
     eTypePost = 4,
-    // PUT·½Ê½ÇëÇó£¨Ö§³Öhttp(s)ºÍftp£©
+    // PUTæ–¹å¼è¯·æ±‚ï¼ˆæ”¯æŒhttp(s)å’Œftpï¼‰
     eTypePut = 5,
-    // DELETE·½Ê½ÇëÇó£¨Ö§³Öhttp(s)£©
+    // DELETEæ–¹å¼è¯·æ±‚ï¼ˆæ”¯æŒhttp(s)ï¼‰
     eTypeDelete = 6,
-    // HEAD·½Ê½ÇëÇó£¨Ö§³Öhttp(s)£©
+    // HEADæ–¹å¼è¯·æ±‚ï¼ˆæ”¯æŒhttp(s)ï¼‰
     eTypeHead = 7,
 
     eTypeUnknown = -1,
 };
 
-//ÇëÇó½á¹¹
+//è¯·æ±‚ç»“æ„
 struct RequestTask
 {
     enum
@@ -42,62 +42,62 @@ struct RequestTask
         ALL_TASK = 0xFFFFFFFF
     };
 
-    // ÇëÇóµÄÀàĞÍ£ºÉÏ´«/ÏÂÔØ/ÆäËûÇëÇó
+    // è¯·æ±‚çš„ç±»å‹ï¼šä¸Šä¼ /ä¸‹è½½/å…¶ä»–è¯·æ±‚
     RequestType eType;
 
     // url
-    // ×¢Òâ: ftpÉÏ´«µÄurlĞèÖ¸¶¨ÎÄ¼şÃû.Èç"ftp://10.0.192.47:21/upload/test.zip", ÎÄ¼ş½«±»±£´æÎªtest.zip.
+    // æ³¨æ„: ftpä¸Šä¼ çš„urléœ€æŒ‡å®šæ–‡ä»¶å.å¦‚"ftp://10.0.192.47:21/upload/test.zip", æ–‡ä»¶å°†è¢«ä¿å­˜ä¸ºtest.zip.
     QUrl url;
 
-    // case eTypeDownload:	ÏÂÔØµÄÎÄ¼ş´æ·ÅµÄ±¾µØÄ¿Â¼. (¾ø¶ÔÂ·¾¶ or Ïà¶ÔÂ·¾¶)
-    // case eTypeUpload£º	´ıÉÏ´«µÄÎÄ¼şÂ·¾¶. (¾ø¶ÔÂ·¾¶ or Ïà¶ÔÂ·¾¶)
-    // case eTypePost£º		postµÄ²ÎÊı. Èç£º"a=b&c=d".
-    // case eTypePut£º		putµÄÊı¾İÁ÷.
+    // case eTypeDownload:	ä¸‹è½½çš„æ–‡ä»¶å­˜æ”¾çš„æœ¬åœ°ç›®å½•. (ç»å¯¹è·¯å¾„ or ç›¸å¯¹è·¯å¾„)
+    // case eTypeUploadï¼š	å¾…ä¸Šä¼ çš„æ–‡ä»¶è·¯å¾„. (ç»å¯¹è·¯å¾„ or ç›¸å¯¹è·¯å¾„)
+    // case eTypePostï¼š		postçš„å‚æ•°. å¦‚ï¼š"a=b&c=d".
+    // case eTypePutï¼š		putçš„æ•°æ®æµ.
     QString strReqArg;
 
-    // case eTypeDownload: ÈôÖ¸¶¨ÁËstrSaveFileName£¬Ôò±£´æµÄÎÄ¼şÃûÊÇstrSaveFileName;·ñÔò£¬¸ù¾İurl.
+    // case eTypeDownload: è‹¥æŒ‡å®šäº†strSaveFileNameï¼Œåˆ™ä¿å­˜çš„æ–‡ä»¶åæ˜¯strSaveFileName;å¦åˆ™ï¼Œæ ¹æ®url.
     QString strSaveFileName;
 
-    // ÇëÇóµÄheaderĞÅÏ¢
+    // è¯·æ±‚çš„headerä¿¡æ¯
     //void QNetworkRequest::setRawHeader(const QByteArray &headerName, const QByteArray &value);
     QMap<QByteArray, QByteArray> mapRawHeader;
 
-    // ÊÇ·ñÏÔÊ¾½ø¶È£¬Ä¬ÈÏÎªfalse.
+    // æ˜¯å¦æ˜¾ç¤ºè¿›åº¦ï¼Œé»˜è®¤ä¸ºfalse.
     bool bShowProgress;
 
     bool bRemoveFileWhileExist;
 
-    // ÈÎÎñÊ§°Üºó£¬ÊÇ·ñÔÙ³¢ÊÔÇëÇóÒ»´Î£¬Ä¬ÈÏÎªfalse.
+    // ä»»åŠ¡å¤±è´¥åï¼Œæ˜¯å¦å†å°è¯•è¯·æ±‚ä¸€æ¬¡ï¼Œé»˜è®¤ä¸ºfalse.
     bool bTryAgainWhileFailed;
 
-    // ÅúÁ¿ÇëÇóÊ§°ÜÒ»¸ö¾ÍÖÕÖ¹ÕûÅúÇëÇó£¬Ä¬ÈÏÎªfalse.
+    // æ‰¹é‡è¯·æ±‚å¤±è´¥ä¸€ä¸ªå°±ç»ˆæ­¢æ•´æ‰¹è¯·æ±‚ï¼Œé»˜è®¤ä¸ºfalse.
     bool bAbortBatchWhileOneFailed;
 
-    // µ¥ÎÄ¼ş¶àÏß³ÌÏÂÔØÄ£Ê½(Ğè·şÎñÆ÷Ö§³Ö) ×¢£ºeTypeÎªeTypeMTDownloadÊ±ÓĞĞ§
-    //	 ¶àÏß³ÌÏÂÔØÄ£Ê½ÏÂ£¬Ò»¸öÎÄ¼şÓÉ¶à¸öÏÂÔØÍ¨µÀÍ¬Ê±ÏÂÔØ.
-    //	 ĞèÒªÏÈ»ñÈ¡http headµÄContent-Length£¬ËùÒÔĞèÒª·şÎñÆ÷µÄÖ§³Ö.
-    // n¸öÏÂÔØÍ¨µÀ(Ä¬ÈÏÊÇ5)(È¡Öµ·¶Î§2-10)
+    // å•æ–‡ä»¶å¤šçº¿ç¨‹ä¸‹è½½æ¨¡å¼(éœ€æœåŠ¡å™¨æ”¯æŒ) æ³¨ï¼šeTypeä¸ºeTypeMTDownloadæ—¶æœ‰æ•ˆ
+    //	 å¤šçº¿ç¨‹ä¸‹è½½æ¨¡å¼ä¸‹ï¼Œä¸€ä¸ªæ–‡ä»¶ç”±å¤šä¸ªä¸‹è½½é€šé“åŒæ—¶ä¸‹è½½.
+    //	 éœ€è¦å…ˆè·å–http headçš„Content-Lengthï¼Œæ‰€ä»¥éœ€è¦æœåŠ¡å™¨çš„æ”¯æŒ.
+    // nä¸ªä¸‹è½½é€šé“(é»˜è®¤æ˜¯5)(å–å€¼èŒƒå›´2-10)
     quint16 nDownloadThreadCount;
 
-    // ÓÃ»§×Ô¶¨ÒåÄÚÈİ£¨¿ÉÓÃÓÚ»Ø´«£©
+    // ç”¨æˆ·è‡ªå®šä¹‰å†…å®¹ï¼ˆå¯ç”¨äºå›ä¼ ï¼‰
     QVariant varArg1;
-    // ÓÃ»§×Ô¶¨ÒåÄÚÈİ£¨¿ÉÓÃÓÚ»Ø´«£©
+    // ç”¨æˆ·è‡ªå®šä¹‰å†…å®¹ï¼ˆå¯ç”¨äºå›ä¼ ï¼‰
     QVariant varArg2;
-    // ÓÃ»§×Ô¶¨ÒåÄÚÈİ£¨¿ÉÓÃÓÚ»Ø´«£©
+    // ç”¨æˆ·è‡ªå®šä¹‰å†…å®¹ï¼ˆå¯ç”¨äºå›ä¼ ï¼‰
     QVariant varArg3;
 
-    //////////////////////·µ»Ø½á¹ûµÄ×Ö¶Î/////////////////////////////////////////////
-    bool bFinished;	//Õı³£½áÊø
-    bool bCancel;	//Íæ¼ÒÈ¡Ïû
+    //////////////////////è¿”å›ç»“æœçš„å­—æ®µ/////////////////////////////////////////////
+    bool bFinished;	//æ­£å¸¸ç»“æŸ
+    bool bCancel;	//ç©å®¶å–æ¶ˆ
 
-    // ÇëÇóÊÇ·ñ³É¹¦
+    // è¯·æ±‚æ˜¯å¦æˆåŠŸ
     bool bSuccess;
-    // ÇëÇó·µ»ØµÄÄÚÈİ/·µ»ØµÄ´íÎóĞÅÏ¢µÈ.
+    // è¯·æ±‚è¿”å›çš„å†…å®¹/è¿”å›çš„é”™è¯¯ä¿¡æ¯ç­‰.
     QByteArray bytesContent;
 
-    // ÇëÇóID
+    // è¯·æ±‚ID
     quint64 uiId;
-    // Åú´ÎID (ÅúÁ¿ÇëÇó)
+    // æ‰¹æ¬¡ID (æ‰¹é‡è¯·æ±‚)
     quint64 uiBatchId;
 
     RequestTask()
@@ -126,17 +126,17 @@ inline const QString getTypeString(const RequestType eType)
     {
     case eTypeDownload:
     {
-        strType = QStringLiteral("ÏÂÔØ");
+        strType = QStringLiteral("ä¸‹è½½");
     }
     break;
     case eTypeMTDownload:
     {
-        strType = QStringLiteral("MTÏÂÔØ");
+        strType = QStringLiteral("MTä¸‹è½½");
     }
     break;
     case eTypeUpload:
     {
-        strType = QStringLiteral("ÉÏ´«");
+        strType = QStringLiteral("ä¸Šä¼ ");
     }
     break;
     case eTypeGet:
@@ -205,14 +205,14 @@ namespace NetworkEvent
     const QEvent::Type NetworkProgress = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
 }
 
-//µÈ´ı¿ÕÏĞÏß³ÌÊÂ¼ş
+//ç­‰å¾…ç©ºé—²çº¿ç¨‹äº‹ä»¶
 class WaitForIdleThreadEvent : public QEvent
 {
 public:
     WaitForIdleThreadEvent() : QEvent(QEvent::Type(NetworkEvent::WaitForIdleThread)) {}
 };
 
-//Í¨Öª½á¹ûÊÂ¼ş
+//é€šçŸ¥ç»“æœäº‹ä»¶
 class ReplyResultEvent : public QEvent
 {
 public:
@@ -222,7 +222,7 @@ public:
     bool bDestroyed;
 };
 
-//ÏÂÔØ/ÉÏ´«½ø¶ÈÊÂ¼ş
+//ä¸‹è½½/ä¸Šä¼ è¿›åº¦äº‹ä»¶
 class NetworkProgressEvent : public QEvent
 {
 public:
