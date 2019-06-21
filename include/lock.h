@@ -54,7 +54,7 @@ namespace VCUtil {
     class Locker
     {
     public:
-        explicit Locker(_Lock& lock) {}
+        explicit Locker(_Lock&) {}
         ~Locker() {}
 
     private:
@@ -67,14 +67,12 @@ namespace VCUtil {
         || std::is_base_of<SRWLock, _Lock>::value>::type>
     {
     public:
-        explicit Locker(_Lock& lock)
-            : m_lock(lock)
+        explicit Locker(_Lock& lock) : m_lock(lock)
         {
             m_lock.lock();
         }
 
-        Locker(_Lock& lock, bool bShared)
-            : m_lock(lock)
+        Locker(_Lock& lock, bool bShared) : m_lock(lock)
         {
             m_lock.lock(bShared);
         }

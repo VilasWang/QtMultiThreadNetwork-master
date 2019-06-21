@@ -16,7 +16,7 @@ CSLock::~CSLock()
 
 bool CSLock::tryLock()
 {
-    return TryEnterCriticalSection(&m_cs);
+    return (TRUE == TryEnterCriticalSection(&m_cs));
 }
 
 void CSLock::lock()
@@ -44,18 +44,18 @@ SRWLock::~SRWLock()
 
 bool SRWLock::tryLock(bool bShared)
 {
-    BOOL success = FALSE;
+    BOOL bSuccess = FALSE;
     if (bShared)
     {
-        success = TryAcquireSRWLockShared(&m_lock);
+        bSuccess = TryAcquireSRWLockShared(&m_lock);
         InterlockedExchange(&m_bSharedLocked, TRUE);
     }
     else
     {
-        success = TryAcquireSRWLockExclusive(&m_lock);
+        bSuccess = TryAcquireSRWLockExclusive(&m_lock);
         InterlockedExchange(&m_bExclusiveLocked, TRUE);
     }
-    return (bool)success;
+    return (TRUE == bSuccess);
 }
 
 void SRWLock::lock(bool bShared)
