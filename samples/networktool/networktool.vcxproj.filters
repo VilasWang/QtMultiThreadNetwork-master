@@ -59,6 +59,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_listview.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_tableview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_tableview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="networktool.h">
@@ -78,6 +87,9 @@
     </CustomBuild>
     <CustomBuild Include="addbatchtask.ui">
       <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="tableview.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

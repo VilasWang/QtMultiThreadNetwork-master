@@ -127,11 +127,14 @@ QVariant ListModel::data(const QModelIndex & index, int role /* = Qt::DisplayRol
 
 void ListModel::clear()
 {
-    beginResetModel();
-    m_vecVariant.clear();
-    endResetModel();
+    if (!m_vecVariant.isEmpty())
+    {
+        beginResetModel();
+        m_vecVariant.clear();
+        endResetModel();
 
-    emit sizeChanged(m_vecVariant.size());
+        emit sizeChanged(m_vecVariant.size());
+    }
 }
 
 void ListModel::insert(const QVariant& var)
