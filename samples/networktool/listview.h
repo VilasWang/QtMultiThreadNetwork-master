@@ -1,5 +1,5 @@
-﻿#ifndef listview_h
-#define listview_h
+﻿#ifndef CUSTOM_LISTVIEW_H
+#define CUSTOM_LISTVIEW_H
 
 #include <QStyledItemDelegate>
 #include <QAbstractListModel>
@@ -7,17 +7,17 @@
 #include <QPointer>
 
 class ListModel;
-class ListDelegate;
-class Listview : public QListView
+class ListItemDelegate;
+class ListView : public QListView
 {
     Q_OBJECT
 
 public:
-    explicit Listview(QWidget* parent = NULL);
-    virtual ~Listview();
+    explicit ListView(QWidget* parent = NULL);
+    virtual ~ListView();
 
 public:
-    void setListDelegate(ListDelegate *);
+    void setListDelegate(ListItemDelegate *);
     void setListModel(ListModel *);
 
     void insert(const QVariant&);
@@ -31,7 +31,7 @@ private:
 
 private:
     QPointer<ListModel> m_pModel;
-    QPointer<ListDelegate> m_pDelegate;
+    QPointer<ListItemDelegate> m_pDelegate;
 };
 
 class ListModel : public QAbstractListModel
@@ -61,13 +61,13 @@ protected:
     QVector<QVariant> m_vecVariant;
 };
 
-class ListDelegate : public QStyledItemDelegate
+class ListItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit ListDelegate(QObject* parent = NULL);
-    virtual ~ListDelegate();
+    explicit ListItemDelegate(QObject* parent = NULL);
+    virtual ~ListItemDelegate();
 
 public:
     void paint(QPainter *painter,

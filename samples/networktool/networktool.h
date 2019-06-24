@@ -77,7 +77,7 @@ private:
     TaskListView *m_pListViewFinished;
     ListModel *m_pModelDoing;
     ListModel *m_pModelFinished;
-    ListDelegate *m_pDelegate;
+    ListItemDelegate *m_pDelegate;
     QButtonGroup *bg_protocal;
     QButtonGroup *bg_type;
 
@@ -108,7 +108,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
-class TaskListView : public Listview
+class TaskListView : public ListView
 {
     Q_OBJECT
 
@@ -133,7 +133,7 @@ public:
     QVariant onTaskFinished(const RequestTask &request);
 };
 
-class TaskDelegate : public ListDelegate
+class TaskDelegate : public ListItemDelegate
 {
 public:
     explicit TaskDelegate(QObject* parent = NULL);

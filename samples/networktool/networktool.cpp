@@ -1083,7 +1083,7 @@ void QLabelEx::mouseDoubleClickEvent(QMouseEvent *event)
 
 //////////////////////////////////////////////////////////////////////////
 TaskListView::TaskListView(QWidget* parent)
-    : Listview(parent)
+    : ListView(parent)
 {
 }
 
@@ -1181,7 +1181,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 
 //////////////////////////////////////////////////////////////////////////
 TaskDelegate::TaskDelegate(QObject* parent /*= NULL*/)
-    : ListDelegate(parent)
+    : ListItemDelegate(parent)
 {
 }
 

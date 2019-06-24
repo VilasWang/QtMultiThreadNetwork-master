@@ -3,7 +3,7 @@
 #include <qDebug>
 #include <QScrollBar>
 
-Listview::Listview(QWidget* parent/* = NULL*/)
+ListView::ListView(QWidget* parent/* = NULL*/)
     : QListView(parent)
     , m_pModel(nullptr)
     , m_pDelegate(nullptr)
@@ -11,12 +11,12 @@ Listview::Listview(QWidget* parent/* = NULL*/)
     initListView();
 }
 
-Listview::~Listview()
+ListView::~ListView()
 {
     reset();
 }
 
-void Listview::initListView()
+void ListView::initListView()
 {
     setFrameShape(QFrame::NoFrame);
     setSpacing(0);
@@ -30,7 +30,7 @@ void Listview::initListView()
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 }
 
-void Listview::setListDelegate(ListDelegate *pDelegate)
+void ListView::setListDelegate(ListItemDelegate *pDelegate)
 {
     if (pDelegate != nullptr)
     {
@@ -39,7 +39,7 @@ void Listview::setListDelegate(ListDelegate *pDelegate)
     }
 }
 
-void Listview::setListModel(ListModel *pModel)
+void ListView::setListModel(ListModel *pModel)
 {
     if (pModel != nullptr)
     {
@@ -48,7 +48,7 @@ void Listview::setListModel(ListModel *pModel)
     }
 }
 
-void Listview::insert(const QVariant& var)
+void ListView::insert(const QVariant& var)
 {
     if (m_pModel != nullptr && var.isValid())
     {
@@ -57,7 +57,7 @@ void Listview::insert(const QVariant& var)
     }
 }
 
-void Listview::insert(const QVector<QVariant>& vec)
+void ListView::insert(const QVector<QVariant>& vec)
 {
     if (m_pModel != nullptr && !vec.isEmpty())
     {
@@ -66,7 +66,7 @@ void Listview::insert(const QVector<QVariant>& vec)
     }
 }
 
-void Listview::remove(const QVariant& var)
+void ListView::remove(const QVariant& var)
 {
     if (m_pModel != nullptr && var.isValid())
     {
@@ -75,7 +75,7 @@ void Listview::remove(const QVariant& var)
     }
 }
 
-void Listview::remove(int row)
+void ListView::remove(int row)
 {
     if (m_pModel != nullptr && row >= 0)
     {
@@ -84,7 +84,7 @@ void Listview::remove(int row)
     }
 }
 
-void Listview::clear()
+void ListView::clear()
 {
     if (m_pModel != nullptr)
     {
@@ -204,28 +204,28 @@ void ListModel::resetAll(const QVector<QVariant>& vec)
 }
 
 //////////////////////////////////////////////////////////////////////////
-ListDelegate::ListDelegate(QObject* parent /*= NULL*/)
+ListItemDelegate::ListItemDelegate(QObject* parent /*= NULL*/)
     : QStyledItemDelegate(parent)
 {
 
 }
 
-ListDelegate::~ListDelegate()
+ListItemDelegate::~ListItemDelegate()
 {
 
 }
 
-QSize ListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     return __super::sizeHint(option, index);
 }
 
-void ListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+void ListItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     __super::paint(painter, option, index);
 }
 
-bool ListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+bool ListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     return __super::editorEvent(event, model, option, index);
