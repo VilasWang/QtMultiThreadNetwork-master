@@ -82,8 +82,6 @@ void NetworkCommonRequest::start()
     }
     else if (m_request.eType == eTypePut)
     {
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
-
         const QByteArray& bytes = m_request.strReqArg.toUtf8();
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
 
