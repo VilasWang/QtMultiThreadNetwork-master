@@ -881,7 +881,6 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
         if (task.bTryAgainWhileFailed && d->addToFailedQueue(task))
         {
             bNotify = false;
-            startAsRunnable(task);
         }
     }
 
@@ -944,16 +943,21 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
                     emit batchRequestFinished(task.uiBatchId, task.bSuccess);
                 }
             }
-        }
 
-        //3.如果是批量任务失败后，并且指定了bAbortBatchWhileOneFailed，就停止该批次的任务
-        if (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhileOneFailed)
-        {
-            d->stopBatchRequests(task.uiBatchId);
+            //3.如果是批量任务失败后，并且指定了bAbortBatchWhileOneFailed，就停止该批次的任务
+            if (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhileOneFailed)
+            {
+                d->stopBatchRequests(task.uiBatchId);
+            }
         }
 
         //4.释放任务线程，使其变成空闲状态
         d->releaseRequestThread(task.uiId);
+
+        if (!bNotify)
+        {
+            startAsRunnable(task);
+        }
     }
     catch (std::exception* e)
     {

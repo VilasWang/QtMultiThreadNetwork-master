@@ -49,7 +49,6 @@ void NetworkCommonRequest::start()
     //m_pNetworkManager->connectToHost(url.host(), url.port());
 
     QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
 
     auto iter = m_request.mapRawHeader.cbegin();
     for (; iter != m_request.mapRawHeader.cend(); ++iter)
@@ -74,6 +73,8 @@ void NetworkCommonRequest::start()
     }
     else if (m_request.eType == eTypePost)
     {
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
+
         const QByteArray& bytes = m_request.strReqArg.toUtf8();
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
 
@@ -81,6 +82,8 @@ void NetworkCommonRequest::start()
     }
     else if (m_request.eType == eTypePut)
     {
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
+
         const QByteArray& bytes = m_request.strReqArg.toUtf8();
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
 
@@ -173,7 +176,5 @@ void NetworkCommonRequest::onFinished()
     emit requestFinished(bSuccess, bytes, m_strError);
 
     m_pNetworkReply->deleteLater();
-    m_pNetworkManager->deleteLater();
     m_pNetworkReply = nullptr;
-    m_pNetworkManager = nullptr;
 }

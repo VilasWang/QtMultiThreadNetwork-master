@@ -297,7 +297,8 @@ void NetworkTool::onResetDefaultValue()
             }
             else if (uiAddTask.cb_get->isChecked())
             {
-                uiAddTask.lineEdit_url->setText(QStringLiteral("http://m.kugou.com/singer/list/88?json=true"));
+                const QString& strUrl = QStringLiteral("http://m.kugou.com/singer/list/88?json=true");
+                uiAddTask.lineEdit_url->setText(strUrl);
             }
             else if (uiAddTask.cb_post->isChecked())
             {
@@ -465,6 +466,7 @@ void NetworkTool::onDownload()
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bRemoveFileWhileExist = true;
     req.strReqArg = strSavePath;
+    req.bTryAgainWhileFailed = true;
     if (!uiAddTask.lineEdit_filename->text().isEmpty())
     {
         req.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
@@ -518,6 +520,7 @@ void NetworkTool::onUpload()
     req.eType = eTypeUpload;
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -551,6 +554,7 @@ void NetworkTool::onGetRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeGet;
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -594,6 +598,7 @@ void NetworkTool::onPostRequest()
     req.url = urlHost;
     req.eType = eTypePost;
     req.strReqArg = strArg;
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -648,6 +653,7 @@ void NetworkTool::onPutRequest()
     req.url = urlHost;
     req.eType = eTypePut;
     req.strReqArg = QString::fromUtf8(bytes);
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -681,6 +687,7 @@ void NetworkTool::onDeleteRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeDelete;
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -714,6 +721,7 @@ void NetworkTool::onHeadRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeHead;
+    req.bTryAgainWhileFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)

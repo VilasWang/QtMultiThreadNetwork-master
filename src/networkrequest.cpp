@@ -21,11 +21,6 @@ NetworkRequest::~NetworkRequest()
     TRACE_CLASS_DESTRUCTOR(NetworkRequest);
 
     abort();
-    if (m_pNetworkReply)
-    {
-        m_pNetworkReply->deleteLater();
-        m_pNetworkReply = nullptr;
-    }
     if (m_pNetworkManager)
     {
         m_pNetworkManager->deleteLater();
@@ -38,7 +33,10 @@ void NetworkRequest::abort()
     m_bAbortManual = true;
     if (m_pNetworkReply)
     {
-        m_pNetworkReply->abort();
+        if (m_pNetworkReply->isRunning())
+        {
+            m_pNetworkReply->abort();
+        }
         m_pNetworkReply->deleteLater();
         m_pNetworkReply = nullptr;
     }
