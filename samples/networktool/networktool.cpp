@@ -173,8 +173,14 @@ void NetworkTool::initConnecting()
     connect(uiAddBatchTask.btn_browser, SIGNAL(clicked()), this, SLOT(onGetBatchTaskConfigFile()));
     connect(uiAddTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddTask()));
     connect(uiAddBatchTask.btn_start, SIGNAL(clicked()), this, SLOT(onAddBatchTasks()));
-    connect(uiAddTask.btn_close, SIGNAL(clicked()), m_pWidgetAddTask, SLOT(hide()));
-    connect(uiAddBatchTask.btn_close, SIGNAL(clicked()), m_pWidgetAddBatch, SLOT(hide()));
+    connect(uiAddTask.btn_close, &QAbstractButton::clicked, this, [=] {
+        m_pWidgetAddTask->hide();
+        uiMain.btn_add->setEnabled(true);
+    });
+    connect(uiAddBatchTask.btn_close, &QAbstractButton::clicked, this, [=] {
+        m_pWidgetAddBatch->hide();
+        uiMain.btn_addBatch->setEnabled(true);
+    });
     connect(uiAddTask.cb_useDefault, &QAbstractButton::toggled, this, [=](bool checked) {
         if (checked)
         {
