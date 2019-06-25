@@ -31,7 +31,7 @@ void NetworkRunnable::run()
 
     try
     {
-        connect(this, &NetworkRunnable::exitEventLoop, &loop, [&bQuit, &loop, &pRequest, &task]() {
+        connect(this, &NetworkRunnable::exitEventLoop, &loop, [&bQuit, &loop, &pRequest]() {
             loop.quit();
             bQuit = true;
             if (pRequest.get())
@@ -47,9 +47,10 @@ void NetworkRunnable::run()
             if (pRequest.get())
             {
                 connect(pRequest.get(), &NetworkRequest::requestFinished,
-                    [this, &task](bool bSuccess, const QByteArray& bytesContent) {
+                    [this, &task](bool bSuccess, const QByteArray& bytesContent, const QString& strError) {
                     task.bSuccess = bSuccess;
                     task.bytesContent = bytesContent;
+                    task.strError = strError;
                     emit requestFinished(task);
                 });
                 pRequest->setRequestTask(task);
@@ -61,6 +62,7 @@ void NetworkRunnable::run()
                 LOG_ERROR("Unsupported type(" << task.eType << ")  ---- " << task.url.url().toStdWString());
 
                 task.bSuccess = false;
+                task.strError = QString("Unsupported type(%1)").arg(task.eType);
                 emit requestFinished(task);
             }
             loop.exec();

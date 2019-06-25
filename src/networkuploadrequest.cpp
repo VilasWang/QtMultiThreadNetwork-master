@@ -96,7 +96,7 @@ void NetworkUploadRequest::start()
     }
     else
     {
-        emit requestFinished(false, m_strError.toUtf8());
+        emit requestFinished(false, QByteArray(), m_strError);
     }
 }
 
@@ -140,18 +140,22 @@ void NetworkUploadRequest::onFinished()
         }
     }
 
+    QByteArray bytes;
     if (!m_bAbortManual)//非调用abort()结束
     {
         if (m_pNetworkReply->isOpen())
         {
-            const QByteArray& bytes = m_pNetworkReply->readAll();
-            if (!bytes.isEmpty())
+            if (bSuccess)
             {
-                m_strError.append(QString::fromUtf8(bytes));
+                bytes = m_pNetworkReply->readAll();
+            }
+            else
+            {
+                m_strError.append(QString::fromUtf8(m_pNetworkReply->readAll()));
             }
         }
     }
-    emit requestFinished(bSuccess, m_strError.toUtf8());
+    emit requestFinished(bSuccess, bytes, m_strError);
 
     m_pNetworkReply->deleteLater();
     m_pNetworkReply = nullptr;

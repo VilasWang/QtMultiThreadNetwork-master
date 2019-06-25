@@ -179,7 +179,7 @@ void NetworkDownloadRequest::start()
     }
     else
     {
-        emit requestFinished(false, m_strError.toUtf8());
+        emit requestFinished(false, QByteArray(), m_strError);
     }
 }
 
@@ -265,7 +265,17 @@ void NetworkDownloadRequest::onFinished()
         }
     }
 
-    emit requestFinished(bSuccess, m_strError.toUtf8());
+    if (!m_bAbortManual)//非调用abort()结束
+    {
+        if (m_pNetworkReply->isOpen())
+        {
+            if (!bSuccess)
+            {
+                m_strError.append(QString::fromUtf8(m_pNetworkReply->readAll()));
+            }
+        }
+    }
+    emit requestFinished(bSuccess, QByteArray(), m_strError);
 
     m_pNetworkReply->deleteLater();
     m_pNetworkReply = nullptr;

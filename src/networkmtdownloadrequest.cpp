@@ -194,7 +194,7 @@ void NetworkMTDownloadRequest::start()
     if (!b)
     {
         m_strError = QStringLiteral("Invalid Url").toUtf8();
-        emit requestFinished(false, m_strError.toUtf8());
+        emit requestFinished(false, QByteArray(), m_strError);
     }
 }
 
@@ -211,7 +211,7 @@ void NetworkMTDownloadRequest::startMTDownload()
         m_strError = QStringLiteral("MT download 服务器未返回Content-Length");
         qDebug() << "[QMultiThreadNetwork]" << m_strError;
         LOG_INFO(m_strError.toStdWString());
-        emit requestFinished(false, m_strError.toUtf8());
+        emit requestFinished(false, QByteArray(), m_strError);
         return;
     }
 
@@ -262,14 +262,14 @@ void NetworkMTDownloadRequest::startMTDownload()
                 abort();
                 m_strError = QStringLiteral("Subpart %1 startDownload() failed!").arg(i);
                 LOG_ERROR(m_strError.toStdWString());
-                emit requestFinished(false, m_strError.toUtf8());
+                emit requestFinished(false, QByteArray(), m_strError);
                 return;
             }
         }
     }
     else
     {
-        emit requestFinished(false, m_strError.toUtf8());
+        emit requestFinished(false, QByteArray(), m_strError);
     }
 }
 
@@ -300,7 +300,7 @@ void NetworkMTDownloadRequest::onSubPartFinished(int index, bool bSuccess, const
     //如果完成数等于文件段数，则说明文件下载成功；失败数大于0，说明下载失败
     if (m_nSuccess == m_nThreadCount || m_nFailed == 1)
     {
-        emit requestFinished((m_nFailed == 0), m_strError.toUtf8());
+        emit requestFinished((m_nFailed == 0), QByteArray(), m_strError);
         qDebug() << "[QMultiThreadNetwork] MT download finished. [result]" << (m_nFailed == 0);
     }
 }
@@ -381,7 +381,7 @@ void NetworkMTDownloadRequest::onFinished()
             m_strError = QStringLiteral("MT download get file size failed! http status code(%1)").arg(statusCode);
             qDebug() << "[QMultiThreadNetwork]" << m_strError;
             LOG_ERROR(m_strError.toStdWString());
-            emit requestFinished(false, m_strError.toUtf8());
+            emit requestFinished(false, QByteArray(), m_strError);
             return;
         }
     }

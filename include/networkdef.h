@@ -92,8 +92,10 @@ struct RequestTask
 
     // 请求是否成功
     bool bSuccess;
-    // 请求返回的内容/返回的错误信息等.
+    // 请求返回的内容
     QByteArray bytesContent;
+    // 返回的错误信息
+    QString strError;
 
     // 请求ID
     quint64 uiId;

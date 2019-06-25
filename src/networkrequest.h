@@ -31,7 +31,7 @@ public Q_SLOTS:
     virtual void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
 
 Q_SIGNALS:
-    void requestFinished(bool, const QByteArray&);
+    void requestFinished(bool bSuccess, const QByteArray& strContent, const QString& strError);
     void aboutToAbort();
 
 protected:

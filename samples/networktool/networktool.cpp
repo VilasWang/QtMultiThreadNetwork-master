@@ -874,7 +874,7 @@ void NetworkTool::onBatchRequest()
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
     bool bBatch = (request.uiBatchId > 0);
-    appendTaskFinishMsg(request.uiId, bBatch, request.bSuccess, request.url.url(), request.bytesContent);
+    appendTaskFinishMsg(request.uiId, bBatch, request.bSuccess, request.url.url(), request.bytesContent, request.strError);
 
     if (bBatch)
     {
@@ -1031,7 +1031,7 @@ void NetworkTool::appendStartBatchTasksMsg(quint64 uiBatchid, int nTotalSize)
     appendMsg(QTime::currentTime().toString() + str);
 }
 
-void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody)
+void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody, const QString& strError)
 {
     if (RequestTask::ALL_TASK == uiTaskid)
     {
@@ -1055,6 +1055,10 @@ void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSucc
     if (!strBody.isEmpty())
     {
         appendMsg(QString("[Body][id:%1]\n").arg(uiTaskid) + strBody, !isBatch);
+    }
+    if (!strError.isEmpty())
+    {
+        appendMsg(QString("[Error][id:%1]\n").arg(uiTaskid) + strError, !isBatch);
     }
 }
 
