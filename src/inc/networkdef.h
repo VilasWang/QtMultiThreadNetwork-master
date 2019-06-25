@@ -87,8 +87,10 @@ struct RequestTask
     QVariant varArg3;
 
     //////////////////////返回结果的字段/////////////////////////////////////////////
-    bool bFinished;	//正常结束
-    bool bCancel;	//玩家取消
+    // 正常结束
+    bool bFinished;
+    // 玩家取消
+    bool bCancel;
 
     // 请求是否成功
     bool bSuccess;
