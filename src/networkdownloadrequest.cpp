@@ -209,8 +209,8 @@ void NetworkDownloadRequest::onReadyRead()
             const QByteArray& bytesRev = m_pNetworkReply->readAll();
             if (!bytesRev.isEmpty() && -1 == m_pFile->write(bytesRev))
             {
-                qDebug() << "[QMultiThreadNetwork]" << m_pFile->errorString();
                 LOG_ERROR(m_pFile->errorString().toStdWString());
+                qDebug() << "[QMultiThreadNetwork]" << m_pFile->errorString();
             }
         }
     }
@@ -238,8 +238,8 @@ void NetworkDownloadRequest::onFinished()
                     m_redirectUrl = redirectUrl;
                     if (m_redirectUrl.isValid())
                     {
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
                         LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
+                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
 
                         m_pNetworkReply->deleteLater();
                         m_pNetworkReply = nullptr;
@@ -252,6 +252,7 @@ void NetworkDownloadRequest::onFinished()
         }
         else if ((statusCode >= 300 || statusCode < 200) && statusCode != 0)
         {
+            LOG_INFO("HttpStatusCode: " << statusCode);
             qDebug() << "[QMultiThreadNetwork] HttpStatusCode:" << statusCode;
         }
     }

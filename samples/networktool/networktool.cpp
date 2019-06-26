@@ -408,7 +408,7 @@ void NetworkTool::onAddBatchTasks()
 
 void NetworkTool::onAbortTask()
 {
-    qDebug() << __FUNCTION__;
+    //qDebug() << __FUNCTION__;
     uiMain.btn_abort->setEnabled(false);
 
     const QModelIndex& index = m_pListViewDoing->currentIndex();
@@ -802,6 +802,8 @@ void NetworkTool::onBatchRequest()
         Q_ASSERT(urlHost.isValid());
         req.url = urlHost;
         req.eType = RequestType(strlst[1].toInt());
+        req.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+        req.bTryAgainWhileFailed = true;
         switch (req.eType)
         {
         case eTypeDownload:
@@ -823,7 +825,6 @@ void NetworkTool::onBatchRequest()
             const QString& strDir = strSaveDir + url.toString();
             req.strReqArg = strDir;
             req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-            req.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
             req.bRemoveFileWhileExist = true;
         }
         case eTypeUpload:
@@ -918,12 +919,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
     }
 
-//#ifndef TEST_PERFORMANCE
+    //#ifndef TEST_PERFORMANCE
     if (m_pListViewDoing)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
-//#endif // !TEST_PERFORMANCE
+    //#endif // !TEST_PERFORMANCE
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
@@ -1270,8 +1271,8 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
                 }
             }
 
-            if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress 
-				&& (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload || stTask.eType == eTypeMTDownload))
+            if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress
+                && (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload || stTask.eType == eTypeMTDownload))
             {
                 int p = m_mapProgress.value(stTask.uiId);
                 painter->fillRect(rect.left() + 180, rect.top() + 1, 102, 12, QBrush("#191919"));

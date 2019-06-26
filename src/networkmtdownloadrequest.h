@@ -7,47 +7,7 @@
 #include "networkrequest.h"
 
 class QFile;
-//用于下载文件（或文件的一部分）
-class Downloader : public QObject
-{
-    Q_OBJECT
-
-public:
-    Downloader(int index, QObject *parent = 0);
-    ~Downloader();
-
-    bool startDownload(const QUrl &url,
-        const QString& strDstFile,
-        QNetworkAccessManager* pNetworkManager,
-        qint64 startPoint = 0,
-        qint64 endPoint = -1,
-        bool bShowProgress = false);
-
-    void abort();
-
-Q_SIGNALS:
-    void downloadFinished(int index, bool bSuccess, const QString& strErr);
-    void downloadProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
-
-    public Q_SLOTS:
-    void onFinished();
-    void onReadyRead();
-    void onError(QNetworkReply::NetworkError code);
-
-private:
-    QPointer<QNetworkAccessManager> m_pNetworkManager;
-    QNetworkReply *m_pNetworkReply;
-    QUrl m_url;
-    HANDLE m_hFile;
-    QString m_strDstFilePath;
-    bool m_bAbortManual;
-    QString m_strError;
-
-    const int m_nIndex;
-    qint64 m_nStartPoint;
-    qint64 m_nEndPoint;
-    bool m_bShowProgress;
-};
+class Downloader;
 
 //多线程下载请求(这里的线程是指下载的通道。一个文件被分成多个部分，由多个下载通道同时下载)
 class NetworkMTDownloadRequest : public NetworkRequest
@@ -99,6 +59,49 @@ private:
     QMap<int, ProgressData> m_mapBytes;
     qint64 m_bytesTotal;
     qint64 m_bytesReceived;
+};
+
+//用于下载文件（或文件的一部分）
+class Downloader : public QObject
+{
+    Q_OBJECT
+
+public:
+    Downloader(int index, QObject *parent = 0);
+    ~Downloader();
+
+    bool startDownload(const QUrl &url,
+        const QString& strDstFile,
+        QNetworkAccessManager* pNetworkManager,
+        qint64 startPoint = 0,
+        qint64 endPoint = -1,
+        bool bShowProgress = false);
+
+    void abort();
+
+Q_SIGNALS:
+    void downloadFinished(int index, bool bSuccess, const QString& strErr);
+    void downloadProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
+
+public Q_SLOTS:
+    void onFinished();
+    void onReadyRead();
+    void onError(QNetworkReply::NetworkError code);
+
+private:
+    QPointer<QNetworkAccessManager> m_pNetworkManager;
+    QNetworkReply *m_pNetworkReply;
+    QUrl m_url;
+    typedef void * HANDLE;
+    HANDLE m_hFile;
+    QString m_strDstFilePath;
+    bool m_bAbortManual;
+    QString m_strError;
+
+    const int m_nIndex;
+    qint64 m_nStartPoint;
+    qint64 m_nEndPoint;
+    bool m_bShowProgress;
 };
 
 #endif // NETWORKBIGFLEDOWNLOADREQUEST_H

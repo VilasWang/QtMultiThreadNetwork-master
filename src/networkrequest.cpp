@@ -49,19 +49,20 @@ void NetworkRequest::start()
 
 void NetworkRequest::onError(QNetworkReply::NetworkError code)
 {
-    LOG_FUN("");
     Q_UNUSED(code);
-    qDebug() << "[QMultiThreadNetwork] onError" << QString("Type[%1]").arg(m_request.eType) << m_pNetworkReply->errorString();
+    LOG_FUN("");
+
+    m_strError = m_pNetworkReply->errorString();
     LOG_ERROR("[url]" << m_request.url.toString().toStdWString()
         << "  [type]" << m_request.eType
-        << "  [error]" << m_pNetworkReply->errorString().toStdString());
-    m_strError = m_pNetworkReply->errorString();
+        << "  [error]" << m_strError.toStdString());
+    qDebug() << "[QMultiThreadNetwork] onError" << QString("Type[%1]").arg(m_request.eType) << m_strError;
 }
 
 void NetworkRequest::onAuthenticationRequired(QNetworkReply *r, QAuthenticator *a)
 {
-    LOG_FUN(__FUNCTION__ << r->readAll().toStdString());
     Q_UNUSED(a);
+    LOG_FUN(__FUNCTION__ << r->readAll().toStdString());
     qDebug() << __FUNCTION__ << r->readAll();
 }
 

@@ -1,6 +1,6 @@
 ﻿// dllmain.cpp : Defines the entry point for the DLL application.
-//#include "stdafx.h"
 
+#ifdef WIN32
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
@@ -20,7 +20,8 @@ extern void ModuleLogInit();
 @brief 模块日志扫尾
 */
 extern void ModuleLogFini();
-#endif
+#endif //LOG_USELOG4CPLUS
+
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
@@ -36,7 +37,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 #ifdef LOG_USELOG4CPLUS
         ///日志记录初始化
         ModuleLogInit();
-#endif
+#endif //LOG_USELOG4CPLUS
     }
     break;
     case DLL_THREAD_ATTACH:
@@ -52,7 +53,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 #ifdef LOG_USELOG4CPLUS
         ///日志记录扫尾
         ModuleLogFini();
-#endif
+#endif //LOG_USELOG4CPLUS
     }
     break;
     default:
@@ -103,5 +104,6 @@ void ModuleLogFini()
     LOG_CRIT("关闭日志模块");
     LOG_FINI();
 }
-#endif
+#endif //LOG_USELOG4CPLUS
 
+#endif //WIN32

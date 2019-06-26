@@ -1,4 +1,8 @@
 ﻿#include "networkmtdownloadrequest.h"
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#endif
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -113,6 +117,7 @@ bool NetworkMTDownloadRequest::createLocalFile()
     }
 
     m_strDstFilePath = strFilePath;
+#ifdef WIN32
     HANDLE hFile = CreateFileW(m_strDstFilePath.toStdWString().c_str(), GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS,
         FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -122,16 +127,24 @@ bool NetworkMTDownloadRequest::createLocalFile()
         li.QuadPart = m_nFileSize;
         if (!SetFilePointerEx(hFile, li, &li, FILE_BEGIN))
         {
-            qDebug() << "[QMultiThreadNetwork] SetFilePointerEx error:" << GetLastError();
+            LOG_ERROR("SetFilePointerEx error:" << GetLastError());
+            qCritical() << "[QMultiThreadNetwork] SetFilePointerEx error:" << GetLastError();
             return false;
         }
         CloseHandle(hFile);
     }
     else
     {
-        qDebug() << "[QMultiThreadNetwork] CreateFileW error:" << GetLastError();
+        LOG_ERROR("CreateFileW error:" << GetLastError());
+        qCritical() << "[QMultiThreadNetwork] CreateFileW error:" << GetLastError();
         return false;
     }
+#else
+    m_strError = QStringLiteral("Error: NetworkMTDownloadRequest only support platform of win32.");
+    qWarning() << m_strError;
+    LOG_INFO(m_strError.toStdWString());
+    return false;
+#endif
 
     return true;
 }
@@ -209,8 +222,9 @@ void NetworkMTDownloadRequest::startMTDownload()
     {
         m_nThreadCount = 1;
         m_strError = QStringLiteral("MT download 服务器未返回Content-Length");
-        qDebug() << "[QMultiThreadNetwork]" << m_strError;
         LOG_INFO(m_strError.toStdWString());
+        qDebug() << "[QMultiThreadNetwork]" << m_strError;
+
         emit requestFinished(false, QByteArray(), m_strError);
         return;
     }
@@ -301,6 +315,7 @@ void NetworkMTDownloadRequest::onSubPartFinished(int index, bool bSuccess, const
     if (m_nSuccess == m_nThreadCount || m_nFailed == 1)
     {
         emit requestFinished((m_nFailed == 0), QByteArray(), m_strError);
+        LOG_INFO("MT download finished. [result] " << (m_nFailed == 0));
         qDebug() << "[QMultiThreadNetwork] MT download finished. [result]" << (m_nFailed == 0);
     }
 }
@@ -367,20 +382,29 @@ void NetworkMTDownloadRequest::onFinished()
             if (!redirectionTarget.isNull())
             {
                 const QUrl& redirectUrl = m_url.resolved(redirectionTarget.toUrl());
-                qDebug() << "[QMultiThreadNetwork] url:" << m_url.toString() << "redirectUrl:" << redirectUrl.toString();
-                if (m_redirectUrl.isValid())
+                if (m_url != redirectUrl && m_redirectUrl != redirectUrl)
                 {
-                    m_pNetworkReply->deleteLater();
-                    m_pNetworkReply = nullptr;
-                    requestFileSize(redirectUrl);
+                    m_redirectUrl = redirectUrl;
+                    if (m_redirectUrl.isValid())
+                    {
+                        LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
+                        qDebug() << "[QMultiThreadNetwork] url:" << m_url.toString() << "redirectUrl:" << redirectUrl.toString();
+
+                        m_pNetworkReply->deleteLater();
+                        m_pNetworkReply = nullptr;
+
+                        requestFileSize(redirectUrl);
+                        return;
+                    }
                 }
             }
         }
         else if (statusCode != 200 && statusCode != 0)
         {
             m_strError = QStringLiteral("MT download get file size failed! http status code(%1)").arg(statusCode);
-            qDebug() << "[QMultiThreadNetwork]" << m_strError;
             LOG_ERROR(m_strError.toStdWString());
+            qDebug() << "[QMultiThreadNetwork]" << m_strError;
+
             emit requestFinished(false, QByteArray(), m_strError);
             return;
         }
@@ -394,12 +418,14 @@ void NetworkMTDownloadRequest::onFinished()
                 qDebug() << header << ":" << m_pNetworkReply->rawHeader(header);
             }
         }
+        clearProgress();
+
         QVariant var = m_pNetworkReply->header(QNetworkRequest::ContentLengthHeader);
         m_nFileSize = var.toLongLong();
-		clearProgress();
         m_bytesTotal = m_nFileSize;
-        qDebug() << "[QMultiThreadNetwork] MT File size:" << m_nFileSize;
         LOG_INFO("MT File size: " << m_nFileSize);
+        qDebug() << "[QMultiThreadNetwork] MT File size:" << m_nFileSize;
+
         m_pNetworkReply->deleteLater();
         m_pNetworkReply = nullptr;
 
@@ -497,6 +523,7 @@ bool Downloader::startDownload(const QUrl &url,
     m_bShowProgress = bShowProgress;
 
     m_strDstFilePath = strDstFile;
+#ifdef WIN32
     m_hFile = CreateFileW(strDstFile.toStdWString().c_str(), GENERIC_WRITE,
         FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (m_hFile != nullptr && m_hFile != INVALID_HANDLE_VALUE)
@@ -506,15 +533,20 @@ bool Downloader::startDownload(const QUrl &url,
         li.LowPart = (DWORD)startPoint;
         if (!SetFilePointerEx(m_hFile, li, nullptr, FILE_BEGIN))
         {
-            qDebug() << "[QMultiThreadNetwork] SetFilePointerEx error:" << GetLastError();
+            LOG_ERROR("SetFilePointerEx error:" << GetLastError());
+            qCritical() << "[QMultiThreadNetwork] SetFilePointerEx error:" << GetLastError();
             return false;
         }
     }
     else
     {
-        qDebug() << "[QMultiThreadNetwork] CreateFileW error:" << GetLastError();
+        LOG_ERROR("CreateFileW error:" << GetLastError());
+        qCritical() << "[QMultiThreadNetwork] CreateFileW error:" << GetLastError();
         return false;
     }
+#else
+    return false;
+#endif
 
     //根据HTTP协议，写入RANGE头部，说明请求文件的范围
     QNetworkRequest request;
@@ -536,8 +568,9 @@ bool Downloader::startDownload(const QUrl &url,
     }
 #endif
 
-    qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "start, Range:" << range;
     LOG_INFO("Part " << m_nIndex << " start, Range: " << range.toStdString());
+    qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "start, Range:" << range;
+
     m_pNetworkReply = m_pNetworkManager->get(request);
     if (m_pNetworkReply)
     {
@@ -553,15 +586,12 @@ bool Downloader::startDownload(const QUrl &url,
             });
         }
     }
-    else
-    {
-        qDebug() << "[QMultiThreadNetwork] Error NetworkReply object!";
-    }
     return true;
 }
 
 void Downloader::onReadyRead()
 {
+#ifdef WIN32
     if (m_pNetworkReply
         && m_pNetworkReply->error() == QNetworkReply::NoError
         && m_pNetworkReply->isOpen())
@@ -574,15 +604,18 @@ void Downloader::onReadyRead()
                 DWORD byteWritten = 0;
                 if (!WriteFile(m_hFile, bytesRev.data(), bytesRev.size(), &byteWritten, nullptr))
                 {
-                    qDebug() << "[QMultiThreadNetwork] WriteFile error:" << GetLastError();
+                    LOG_ERROR("WriteFile error:" << GetLastError());
+                    qCritical() << "[QMultiThreadNetwork] WriteFile error:" << GetLastError();
                 }
                 if (byteWritten != bytesRev.size())
                 {
-                    qCritical() << "[QMultiThreadNetwork] error write!" << byteWritten << bytesRev.size();
+                    LOG_ERROR("mismatched bytes! receive: " << bytesRev.size() << "; write: " << byteWritten);
+                    qCritical() << "[QMultiThreadNetwork] mismatched bytes! receive:" << bytesRev.size() << "write:" << byteWritten;
                 }
             }
         }
     }
+#endif
 }
 
 void Downloader::onFinished()
@@ -605,18 +638,19 @@ void Downloader::onFinished()
                     const QUrl& redirectUrl = m_url.resolved(redirectionTarget.toUrl());
                     if (redirectUrl.isValid() && redirectUrl != m_url)
                     {
-                        qDebug() << "[QMultiThreadNetwork] url:" << m_url.toString() << "redirectUrl:" << redirectUrl.toString();
                         LOG_INFO("url: " << m_url.toString().toStdWString() << "; redirectUrl:" << redirectUrl.toString().toStdWString());
+                        qDebug() << "[QMultiThreadNetwork] url:" << m_url.toString() << "redirectUrl:" << redirectUrl.toString();
 
                         m_pNetworkReply->abort();
                         m_pNetworkReply->deleteLater();
                         m_pNetworkReply = nullptr;
+#ifdef WIN32
                         if (m_hFile)
                         {
                             CloseHandle(m_hFile);
                             m_hFile = nullptr;
                         }
-
+#endif
                         startDownload(redirectUrl, m_strDstFilePath, m_pNetworkManager.data(),
                             m_nStartPoint, m_nEndPoint, m_bShowProgress);
                         return;
@@ -630,34 +664,38 @@ void Downloader::onFinished()
         }
         else
         {
+#ifdef WIN32
             if (m_hFile)
             {
                 FlushFileBuffers(m_hFile);
             }
+#endif
         }
 
-        qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "download" << bSuccess;
         LOG_INFO("Part " << m_nIndex << " download " << bSuccess);
+        qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "download" << bSuccess;
 
         m_pNetworkReply->deleteLater();
         m_pNetworkReply = nullptr;
+#ifdef WIN32
         if (m_hFile)
         {
             CloseHandle(m_hFile);
             m_hFile = nullptr;
         }
+#endif
 
         emit downloadFinished(m_nIndex, bSuccess, m_strError);
     }
     catch (std::exception* e)
     {
-        qCritical() << "Part" << m_nIndex << "Downloader::onFinished() exception:" << QString::fromUtf8(e->what());
         LOG_ERROR("Part" << m_nIndex << " Downloader::onFinished() exception: " << e->what());
+        qCritical() << "Part" << m_nIndex << "Downloader::onFinished() exception:" << QString::fromUtf8(e->what());
     }
     catch (...)
     {
-        qCritical() << "Part" << m_nIndex << "Downloader::onFinishede() exception:" << GetLastError();
         LOG_ERROR("Part" << m_nIndex << " Downloader::onFinished() exception: " << GetLastError());
+        qCritical() << "Part" << m_nIndex << "Downloader::onFinishede() exception:" << GetLastError();
     }
 }
 
@@ -665,7 +703,8 @@ void Downloader::onError(QNetworkReply::NetworkError code)
 {
     LOG_FUN("");
     Q_UNUSED(code);
-    qDebug() << "[QMultiThreadNetwork] Downloader::onError - Part" << m_nIndex << m_pNetworkReply->errorString();
-    LOG_ERROR("[Part " << m_nIndex << "]" << m_pNetworkReply->errorString().toStdString());
+
     m_strError = m_pNetworkReply->errorString();
+    LOG_ERROR("[Part " << m_nIndex << "]" << m_strError.toStdString());
+    qDebug() << "[QMultiThreadNetwork] Downloader::onError - Part" << m_nIndex << m_strError;
 }

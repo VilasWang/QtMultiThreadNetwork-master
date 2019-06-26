@@ -21,10 +21,9 @@ TRACE_CLASS_CHECK_LEAKS();
 */
 
 #pragma once
-#include <windows.h>
+#include <mutex>
 #include <string>
 #include <map>
-#include "lock.h"
 
 
 #ifndef TRACE_CLASS_CONSTRUCTOR
@@ -58,7 +57,7 @@ namespace VCUtil {
     private:
         typedef std::map<size_t, std::pair<std::string, int>> TClassRefCount;
         static TClassRefCount s_mapRefCount;
-        static CSLock m_lock;
+        static std::mutex m_lock;
 
     public:
         template <typename T>
@@ -67,7 +66,7 @@ namespace VCUtil {
             static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
-            Locker<CSLock> locker(m_lock);
+            std::lock_guard<std::mutex> locker(m_lock);
             auto iter = s_mapRefCount.find(hashcode);
             if (iter == s_mapRefCount.end())
             {
@@ -86,7 +85,7 @@ namespace VCUtil {
             static_assert(std::is_class<T>::value, "T must be class type.");
             const size_t hashcode = typeid(T).hash_code();
 
-            Locker<CSLock> locker(m_lock);
+            std::lock_guard<std::mutex> locker(m_lock);
             auto iter = s_mapRefCount.find(hashcode);
             if (iter != s_mapRefCount.end())
             {

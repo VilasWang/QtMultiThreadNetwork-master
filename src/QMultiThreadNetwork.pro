@@ -13,8 +13,7 @@ DEFINES += UNICODE QT_MTNETWORK_LIB
 staticlib: DEFINES += QT_MTNETWORK_STATIC
 
 # Input
-HEADERS += $$PWD/inc/lock.h \
-           $$PWD/inc/classmemorytracer.h \
+HEADERS += $$PWD/inc/classmemorytracer.h \
            $$PWD/inc/Log4cplusWrapper.h \
            $$PWD/inc/network_global.h \
            $$PWD/inc/networkdef.h \
@@ -28,7 +27,6 @@ HEADERS += $$PWD/inc/lock.h \
            networkrunnable.h
 
 SOURCES += dllmain.cpp \
-	   lock.cpp \
            classmemorytracer.cpp \
            networkrequest.cpp \
            networkcommonrequest.cpp \

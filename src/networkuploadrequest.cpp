@@ -34,8 +34,8 @@ bool NetworkUploadRequest::readLocalFile(const QString& strFilePath, QByteArray&
     {
         m_strError = QStringLiteral("Error: File is not exists(%1)").arg(strFilePath);
     }
-    qDebug() << "[QMultiThreadNetwork]" << m_strError;
     LOG_INFO(m_strError.toStdWString());
+    qDebug() << "[QMultiThreadNetwork]" << m_strError;
     return false;
 }
 
@@ -122,8 +122,8 @@ void NetworkUploadRequest::onFinished()
                     m_redirectUrl = redirectUrl;
                     if (m_redirectUrl.isValid())
                     {
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
                         LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
+                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
 
                         m_pNetworkReply->deleteLater();
                         m_pNetworkReply = nullptr;
@@ -136,6 +136,7 @@ void NetworkUploadRequest::onFinished()
         }
         else if (statusCode != 200 && statusCode != 0)
         {
+            LOG_INFO("HttpStatusCode: " << statusCode);
             qDebug() << "[QMultiThreadNetwork] HttpStatusCode: " << statusCode;
         }
     }

@@ -1,6 +1,5 @@
-﻿
-#include "tableview.h"
-#include <qDebug>
+﻿#include "tableview.h"
+#include <QDebug>
 #include <QScrollBar>
 
 TableView::TableView(QWidget* parent/* = NULL*/)
@@ -236,7 +235,7 @@ TableItemDelegate::~TableItemDelegate()
 
 QSize TableItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-    return __super::sizeHint( option, index);
+    return __super::sizeHint(option, index);
 }
 
 void TableItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const

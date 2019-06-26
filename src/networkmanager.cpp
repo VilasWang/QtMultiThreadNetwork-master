@@ -70,17 +70,21 @@ private:
 #else
     static quint64 ms_uiRequestId;
     static quint64 ms_uiBatchId;
-    bool m_bStopAllFlag;	// 停止所有请求标记
+    // 停止所有请求标记
+    bool m_bStopAllFlag;
 #endif
 
     mutable QMutex m_mutex;
     QThreadPool *m_pThreadPool;
 
     QMap<quint64, std::shared_ptr<NetworkRunnable>> m_mapRunnable;
-    QMap<quint64, std::shared_ptr<NetworkReply>> m_mapReply;			// (requestId <---> NetworkReply *)
-    QMap<quint64, std::shared_ptr<NetworkReply>> m_mapBatchReply;		// (batchId <---> NetworkReply *)
+    // 一对一. requestId <---> NetworkReply *
+    QMap<quint64, std::shared_ptr<NetworkReply>> m_mapReply;
+    // 一对多. batchId <---> NetworkReply *
+    QMap<quint64, std::shared_ptr<NetworkReply>> m_mapBatchReply;
 
-    QMap<quint64, RequestTask> m_queFailed;	// 请求失败队列
+    // 请求失败队列
+    QMap<quint64, RequestTask> m_queFailed;
 
     // (batchId <---> 任务总数)
     QMap<quint64, int> m_mapBatchTotalSize;
@@ -291,13 +295,13 @@ void NetworkManagerPrivate::stopBatchRequests(quint64 uiBatchId)
         }
         catch (std::exception* e)
         {
-            qCritical() << "erase batch runnable exception:" << QString::fromUtf8(e->what());
             LOG_ERROR("erase batch runnable exception: " << e->what());
+            qCritical() << "erase batch runnable exception:" << QString::fromUtf8(e->what());
         }
         catch (...)
         {
-            qCritical() << "erase batch runnable exception:" << GetLastError();
-            LOG_ERROR("erase batch runnable exception: " << GetLastError());
+            LOG_ERROR("erase batch runnable unknown exception");
+            qCritical() << "erase batch runnable unknown exception";
         }
         //qDebug() << "Runnable[After]: " << m_mapRunnable.size();
 
@@ -457,13 +461,13 @@ bool NetworkManagerPrivate::startRunnable(std::shared_ptr<NetworkRunnable> r)
         }
         catch (std::exception* e)
         {
-            qDebug() << "[QMultiThreadNetwork] startRunnable() exception:" << QString::fromUtf8(e->what());
             LOG_ERROR("startRunnable() exception: " << e->what());
+            qDebug() << "[QMultiThreadNetwork] startRunnable() exception:" << QString::fromUtf8(e->what());
         }
         catch (...)
         {
-            qDebug() << "[QMultiThreadNetwork] startRunnable() exception:" << GetLastError();
-            LOG_ERROR("startRunnable() exception: " << GetLastError());
+            LOG_ERROR("startRunnable() unknown exception");
+            qDebug() << "[QMultiThreadNetwork] startRunnable() unknown exception";
         }
     }
 
@@ -520,8 +524,8 @@ std::shared_ptr<NetworkReply> NetworkManagerPrivate::getReply(quint64 uiRequestI
             return m_mapReply.value(uiRequestId);
         }
     }
-    qDebug() << QString("%1 failed! Id: ").arg(__FUNCTION__) << uiRequestId;
     LOG_ERROR(__FUNCTION__ << " failed! Id: " << uiRequestId);
+    qDebug() << QString("%1 failed! Id: ").arg(__FUNCTION__) << uiRequestId;
     return nullptr;
 }
 
@@ -633,11 +637,6 @@ bool NetworkManagerPrivate::releaseRequestThread(quint64 uiRequestId)
         }
         return true;
     }
-    else
-    {
-        LOG_ERROR("releaseRequestThread - request not exist, id:" << uiRequestId);
-        qWarning() << "releaseRequestThread - request not exist, id:" << uiRequestId;
-    }
     return false;
 }
 
@@ -653,7 +652,7 @@ NetworkManager::NetworkManager(QObject *parent)
     LOG_FUN("");
     Q_D(NetworkManager);
     d->q_ptr = this;
-    qDebug() << "[QMultiThreadNetwork] Thread : " << QThread::currentThreadId();
+    //qDebug() << "[QMultiThreadNetwork] Thread : " << QThread::currentThreadId();
 }
 
 NetworkManager::~NetworkManager()
@@ -786,8 +785,8 @@ bool NetworkManager::startAsRunnable(const RequestTask &request)
     Q_D(NetworkManager);
     if (!d->startRunnable(r))
     {
-        qDebug() << "[QMultiThreadNetwork] ThreadPool->start() failed!";
         LOG_ERROR("ThreadPool->start() failed!");
+        qDebug() << "[QMultiThreadNetwork] ThreadPool->start() failed!";
 
         d->addToFailedQueue(request);
         r.reset();
@@ -939,7 +938,8 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
                 pReply->replyResult(task, bDestroyed);
                 if (task.uiBatchId > 0 && bDestroyed)
                 {
-                    qDebug() << QStringLiteral("[QMultiThreadNetwork] Batch finished! Id：%1").arg(task.uiBatchId);
+                    LOG_INFO("[Batch request finished! Id：" << task.uiBatchId);
+                    qDebug() << QStringLiteral("[QMultiThreadNetwork] Batch request finished! Id：%1").arg(task.uiBatchId);
                     emit batchRequestFinished(task.uiBatchId, task.bSuccess);
                 }
             }
@@ -961,12 +961,12 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
     }
     catch (std::exception* e)
     {
-        qCritical() << "NetworkManager::onRequestFinished() exception:" << QString::fromUtf8(e->what());
         LOG_ERROR("NetworkManager::onRequestFinished() exception: " << e->what());
+        qCritical() << "NetworkManager::onRequestFinished() exception:" << QString::fromUtf8(e->what());
     }
     catch (...)
     {
-        qCritical() << "NetworkManager::onRequestFinished() exception:" << GetLastError();
-        LOG_ERROR("NetworkManager::onRequestFinished() exception: " << GetLastError());
+        LOG_ERROR("NetworkManager::onRequestFinished() unknown exception");
+        qCritical() << "NetworkManager::onRequestFinished() unknown exception";
     }
 }

@@ -35,8 +35,9 @@ void NetworkCommonRequest::start()
         {
             const QString& strType = getTypeString(m_request.eType);
             m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(m_request.url.url());
-            qDebug() << "[QMultiThreadNetwork]" << m_strError;
             LOG_ERROR(m_strError.toStdWString());
+            qDebug() << "[QMultiThreadNetwork]" << m_strError;
+
             emit requestFinished(false, QByteArray(), m_strError);
             return;
         }
@@ -124,8 +125,8 @@ void NetworkCommonRequest::onFinished()
                     m_redirectUrl = redirectUrl;
                     if (m_redirectUrl.isValid())
                     {
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
                         LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
+                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
 
                         m_pNetworkReply->deleteLater();
                         m_pNetworkReply = nullptr;

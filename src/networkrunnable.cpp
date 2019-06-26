@@ -58,8 +58,8 @@ void NetworkRunnable::run()
             }
             else
             {
-                qWarning() << QString("Unsupported type(%1) ----").arg(task.eType) << task.url.url();
                 LOG_ERROR("Unsupported type(" << task.eType << ")  ---- " << task.url.url().toStdWString());
+                qWarning() << QString("Unsupported type(%1) ----").arg(task.eType) << task.url.url();
 
                 task.bSuccess = false;
                 task.strError = QString("Unsupported type(%1)").arg(task.eType);
@@ -70,13 +70,13 @@ void NetworkRunnable::run()
     }
     catch (std::exception* e)
     {
-        qCritical() << "NetworkRunnable::run() exception:" << QString::fromUtf8(e->what());
         LOG_ERROR("NetworkRunnable::run() exception: " << e->what());
+        qCritical() << "NetworkRunnable::run() exception:" << QString::fromUtf8(e->what());
     }
     catch (...)
     {
-        qCritical() << "NetworkRunnable::run() exception:" << GetLastError();
-        LOG_ERROR("NetworkRunnable::run() exception: " << GetLastError());
+        LOG_ERROR("NetworkRunnable::run() unknown exception");
+        qCritical() << "NetworkRunnable::run() unknown exception";
     }
 
     if (pRequest.get())

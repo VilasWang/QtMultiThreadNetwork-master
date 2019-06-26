@@ -113,9 +113,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_networkreply.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="lock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="classmemorytracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -128,9 +125,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\networkdef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\classmemorytracer.h">

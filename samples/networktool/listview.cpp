@@ -1,6 +1,5 @@
-﻿
-#include "listview.h"
-#include <qDebug>
+﻿#include "listview.h"
+#include <QDebug>
 #include <QScrollBar>
 
 ListView::ListView(QWidget* parent/* = NULL*/)

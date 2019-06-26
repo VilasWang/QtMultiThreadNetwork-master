@@ -1,19 +1,22 @@
 ﻿#include "classmemorytracer.h"
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#endif
 #include <sstream>
 #include <vector>
 #include <algorithm>
 
 namespace VCUtil
 {
-    CSLock ClassMemoryTracer::m_lock;
+    std::mutex ClassMemoryTracer::m_lock;
     ClassMemoryTracer::TClassRefCount ClassMemoryTracer::s_mapRefCount;
 
     void LogDebug(const std::string& str)
     {
-        if (!str.empty())
-        {
-            OutputDebugStringA(str.c_str());
-        }
+#ifdef WIN32
+        OutputDebugStringA(str.c_str());
+#endif
     }
 
     std::string intToString(const int n)
@@ -25,7 +28,7 @@ namespace VCUtil
 
     void ClassMemoryTracer::checkMemoryLeaks()
     {
-        Locker<CSLock> locker(m_lock);
+        std::lock_guard<std::mutex> locker(m_lock);
         std::ostringstream oss;
         try
         {
@@ -66,8 +69,7 @@ namespace VCUtil
         catch (...)
         {
             oss.str("");
-            oss << "ClassMemoryTracer::checkMemoryLeaks() exception: "
-                << intToString(GetLastError())
+            oss << "ClassMemoryTracer::checkMemoryLeaks() unknown exception"
                 << "\n";
             LogDebug(oss.str());
         }
