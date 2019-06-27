@@ -39,7 +39,7 @@ struct RequestTask
 {
     enum
     {
-        ALL_TASK = 0xFFFFFFFF
+        ALL_TASK = (unsigned long)0xffffffff,
     };
 
     // 请求的类型：上传/下载/其他请求

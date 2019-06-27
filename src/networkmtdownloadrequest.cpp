@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFile>
 #include <QTimer>
+#include <QUrlQuery>
 #include <QNetworkAccessManager>
 #include <QCoreApplication>
 #include "Log4cplusWrapper.h"
@@ -74,13 +75,39 @@ bool NetworkMTDownloadRequest::createLocalFile()
     }
     else
     {
+        QUrl url;
         if (redirected())
         {
-            strFileName = m_redirectUrl.fileName();
+            url = m_redirectUrl;
         }
         else
         {
-            strFileName = m_request.url.fileName();
+            url = m_request.url;
+        }
+        // url中提取文件名，格式如：response-content-disposition=attachment; filename=test.exe
+        QUrlQuery query(url.query(QUrl::FullyDecoded));
+        const QList<QPair<QString, QString>>& querys = query.queryItems();
+        foreach(auto pair, querys)
+        {
+            if (pair.first.compare("response-content-disposition", Qt::CaseInsensitive) == 0
+                || pair.first.compare("content-disposition", Qt::CaseInsensitive) == 0)
+            {
+                const QStringList& listString = pair.second.split(";", QString::SkipEmptyParts);
+                foreach(QString str, listString)
+                {
+                    str = str.trimmed();
+                    if (str.startsWith(QString("filename="), Qt::CaseInsensitive))
+                    {
+                        strFileName = str.right(str.size() - QString("filename=").size());
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if (strFileName.isEmpty())
+        {
+            strFileName = url.fileName();
         }
     }
 
@@ -399,7 +426,7 @@ void NetworkMTDownloadRequest::onFinished()
                 }
             }
         }
-        else if (statusCode != 200 && statusCode != 0)
+        else
         {
             m_strError = QStringLiteral("MT download get file size failed! http status code(%1)").arg(statusCode);
             LOG_ERROR(m_strError.toStdWString());
