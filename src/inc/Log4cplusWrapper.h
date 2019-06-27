@@ -198,7 +198,6 @@ using namespace log4cplus::helpers;
 * 下面两个目录各有本文件的一个拷贝,两个文件是一样的
 *		apache-log4cplus-0.10.0\apache-log4cplus-0.10.0\src\main\include\
 *		apache-log4cplus-0.10.0\apache-log4cplus-0.10.0\src\main\Log4cxxWrapper\
-* added by 温辉敏 in 2008-06-16
 * 日志配置头文件
 * 通过预编译头文件LOG4CPLUS_ENABLE来控制是否使用log4cplus日志记录系统,
 * 若没有定义LOG4CPLUS_ENABLE预编译开关的话则不适用log4cplus的日志记录系统
@@ -333,7 +332,6 @@ do \
 while(0);
 
 /**将内存中数据以十六进制方式打印出来的一个宏定义
-作者:温辉敏 日期:2008-03-20
 */
 #define LOG_HEX_DUMP(level, ptrBuffer, lBufferLen)	\
 do \
@@ -1544,7 +1542,6 @@ LOG结束清理函数
 注意事项: 必须初始化日志模块后才能正确记录日志
 本初始化不要求应用程序所在目录有日志配置文件log4crc，会自动生成一个缺省的log4crc文件
 使用例子: LOG4C_INIT_DEFAULT();
-作者:温辉敏  日期:2009-7-17
 */
 #define LOG4C_INIT_DEFAULT() \
 	log_init_with_string("", "")
@@ -3234,7 +3231,6 @@ of compatibility with documentation systems.
 /** 日志记录
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 LOGWRAPPER_API void log_msg_cpp(
     const char *strFile,				///文件名
@@ -3248,7 +3244,6 @@ LOGWRAPPER_API void log_msg_cpp(
 /** 日志记录,不记录文件名和行号
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 LOGWRAPPER_API void log_msg_no_file_num_cpp(
     const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -3261,7 +3256,6 @@ LOGWRAPPER_API void log_msg_no_file_num_cpp(
 此条记录没有行号，也没有线程号，也没有回车等
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-9-14
 */
 LOGWRAPPER_API void log_msg_no_file_num_no_layout_cpp(
     const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -3281,7 +3275,6 @@ LOGWRAPPER_API void log_msg_no_file_num_no_layout_cpp(
 /*
 * logWrapper.h
 *
-* added by 温辉敏 in 2012-4-28
 * 日志相关代码的头文件,CLogWrapper类的声明头文件
 */
 #if !defined(AFX_LOGWRAPPER_H__4735DC75_04BF_445A_9FB0_4146D6333F85__INCLUDED_)
@@ -3582,7 +3575,6 @@ public:
     /** 日志记录
     日志记录为一个字符串指针指向的内容
     @return void
-    作者:温辉敏  日期:2008-7-20
     */
     void LogMsg(
         const char *strFile,
@@ -3595,7 +3587,6 @@ public:
     /** 日志记录,不带文件名和行号的
     日志记录为一个字符串指针指向的内容
     @return void
-    作者:温辉敏  日期:2008-7-20
     */
     void LogMsg(
         const int &iLogLevel,
@@ -3606,7 +3597,6 @@ public:
     /** 日志记录,不带文件名和行号的同时不附加回车换行，字符串原样输出到日志中去
     日志记录为一个字符串指针指向的内容
     @return void
-    作者:温辉敏  日期:2008-7-20
     */
     void LogMsgNoFileNumAndNoLayout(
         const int &iLogLevel,
@@ -3615,7 +3605,6 @@ public:
     );
 
     /**获取宏定义中传入的参数形如(int , const char *, ...)的第一个iPriority的参数
-    作者:温辉敏  日期:2009-4-20
     */
     const int GetPriorityWrapper(
         const int iLogLevel,		///日志记录级别
@@ -3627,7 +3616,6 @@ public:
     本函数只使用第二个及以后的参数,使用vsnprintf函数将strFormat和后面的不定参数va_list va;以
     vsnprintf(strMsg, sizeof(strMsg), strFormat, va);
     形式格式化输出到一缓冲区中并以字符串的形式返回
-    作者:温辉敏  日期:2009-4-20
     */
     const char *LogVsnprintfWrapper(
         const int iLogLevel,	///日志记录级别
@@ -3891,8 +3879,6 @@ namespace NSLog
 
 /************** Begin of voscfg.h *******************************************/
 /**********************************************************
-* 版权所有 (C)2002, 深圳市中兴通讯股份有限公司。
-*
 * 文件名称： voscfg.h
 * 文件标识：
 * 内容摘要： VOS的系统配置文件
@@ -4118,15 +4104,11 @@ extern "C" {
 
 /************** Begin of vos.h *******************************************/
 /**********************************************************
-* 版权所有 (C)2002, 深圳市中兴通讯股份有限公司。
-*
 * 文件名称： vos.h
 * 文件标识：
 * 内容摘要： 操作系统封装层头文件（主要是所包含头文件、数据结构、接口等）
 * 其它说明： 无
 * 当前版本： V1.0
-* 作    者： 王泽民
-* 完成日期： 2003/08/10
 *
 * 修改记录1：
 *    修改日期：
@@ -4528,7 +4510,7 @@ extern "C" {
     }T_FileStat;
 
 
-    /* added by 温辉敏,文件的访问属性*/
+    /*文件的访问属性*/
     enum Permissions {
         /// File has world execute permission
         WorldExecute = 1,
@@ -4868,8 +4850,6 @@ extern "C" {
 
 /************** Begin of vosnt.c *******************************************/
 /**********************************************************
-* 版权所有 (C)2001, 深圳市中兴通讯股份有限公司
-*
 * 文件名称： vosnt.c
 * 文件标识：
 * 内容摘要： VOS在WINNT下的实现，包括调度模块、通信模块、
@@ -4877,24 +4857,6 @@ extern "C" {
 数的封装
 * 其它说明： 无
 * 当前版本： V 0.1
-* 作    者： 杨新
-* 完成日期： 2002年6月1日
-*
-* 修改记录1：
-*    修改日期：2003年8月20日
-*    版 本 号：V 1.0
-*    修 改 人：王泽民
-*    修改内容：VOS在NT下的适配版本整理,补充一些接口；
-* 修改记录2：…
-*    修改日期：2004年1月2日
-*    版 本 号：V 1.0
-*    修 改 人：谢鑫
-*    修改内容：VOS在NT下的消息队列适配的修改；
-* 修改记录3：…
-*    修改日期：2007年1月20日
-*    版 本 号：V 1.0
-*    修 改 人：温辉敏
-*    修改内容：增加新的VOS接口；
 **********************************************************/
 /**********************************************************
 * 函数名称： VOS_DeleteSem
@@ -5200,9 +5162,6 @@ VOS_STATUS VOS_DeleteThreadMutex(SEM_ID semId)
 * 输出参数： 无
 * 返 回 值： TASK_ID － 任务号
 * 其它说明： 无
-* 修改日期    版本号     修改人      修改内容
-* -----------------------------------------------
-* 03/08/20     V1.0       王泽民      XXXX
 **********************************************************/
 TASK_ID      VOS_GetSelfTaskID(VOID)
 {
@@ -5218,10 +5177,6 @@ TASK_ID      VOS_GetSelfTaskID(VOID)
 * 返 回 值： VOS_OK       成功
 VOS_ERROR    失败
 * 其它说明： 无
-* 修改日期    版本号     修改人      修改内容
-* -----------------------------------------------
-* 02/08/01     V0.1       杨新        XXXX
-* 03/08/20     V1.0       王泽民      版本整合
 **********************************************************/
 VOS_STATUS VOS_DeleteSem(SEM_ID semId)
 {
@@ -5245,10 +5200,6 @@ VOS_STATUS VOS_DeleteSem(SEM_ID semId)
 * 返 回 值： VOS_OK       成功
 VOS_ERROR    失败
 * 其它说明： 无
-* 修改日期    版本号     修改人      修改内容
-* -----------------------------------------------
-* 02/08/01     V0.1       杨新        XXXX
-* 03/08/20     V1.0       王泽民      版本整合
 **********************************************************/
 VOS_STATUS VOS_GiveSem(SEM_ID semId)
 {
@@ -5275,10 +5226,6 @@ timeout  : 超时毫秒数
 * 返 回 值： VOS_OK       成功
 VOS_ERROR    失败
 * 其它说明： 无
-* 修改日期    版本号     修改人      修改内容
-* -----------------------------------------------
-* 02/08/01     V0.1       杨新        XXXX
-* 03/08/20     V1.0       王泽民      版本整合
 **********************************************************/
 VOS_STATUS VOS_TakeSem(SEM_ID semId, SWORD32 timeout)
 {
@@ -5345,9 +5292,6 @@ VOS_SEM_INVERSION_SAFE
 * 返 回 值： MSEM_ID 	成功，返回互斥信号量标识符
 NULL       失败，返回NULL
 * 其它说明： 无
-* 修改日期    版本号     修改人	     修改内容
-* -----------------------------------------------
-* 02/08/01	   V1.0	      杨新	       XXXX
 **********************************************************/
 SEM_ID VOS_CreateMSem(SWORD32 options)
 {
@@ -5379,9 +5323,6 @@ VOS_SEM_EMPTY
 VOS_ERROR    失败，返回NULL
 * 其它说明： 无
 * 修改日期    版本号     修改人      修改内容
-* -----------------------------------------------
-* 02/08/01     V0.1       杨新        XXXX
-* 03/08/20     V1.0       王泽民      版本整合
 **********************************************************/
 SEM_ID VOS_CreateBSem(SWORD32 options, VOS_SEM_STATE initialState)
 {
@@ -5408,9 +5349,6 @@ SEM_ID VOS_CreateBSem(SWORD32 options, VOS_SEM_STATE initialState)
 * 返 回 值： SEM_ID	         成功，返回信号量标识符
              VOS_ERROR	     失败，返回NULL
 * 其它说明： 无
-* 修改日期    版本号     修改人	     修改内容
-* -----------------------------------------------
-* 02/08/01	   V1.0	      杨新	       XXXX
 **********************************************************/
 SEM_ID VOS_CreateCSem(SWORD32 options, SWORD32 initialState)
 {
@@ -5428,9 +5366,6 @@ SEM_ID VOS_CreateCSem(SWORD32 options, SWORD32 initialState)
 * 输出参数： 无
 * 返 回 值： TASK_ID － 任务号
 * 其它说明： 无
-* 修改日期    版本号     修改人	     修改内容
-* -----------------------------------------------
-* 02/11/21	   V1.0	      谢鑫	       XXXX
 **********************************************************/
 TASK_ID    VOS_GetSelfTaskID(VOID)
 {
@@ -5447,11 +5382,6 @@ TASK_ID    VOS_GetSelfTaskID(VOID)
 #if defined(linux)  && defined(HAVE_SHM)
 /***************************************************************************
 |sharedmemory.h|  -  sharedmemory类的头文件-声明sharedmemory类
--------------------
-begin                : |03-6-20|
-modify               : |03-6-20|
-copyright            : (C) |YEAR| by |wenhm(温辉敏)|
-email                : |EMAIL|
 ***************************************************************************/
 
 #ifndef SHAREDMEMORY_H
@@ -5488,11 +5418,6 @@ extern int del_sharedmemory(int shmid);
 #if defined(linux)  && defined(HAVE_SHM)
 /***************************************************************************
 |saharedmemory.c|  -  saharedmemory共享内存对象 自己定义的一些操作函数的实现文件
--------------------
-begin                : |03-6-20|
-modify               : |03-6-20|
-copyright            : (C) |YEAR| by |wenhm(温辉敏)|
-email                : |EMAIL|
 ***************************************************************************/
 #include <stdio.h>
 #include <ctype.h>
@@ -6282,7 +6207,6 @@ LOGWRAPPER_API int log4c_init(void);
 * 带有配置文件名的初始化函数
 * 完成功能和log4c_init完全一致，只是这里的配置文件名以参数形式传入的
 * @returns 0 for success .
-* 作者:温辉敏 日期:2008-9-6
 */
 LOGWRAPPER_API int log4c_init_with_cfg_file(const char *strCfgFileName);
 
@@ -6456,7 +6380,6 @@ extern BOOL is_log4c_init()
 /** 带有配置文件名的初始化函数
 完成功能和log4c_init完全一致，只是这里的配置文件名以参数形式传入的
 @returns 0 for success .
-作者:温辉敏 日期:2008-9-6
 */
 static ConfigureAndWatchThread *gs_ptrConfigureAndWatchThread = NULL;
 extern int log4c_init_with_cfg_file(const char *strCfgFileName)
@@ -6625,7 +6548,6 @@ extern void __attribute__((destructor)) __log4c_fini(void)
 /*
 * CommonUtils.c
 *
-* added by 温辉敏 in 2011-5-24
 * 通用Utiltity帮助代码的定义文件
 */
 #include <ShlObj.h>
@@ -7759,7 +7681,6 @@ const log4cplus::tstring ToLog4cplus_TString(const char * str)
 /*
 * log.cpp
 *
-* added by 温辉敏 in 2008-2-3
 * 日志相关代码的定义文件
 */
 
@@ -7819,7 +7740,6 @@ static int gs_iModuleUsage_shmid = 0;
 
 /** 日志模块初始化
 @return int:return 0 for success
-作者:温辉敏  日期:2008-2-3
 */
 int log_init()
 {
@@ -7832,7 +7752,6 @@ int log_init()
 
 /** 日志模块初始化,指定配置文件名称
 @return int:return 0 for success
-作者:温辉敏  日期:2008-9-5
 */
 int log_init_with_cfg_file(const char *strCfgFileName)
 {
@@ -7845,13 +7764,12 @@ extern void ReleaseModuleUsage();
 
 /** 日志模块清理
 @return int:return 0 for success
-作者:温辉敏  日期:2008-2-3
 */
 int log_fini()
 {
     int iResult = log4c_fini();
 
-    // 解决资源泄漏 [4/18/2009 温辉敏]
+    // 解决资源泄漏
     ///VOS_DELETE_SEM(gs_semphore);
     ReleaseModuleUsage();
 
@@ -7860,7 +7778,6 @@ int log_fini()
 
 /**检测配置文件是否存在
 @return const int : iLogLevel.
-作者:温辉敏  日期:2008-2-18
 */
 const int log_check(void)
 {
@@ -7924,7 +7841,6 @@ const int log_check(void)
 
 /**检测配置文件是否存在,只检测传入的配置文件名
 @return const int : iLogLevel.
-作者:温辉敏  日期:2008-9-4
 */
 const int log_check_with_cfg_file(const char *strCfgFileName)
 {
@@ -7992,7 +7908,6 @@ const int log_check_with_cfg_file(const char *strCfgFileName)
 /** 日志记录
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_msg(
     const char *strFile,				///文件名
@@ -8028,7 +7943,6 @@ void log_msg(
 /** 日志记录,不记录文件名和行号
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_msg_no_file_num(
     ///const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -8062,7 +7976,6 @@ void log_msg_no_file_num(
 此条记录没有行号，也没有线程号，也没有回车等
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-9-14
 */
 void log_msg_no_file_num_no_layout(
     ///const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -8095,7 +8008,6 @@ void log_msg_no_file_num_no_layout(
 /** 日志记录
 支持类似printf函数的带格式输出
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_log(
     ///const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -8254,7 +8166,6 @@ void log_msg_wrapper(
 /**宏参数抽取format函数
 本函数接受LOG_DEBUG(X)的参数，并从该宏定义的参数中返回format的值
 @return const char* : strFormat
-作者:温辉敏  日期:2008-2-4
 */
 const char* log_get_format_wrapper(
     const int iLogLevel,	///日志记录级别
@@ -8272,7 +8183,6 @@ const char* log_get_format_wrapper(
 /**宏参数抽取priority函数
 本函数接受LOG_DEBUG(X)的参数，并从该宏定义的参数中返回priority的值
 @return const int : iLogLevel.
-作者:温辉敏  日期:2008-2-4
 */
 const int log_get_priority_wrapper(
     const int iLogLevel,	///日志记录级别
@@ -9678,7 +9588,6 @@ extern char* sd_vsprintf(const char* a_fmt, va_list a_args)
 /*
 * logWrapper.cpp
 *
-* added by 温辉敏 in 2008-07-20
 * 日志相关代码的定义文件,CLog类的实现文件
 */
 ///#include "config_log.h"
@@ -9712,14 +9621,14 @@ CLogWrapper* CLogWrapper::Instance()
     {
         ///static SEM_ID semphore = NULL;
 
-        ///为线程安全这里加锁，[2/15/2008 温辉敏]
+        ///为线程安全这里加锁
         ///VOS_TakeSem(g_semphore, VOS_WAIT_FOREVER);
         VOS_TakeThreadMutex(g_semphore, VOS_WAIT_FOREVER);
 
         ///CLockMgr<CCSWrapper> guard(m_lock, FALSE);
         if (NULL != m_ptrInstance)
         {
-            // 解锁 [2/15/2008 温辉敏]
+            // 解锁
             ///VOS_GiveSem(g_semphore);
             VOS_GiveThreadMutex(g_semphore);
             return m_ptrInstance;
@@ -9728,7 +9637,7 @@ CLogWrapper* CLogWrapper::Instance()
         {
             m_ptrInstance = new CLogWrapper();
             // m_ptrInstance->Init("");
-            // 解锁 [2/15/2008 温辉敏]
+            // 解锁
             ///VOS_GiveSem(g_semphore);
             VOS_GiveThreadMutex(g_semphore);
             return m_ptrInstance;
@@ -9741,17 +9650,17 @@ void CLogWrapper::DestroyInstance()
     PAssert_Return(NULL != m_ptrInstance && NULL != g_semphore);
 
     ///CLockMgr<CCSWrapper> guard(m_lock, TRUE);
-    ///为线程安全这里加锁，[2/15/2008 温辉敏]
+    ///为线程安全这里加锁
     ///VOS_TakeSem(g_semphore, VOS_WAIT_FOREVER);
     VOS_TakeThreadMutex(g_semphore, VOS_WAIT_FOREVER);
 
     DELETEP(m_ptrInstance);
 
-    // 解锁 [2/15/2008 温辉敏]
+    // 解锁
     ///VOS_GiveSem(g_semphore);
     VOS_GiveThreadMutex(g_semphore);
 
-    // 删除资源 [4/18/2009 温辉敏]
+    // 删除资源
     ///VOS_DELETE_SEM(g_semphore)
     VOS_DELETE_THREAD_MUTEX(g_semphore);
     ///VOS_DeleteSem(g_semphore);
@@ -10127,7 +10036,7 @@ void CBlockBase::Lock()
     if (true == m_bMultiThreadEnabled)
     {
         ///CWaitAndSignal sync(m_sync);
-        ///为线程安全这里加锁，[9/15/2008 温辉敏]
+        ///为线程安全这里加锁
         ///VOS_TakeSem(g_semphore, VOS_WAIT_FOREVER);
         VOS_TakeThreadMutex(g_semphore, VOS_WAIT_FOREVER);
     }
@@ -10301,7 +10210,6 @@ CLogWrapper::CLightBlock::~CLightBlock()
 /** 日志记录
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_msg_cpp(
     const char *strFile,				///文件名
@@ -10335,7 +10243,6 @@ void log_msg_cpp(
 /** 日志记录,不记录文件名和行号
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_msg_no_file_num_cpp(
     const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -10367,7 +10274,6 @@ void log_msg_no_file_num_cpp(
 此条记录没有行号，也没有线程号，也没有回车等
 日志记录为一个字符串指针指向的内容
 @return void
-作者:温辉敏  日期:2008-9-14
 */
 void log_msg_no_file_num_no_layout_cpp(
     const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -10398,7 +10304,6 @@ void log_msg_no_file_num_no_layout_cpp(
 /** 日志记录
 支持类似printf函数的带格式输出
 @return void
-作者:温辉敏  日期:2008-2-3
 */
 void log_log_cpp(
     const log4cplus::Logger &loggerObj,	///Logger对象引用
@@ -10427,7 +10332,6 @@ void log_log_cpp(
                 _log4cplus_buf.str()
             );
 
-            //////////////////////////////////////////////////////////////////////////
             ///这里更改Layout使输出的记录中没有文件名和行号
             ///输出日志后将原先的Layout再恢复即可		
             ///经测试上述两点无法做到
