@@ -49,11 +49,7 @@ private:
     {
         qint64 bytesReceived;
         qint64 bytesTotal;
-        ProgressData()
-        {
-            bytesReceived = 0;
-            bytesTotal = 0;
-        }
+        ProgressData() : bytesReceived(0), bytesTotal(0) {}
     };
 
     QMap<int, ProgressData> m_mapBytes;
@@ -67,8 +63,8 @@ class Downloader : public QObject
     Q_OBJECT
 
 public:
-    Downloader(int index, QObject *parent = 0);
-    ~Downloader();
+    explicit Downloader(int index, QObject *parent = 0);
+    virtual ~Downloader();
 
     bool startDownload(const QUrl &url,
         const QString& strDstFile,

@@ -113,6 +113,7 @@ NetworkManagerPrivate::NetworkManagerPrivate()
     : m_mutex(QMutex::Recursive)
     , m_bStopAllFlag(false)
     , m_pThreadPool(new QThreadPool)
+    , q_ptr(nullptr)
 {
 }
 
