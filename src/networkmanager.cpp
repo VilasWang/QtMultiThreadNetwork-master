@@ -213,6 +213,7 @@ void NetworkManagerPrivate::stopRequest(quint64 uiTaskId)
 
     {
         QMutexLocker locker(&m_mutex);
+        reply = m_mapReply.take(uiTaskId);
 
         if (m_mapRunnable.contains(uiTaskId))
         {
@@ -237,8 +238,6 @@ void NetworkManagerPrivate::stopRequest(quint64 uiTaskId)
         {
             m_queFailed.remove(uiTaskId);
         }
-
-        reply = m_mapReply.take(uiTaskId);
     }
 
     if (reply.get())
@@ -258,10 +257,11 @@ void NetworkManagerPrivate::stopBatchRequests(quint64 uiBatchId)
 
     {
         QMutexLocker locker(&m_mutex);
+        reply = m_mapBatchReply.take(uiBatchId);
 
         std::shared_ptr<NetworkRunnable> r = nullptr;
         //qDebug() << "Runnable[Before]: " << m_mapRunnable.size();
-        for (auto iter = m_mapRunnable.cbegin(); iter != m_mapRunnable.cend(); ++iter)
+        for (auto iter = m_mapRunnable.begin(); iter != m_mapRunnable.end();)
         {
             r = iter.value();
             if (r.get() && r->batchId() == uiBatchId)
@@ -275,38 +275,14 @@ void NetworkManagerPrivate::stopBatchRequests(quint64 uiBatchId)
                 m_pThreadPool->cancel(r.get());
                 r->quit();
 #endif
+                iter = m_mapRunnable.erase(iter);
             }
-        }
-
-        try
-        {
-            //之所以遍历两遍，是让runnable对象先退出,再让他析构
-            for (auto iter = m_mapRunnable.begin(); iter != m_mapRunnable.end();)
+            else
             {
-                r = iter.value();
-                if (r.get() && r->batchId() == uiBatchId)
-                {
-                    iter = m_mapRunnable.erase(iter);
-                }
-                else
-                {
-                    ++iter;
-                }
+                ++iter;
             }
-        }
-        catch (std::exception* e)
-        {
-            LOG_ERROR("erase batch runnable exception: " << e->what());
-            qCritical() << "erase batch runnable exception:" << QString::fromUtf8(e->what());
-        }
-        catch (...)
-        {
-            LOG_ERROR("erase batch runnable unknown exception");
-            qCritical() << "erase batch runnable unknown exception";
         }
         //qDebug() << "Runnable[After]: " << m_mapRunnable.size();
-
-        reply = m_mapBatchReply.take(uiBatchId);
 
         if (m_mapBatchTotalSize.contains(uiBatchId))
         {
@@ -348,53 +324,53 @@ void NetworkManagerPrivate::stopBatchRequests(quint64 uiBatchId)
 
 void NetworkManagerPrivate::stopAllRequest()
 {
-    if (!isStopAllState())
+    if (isStopAllState())
+        return;
+    
+    markStopAllFlag();
+    std::shared_ptr<NetworkReply> reply = nullptr;
+
     {
-        markStopAllFlag();
-        std::shared_ptr<NetworkReply> reply = nullptr;
-
+        QMutexLocker locker(&m_mutex);
+        if (!m_mapReply.isEmpty())
         {
-            QMutexLocker locker(&m_mutex);
-            std::shared_ptr<NetworkRunnable> r = nullptr;
-            for (auto iter = m_mapRunnable.cbegin(); iter != m_mapRunnable.cend(); ++iter)
+            reply = m_mapReply.last();
+        }
+        else if (!m_mapBatchReply.isEmpty())
+        {
+            reply = m_mapBatchReply.last();
+        }
+
+        std::shared_ptr<NetworkRunnable> r = nullptr;
+        for (auto iter = m_mapRunnable.cbegin(); iter != m_mapRunnable.cend(); ++iter)
+        {
+            r = iter.value();
+            if (r.get())
             {
-                r = iter.value();
-                if (r.get())
-                {
 #if (QT_VERSION >= QT_VERSION_CHECK(5,9,0))
-                    if (!m_pThreadPool->tryTake(r.get()))
-                    {
-                        r->quit();
-                    }
-#else
-                    m_pThreadPool->cancel(r.get());
+                if (!m_pThreadPool->tryTake(r.get()))
+                {
                     r->quit();
-#endif
                 }
-            }
-            m_mapRunnable.clear();
-
-            if (!m_mapReply.isEmpty())
-            {
-                reply = m_mapReply.last();
-            }
-            else if (!m_mapBatchReply.isEmpty())
-            {
-                reply = m_mapBatchReply.last();
+#else
+                m_pThreadPool->cancel(r.get());
+                r->quit();
+#endif
             }
         }
-        reset();
+        m_mapRunnable.clear();
+    }
+    reset();
 
-        if (reply.get())
-        {
-            RequestTask t;
-            t.uiId = RequestTask::ALL_TASK;
-            t.bSuccess = false;
-            t.bCancel = true;
-            t.bytesContent = QString("Operation cancelled (All Request)").toUtf8();
+    if (reply.get())
+    {
+        RequestTask t;
+        t.uiId = RequestTask::ALL_TASK;
+        t.bSuccess = false;
+        t.bCancel = true;
+        t.bytesContent = QString("Operation cancelled (All Request)").toUtf8();
 
-            reply->replyResult(t, true);
-        }
+        reply->replyResult(t, true);
     }
 }
 

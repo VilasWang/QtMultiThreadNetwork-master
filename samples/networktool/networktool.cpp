@@ -21,8 +21,8 @@
 #include "networkreply.h"
 
 
-//#define TEST_PERFORMANCE
-#define TEST_PERFORMANCE_EXEC_COUNT 100
+//#define TEST_PERFORMANCE_NO_TASK_LIST
+#define BATCH_REQUEST_EXEC_COUNT    1
 
 #define DEFAULT_CONCURRENT_TASK		8
 #define MAX_CONCURRENT_TASK		    16
@@ -491,7 +491,7 @@ void NetworkTool::onDownload()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -536,7 +536,7 @@ void NetworkTool::onUpload()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -570,7 +570,7 @@ void NetworkTool::onGetRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -614,7 +614,7 @@ void NetworkTool::onPostRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -669,7 +669,7 @@ void NetworkTool::onPutRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -703,7 +703,7 @@ void NetworkTool::onDeleteRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -737,7 +737,7 @@ void NetworkTool::onHeadRequest()
         connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
             this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
         switchTaskView(true);
 #endif
@@ -850,10 +850,8 @@ void NetworkTool::onBatchRequest()
         requests.append(std::move(req));
     }
 
-#ifdef TEST_PERFORMANCE
-    for (int i = 0; i < TEST_PERFORMANCE_EXEC_COUNT; ++i)
+    for (int i = 0; i < BATCH_REQUEST_EXEC_COUNT; ++i)
     {
-#endif // #ifdef TEST_PERFORMANCE
 
         quint64 batchId;
         NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
@@ -865,7 +863,7 @@ void NetworkTool::onBatchRequest()
             connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
                 this, SLOT(onRequestFinished(const RequestTask &)));
 
-#ifndef TEST_PERFORMANCE
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
             QVector<QVariant> vec;
             vec.resize(requests.size());
             int i = 0;
@@ -878,10 +876,7 @@ void NetworkTool::onBatchRequest()
             switchTaskView(true);
 #endif
         }
-
-#ifdef TEST_PERFORMANCE
     }
-#endif // #ifdef TEST_PERFORMANCE
 }
 
 //request:		任务信息
@@ -919,12 +914,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
     }
 
-    //#ifndef TEST_PERFORMANCE
+    //#ifndef TEST_PERFORMANCE_NO_TASK_LIST
     if (m_pListViewDoing)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
-    //#endif // !TEST_PERFORMANCE
+    //#endif // !TEST_PERFORMANCE_NO_TASK_LIST
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
