@@ -21,8 +21,9 @@
 #include "networkreply.h"
 
 
-//#define TEST_PERFORMANCE_NO_TASK_LIST
+#define TEST_PERFORMANCE_NO_TASK_LIST
 #define BATCH_REQUEST_EXEC_COUNT    1
+#define POST_REQUEST_EXEC_COUNT     1
 
 #define DEFAULT_CONCURRENT_TASK		8
 #define MAX_CONCURRENT_TASK		    16
@@ -606,18 +607,21 @@ void NetworkTool::onPostRequest()
     req.strReqArg = strArg;
     req.bTryAgainWhileFailed = true;
 
-    NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
-    if (nullptr != pReply)
+    for (int i = 0; i < POST_REQUEST_EXEC_COUNT; ++i)
     {
-        appendStartTaskMsg(req.uiId, strUrl);
+        NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
+        if (nullptr != pReply)
+        {
+            appendStartTaskMsg(req.uiId, strUrl);
 
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
+            connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
+                this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
-        m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-        switchTaskView(true);
+            m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
+            switchTaskView(true);
 #endif
+        }
     }
 }
 
@@ -852,7 +856,6 @@ void NetworkTool::onBatchRequest()
 
     for (int i = 0; i < BATCH_REQUEST_EXEC_COUNT; ++i)
     {
-
         quint64 batchId;
         NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
         if (nullptr != pReply)
@@ -914,12 +917,12 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
     }
 
-    //#ifndef TEST_PERFORMANCE_NO_TASK_LIST
+#ifndef TEST_PERFORMANCE_NO_TASK_LIST
     if (m_pListViewDoing)
     {
         m_pListViewDoing->onTaskFinished(request);
     }
-    //#endif // !TEST_PERFORMANCE_NO_TASK_LIST
+#endif // !TEST_PERFORMANCE_NO_TASK_LIST
 }
 
 void NetworkTool::onBatchDownloadProgress(quint64 batchId, qint64 bytes)
