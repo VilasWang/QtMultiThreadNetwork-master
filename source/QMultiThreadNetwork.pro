@@ -4,10 +4,14 @@
 
 TEMPLATE = lib
 TARGET = QMultiThreadNetwork
-QT += core network
+QT += network
+QT -= gui
+CONFIG += qt thread
+CONFIG += debug_and_release
+
 INCLUDEPATH += . \
             $$PWD/inc \
-            $$PWD/../log4cplus/include
+            $$PWD/../ThirdParty/log4cplus/include
 
 DEFINES += UNICODE QT_MTNETWORK_LIB
 staticlib: DEFINES += QT_MTNETWORK_STATIC
@@ -37,23 +41,34 @@ SOURCES += dllmain.cpp \
            networkreply.cpp \
            networkmanager.cpp
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    TARGET_ARCH=$${QT_ARCH}
+} else {
+    TARGET_ARCH=$${QMAKE_HOST.arch}
+}
+
 CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
-        DESTDIR = $$PWD/../bin/Debug
-	LIBPATH += $$PWD/../lib/Debug
-        LIBPATH += $$PWD/../log4cplus/lib
+	contains(TARGET_ARCH, x86_64) {
+	    DESTDIR = $$PWD/../bin/x64/Debug	
+	} else {
+            DESTDIR = $$PWD/../bin/Win32/Debug
+        }
+        LIBPATH += $$PWD/../ThirdParty/log4cplus/lib
         #LIBS += -llog4cplusd
 
 } else {
         DEFINES += NDEBUG
-        DESTDIR = $$PWD/../bin/Release
-	LIBPATH += $$PWD/../lib/Release
-        LIBPATH += $$PWD/../log4cplus/lib
+        contains(TARGET_ARCH, x86_64) {
+	    DESTDIR = $$PWD/../bin/x64/Release	
+	} else {
+            DESTDIR = $$PWD/../bin/Win32/Release
+        }
+        LIBPATH += $$PWD/../ThirdParty/log4cplus/lib
         #LIBS += -llog4cplus
 }
 
 win32 {
-    DEFINES += WIN32
     LIBS += -lkernel32 \
             -luser32 \
             -lgdi32 \

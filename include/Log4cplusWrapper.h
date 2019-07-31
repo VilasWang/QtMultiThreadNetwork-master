@@ -3970,7 +3970,7 @@ extern "C" {
 #include <esf.h>
 #include <memLib.h>
 #include <tickLib.h>
-#include <private\memPartLibP.h>
+#include <private/memPartLibP.h>
 #include <in.h>
 #include <ramDrv.h>
 #include <ftpdLib.h>
@@ -3982,7 +3982,7 @@ extern "C" {
 #include <intLib.h>
 #include <timers.h>
 #include "inetLib.h"
-#include "netinet\tcp.h"
+#include "netinet/tcp.h"
 #include "fcntl.h"
 #include "netinet/in.h"
 #include "end.h"

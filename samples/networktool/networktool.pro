@@ -9,6 +9,7 @@ TARGET = NetworkTool
 
 QT += core network xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+CONFIG += debug_and_release
 
 INCLUDEPATH += . \
                 $$PWD/../../include \
@@ -19,18 +20,32 @@ HEADERS += networktool.h listview.h
 FORMS += networktool.ui addtask.ui addbatchtask.ui
 SOURCES += main.cpp networktool.cpp listview.cpp
 
-CONFIG(debug, debug|release) {
-        DESTDIR = $$PWD/../../bin/Debug
-        LIBPATH += $$PWD/../../lib/Debug $$PWD/../../bin/Debug
-        LIBS += -lQMultiThreadNetworkd
+greaterThan(QT_MAJOR_VERSION, 4) {
+    TARGET_ARCH=$${QT_ARCH}
 } else {
-        DESTDIR = $$PWD/../../bin/Release
-        LIBPATH += $$PWD/../../lib/Release $$PWD/../../bin/Release
-        LIBS += -lQMultiThreadNetwork
+    TARGET_ARCH=$${QMAKE_HOST.arch}
 }
 
-win32 {
-    DEFINES += WIN32
+CONFIG(debug, debug|release) {
+        contains(TARGET_ARCH, x86_64) {
+            DESTDIR = $$PWD/../../bin/x64/Debug
+            LIBPATH += $$PWD/../../bin/x64/Debug
+        } else {
+            DESTDIR = $$PWD/../../bin/Win32/Debug
+            LIBPATH += $$PWD/../../bin/Win32/Debug
+        }
+        LIBPATH += $$PWD/../../lib/Debug
+        LIBS += -lQMultiThreadNetworkd
+} else {
+        contains(TARGET_ARCH, x86_64) {
+            DESTDIR = $$PWD/../../bin/x64/Release
+            LIBPATH += $$PWD/../../bin/x64/Release
+        } else {
+            DESTDIR = $$PWD/../../bin/Win32/Release
+            LIBPATH += $$PWD/../../bin/Win32/Release
+        }
+        LIBPATH += $$PWD/../../lib/Release
+        LIBS += -lQMultiThreadNetwork
 }
 
 RC_ICONS = resources/networktool.ico
