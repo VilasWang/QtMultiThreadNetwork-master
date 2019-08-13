@@ -65,6 +65,11 @@ void NetworkUploadRequest::start()
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
+        auto iter = m_request.mapRawHeader.cbegin();
+        for (; iter != m_request.mapRawHeader.cend(); ++iter)
+        {
+            request.setRawHeader(iter.key(), iter.value());
+        }
 
         if (isFtpProxy(url.scheme()))
         {
@@ -82,7 +87,14 @@ void NetworkUploadRequest::start()
                 request.setSslConfiguration(conf);
             }
 #endif
-            m_pNetworkReply = m_pNetworkManager->post(request, bytes);
+            if (m_request.bUploadUsePut)
+            {
+                m_pNetworkReply = m_pNetworkManager->put(request, bytes);
+            }
+            else
+            {
+                m_pNetworkReply = m_pNetworkManager->post(request, bytes);
+            }
         }
 
         connect(m_pNetworkReply, SIGNAL(finished()), this, SLOT(onFinished()));

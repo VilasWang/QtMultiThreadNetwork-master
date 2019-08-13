@@ -178,6 +178,11 @@ void NetworkDownloadRequest::start()
         QNetworkRequest request(url);
         //request.setRawHeader("Accept-Charset", "utf-8");
         //request.setRawHeader("Accept-Language", "zh-CN");
+        auto iter = m_request.mapRawHeader.cbegin();
+        for (; iter != m_request.mapRawHeader.cend(); ++iter)
+        {
+            request.setRawHeader(iter.key(), iter.value());
+        }
 
 #ifndef QT_NO_SSL
         if (isHttpsProxy(url.scheme()))
