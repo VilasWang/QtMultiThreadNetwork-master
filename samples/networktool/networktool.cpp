@@ -15,13 +15,15 @@
 #include <QScrollBar>
 #include <QPushButton>
 #include <QComboBox>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTime>
 #include "networktool.h"
 #include "networkmanager.h"
 #include "networkreply.h"
 
 
-#define TEST_PERFORMANCE_NO_TASK_LIST
+//#define TEST_PERFORMANCE_NO_TASK_LIST
 #define BATCH_REQUEST_EXEC_COUNT    1
 #define POST_REQUEST_EXEC_COUNT     1
 
@@ -327,6 +329,9 @@ void NetworkTool::onResetDefaultValue()
                     .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
+
+                //const QString& strUrl = QString("https://api.bimface.com/translate");
+                //uiAddTask.lineEdit_url->setText(strUrl);
             }
             else if (uiAddTask.cb_delete->isChecked())
             {
@@ -664,6 +669,23 @@ void NetworkTool::onPutRequest()
     req.eType = eTypePut;
     req.strReqArg = QString::fromUtf8(bytes);
     req.bTryAgainWhileFailed = true;
+
+#if 0
+    QFile file("D:\\test.igms");
+    if (!file.exists() || !file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::information(nullptr, "Tips",
+            QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
+        reset();
+        return;
+    }
+    const QByteArray& bytes = file.readAll();
+    file.close();
+
+    req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
+    req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
+    req.strReqArg = QString::fromUtf8(bytes);
+#endif
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
