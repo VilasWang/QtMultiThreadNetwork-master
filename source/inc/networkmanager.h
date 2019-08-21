@@ -20,6 +20,7 @@ That must be called in the main thread.
 #define NETWORKMANAGER_H
 
 #include <QObject>
+#include <atomic>
 #include "networkreply.h"
 #include "networkdef.h"
 #include "network_global.h"
@@ -96,7 +97,11 @@ private:
 private:
     QScopedPointer<NetworkManagerPrivate> d_ptr;
     static NetworkManager* ms_pInstance;
+#if _MSC_VER >= 1700
+    static std::atomic<bool> ms_bIntialized;
+#else
     static bool ms_bIntialized;
+#endif
 };
 
 #endif //NETWORKMANAGER_H

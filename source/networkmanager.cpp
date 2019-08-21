@@ -620,7 +620,11 @@ bool NetworkManagerPrivate::releaseRequestThread(quint64 uiRequestId)
 
 //////////////////////////////////////////////////////////////////////////
 NetworkManager *NetworkManager::ms_pInstance = nullptr;
+#if _MSC_VER >= 1700
+std::atomic<bool> NetworkManager::ms_bIntialized = false;
+#else
 bool NetworkManager::ms_bIntialized = false;
+#endif
 
 NetworkManager::NetworkManager(QObject *parent)
     : QObject(parent)
@@ -706,6 +710,13 @@ void NetworkManager::fini()
 
 NetworkReply *NetworkManager::addRequest(RequestTask& request)
 {
+    if (NetworkManager::isInitialized())
+    {
+        qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
+        LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
+        return nullptr;
+    }
+
     Q_D(NetworkManager);
     d->resetStopAllFlag();
 
@@ -719,6 +730,13 @@ NetworkReply *NetworkManager::addRequest(RequestTask& request)
 
 NetworkReply *NetworkManager::addBatchRequest(BatchRequestTask& tasks, quint64 &uiBatchId)
 {
+    if (NetworkManager::isInitialized())
+    {
+        qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
+        LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
+        return nullptr;
+    }
+
     Q_D(NetworkManager);
     d->resetStopAllFlag();
 
@@ -840,7 +858,7 @@ void NetworkManager::updateProgress(quint64 uiId, quint64 uiBatchId, qint64 iByt
 
 void NetworkManager::onRequestFinished(const RequestTask &request)
 {
-    //Q_ASSERT(QThread::currentThread() == NetworkManager::globalInstance()->thread());
+    Q_ASSERT(QThread::currentThread() == NetworkManager::globalInstance()->thread());
     Q_D(NetworkManager);
     if (d->isStopAllState())
         return;

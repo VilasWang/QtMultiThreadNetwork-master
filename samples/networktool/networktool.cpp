@@ -533,6 +533,7 @@ void NetworkTool::onUpload()
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bTryAgainWhileFailed = true;
+    req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
