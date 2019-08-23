@@ -476,9 +476,9 @@ void NetworkTool::onDownload()
     req.url = urlHost;
     req.eType = eTypeDownload;
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
-    req.bRemoveFileWhileExist = true;
+    req.bReplaceFileIfExist = true;
     req.strReqArg = strSavePath;
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
     if (!uiAddTask.lineEdit_filename->text().isEmpty())
     {
         req.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
@@ -532,7 +532,7 @@ void NetworkTool::onUpload()
     req.eType = eTypeUpload;
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
     req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -567,7 +567,7 @@ void NetworkTool::onGetRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeGet;
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -611,7 +611,7 @@ void NetworkTool::onPostRequest()
     req.url = urlHost;
     req.eType = eTypePost;
     req.strReqArg = strArg;
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
 
     for (int i = 0; i < POST_REQUEST_EXEC_COUNT; ++i)
     {
@@ -669,24 +669,10 @@ void NetworkTool::onPutRequest()
     req.url = urlHost;
     req.eType = eTypePut;
     req.strReqArg = QString::fromUtf8(bytes);
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
 
-#if 0
-    QFile file("D:\\test.igms");
-    if (!file.exists() || !file.open(QIODevice::ReadOnly))
-    {
-        QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("上传文件不存在或者已被占用"), QMessageBox::Ok);
-        reset();
-        return;
-    }
-    const QByteArray& bytes = file.readAll();
-    file.close();
-
-    req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
-    req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
-    req.strReqArg = QString::fromUtf8(bytes);
-#endif
+	//req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
+	req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -720,7 +706,7 @@ void NetworkTool::onDeleteRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeDelete;
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -754,7 +740,7 @@ void NetworkTool::onHeadRequest()
     RequestTask req;
     req.url = urlHost;
     req.eType = eTypeHead;
-    req.bTryAgainWhileFailed = true;
+    req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -829,8 +815,8 @@ void NetworkTool::onBatchRequest()
         Q_ASSERT(urlHost.isValid());
         req.url = urlHost;
         req.eType = RequestType(strlst[1].toInt());
-        req.bAbortBatchWhileOneFailed = uiAddBatchTask.cb_abortBatch->isChecked();
-        req.bTryAgainWhileFailed = true;
+        req.bAbortBatchWhenFailed = uiAddBatchTask.cb_abortBatch->isChecked();
+        req.bTryAgainIfFailed = true;
         switch (req.eType)
         {
         case eTypeDownload:
@@ -852,7 +838,7 @@ void NetworkTool::onBatchRequest()
             const QString& strDir = strSaveDir + url.toString();
             req.strReqArg = strDir;
             req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
-            req.bRemoveFileWhileExist = true;
+            req.bReplaceFileIfExist = true;
         }
         case eTypeUpload:
         {
@@ -930,7 +916,7 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
             + "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]";
 
         if (m_mapBatchSuccessSize.value(request.uiBatchId) + m_mapBatchFailedSize.value(request.uiBatchId) == m_mapBatchTotalSize.value(request.uiBatchId)
-            || (request.bAbortBatchWhileOneFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
+            || (request.bAbortBatchWhenFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
         {
             appendMsg(QTime::currentTime().toString() + " - Batch finished. Id[" + QString::number(request.uiBatchId) + "]");
 

@@ -710,7 +710,7 @@ void NetworkManager::fini()
 
 NetworkReply *NetworkManager::addRequest(RequestTask& request)
 {
-    if (NetworkManager::isInitialized())
+    if (!NetworkManager::isInitialized())
     {
         qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
         LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
@@ -730,7 +730,7 @@ NetworkReply *NetworkManager::addRequest(RequestTask& request)
 
 NetworkReply *NetworkManager::addBatchRequest(BatchRequestTask& tasks, quint64 &uiBatchId)
 {
-    if (NetworkManager::isInitialized())
+    if (!NetworkManager::isInitialized())
     {
         qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
         LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
@@ -872,7 +872,7 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
         // 加入到失败队列，如果成功表示第一次失败，否则表示是第二次失败
         //		第一次失败的情况: 需要将任务再次加入到等待队列重新执行一遍
         //		第二次失败的情况: 需要将任务结果反馈给用户
-        if (task.bTryAgainWhileFailed && d->addToFailedQueue(task))
+        if (task.bTryAgainIfFailed && d->addToFailedQueue(task))
         {
             bNotify = false;
         }
@@ -918,7 +918,7 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
                 }
                 else//批量任务失败
                 {
-                    if (!task.bAbortBatchWhileOneFailed && (sizeFinished < sizeTotal))
+                    if (!task.bAbortBatchWhenFailed && (sizeFinished < sizeTotal))
                     {
                         bDestroyed = false;
                     }
@@ -929,7 +929,7 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
             if (pReply.get())
             {
                 task.bFinished = true;
-                task.bCancel = (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhileOneFailed);
+                task.bCancel = (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhenFailed);
                 pReply->replyResult(task, bDestroyed);
                 if (task.uiBatchId > 0 && bDestroyed)
                 {
@@ -940,7 +940,7 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
             }
 
             //3.如果是批量任务失败后，并且指定了bAbortBatchWhileOneFailed，就停止该批次的任务
-            if (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhileOneFailed)
+            if (task.uiBatchId > 0 && !task.bSuccess && task.bAbortBatchWhenFailed)
             {
                 d->stopBatchRequests(task.uiBatchId);
             }

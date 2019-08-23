@@ -123,7 +123,7 @@ bool NetworkMTDownloadRequest::createLocalFile()
     const QString& strFilePath = QDir::toNativeSeparators(strSaveDir + strFileName);
     if (QFile::exists(strFilePath))
     {
-        if (m_request.bRemoveFileWhileExist)
+        if (m_request.bReplaceFileIfExist)
         {
             QFile file(strFilePath);
             if (!removeFile(&file))

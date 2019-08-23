@@ -65,15 +65,16 @@ struct RequestTask
     // 是否显示进度，默认为false.
     bool bShowProgress;
 
-    bool bRemoveFileWhileExist;
+	// 若文件存在，是否替换，默认为false.
+    bool bReplaceFileIfExist;
 
-    // 任务失败后，是否再尝试请求一次，默认为false.
-    bool bTryAgainWhileFailed;
+    // 若任务失败，是否再尝试请求一次，默认为false.
+    bool bTryAgainIfFailed;
 
-    // 批量请求失败一个就终止整批请求，默认为false.
-    bool bAbortBatchWhileOneFailed;
+    // 批量请求，是否有一个失败就终止整批请求，默认为false.
+    bool bAbortBatchWhenFailed;
 
-    // 上传文件使用PUT方式，否则POST方式，仅HTTP(s)有效
+    // 上传文件使用PUT方式，否则POST方式，仅HTTP(s)有效，默认为true.
     bool bUploadUsePut;
 
     // 单文件多线程下载模式(需服务器支持) 注：eType为eTypeMTDownload时有效
@@ -116,9 +117,9 @@ struct RequestTask
         bCancel = false;
         bSuccess = false;
         bShowProgress = false;
-        bRemoveFileWhileExist = false;
-        bTryAgainWhileFailed = false;
-        bAbortBatchWhileOneFailed = false;
+        bReplaceFileIfExist = false;
+        bTryAgainIfFailed = false;
+        bAbortBatchWhenFailed = false;
         nDownloadThreadCount = 5;
         bUploadUsePut = true;
     }
