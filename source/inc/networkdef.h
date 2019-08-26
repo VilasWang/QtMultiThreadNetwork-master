@@ -65,7 +65,7 @@ struct RequestTask
     // 是否显示进度，默认为false.
     bool bShowProgress;
 
-	// 若文件存在，是否替换，默认为false.
+    // 若文件存在，是否替换，默认为false.
     bool bReplaceFileIfExist;
 
     // 若任务失败，是否再尝试请求一次，默认为false.

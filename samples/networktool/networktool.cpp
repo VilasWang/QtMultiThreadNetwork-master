@@ -329,9 +329,6 @@ void NetworkTool::onResetDefaultValue()
                     .arg(HTTP_SERVER_IP).arg(HTTP_SERVER_PORT);
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_uploadFile->setText("help/VerComp.dat");
-
-                //const QString& strUrl = QString("https://api.bimface.com/translate");
-                //uiAddTask.lineEdit_url->setText(strUrl);
             }
             else if (uiAddTask.cb_delete->isChecked())
             {
@@ -533,7 +530,6 @@ void NetworkTool::onUpload()
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bTryAgainIfFailed = true;
-    req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
@@ -670,8 +666,6 @@ void NetworkTool::onPutRequest()
     req.eType = eTypePut;
     req.strReqArg = QString::fromUtf8(bytes);
     req.bTryAgainIfFailed = true;
-
-	//req.mapRawHeader.insert("Authorization", "bearer cn-ad0c0fe1-7643-42c1-8cfa-e7dc74e05e7b");
 	req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -889,6 +883,11 @@ void NetworkTool::onBatchRequest()
 #endif
         }
     }
+}
+
+void NetworkTool::onTestRequest()
+{
+    // Add test code here.
 }
 
 //request:		任务信息

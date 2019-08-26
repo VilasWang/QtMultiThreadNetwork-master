@@ -37,6 +37,8 @@ private Q_SLOTS:
     void onHeadRequest();
     void onBatchRequest();
 
+    void onTestRequest();
+
     void onRequestFinished(const RequestTask &);
     void onErrorMessage(const QString& error);
     void onBatchDownloadProgress(quint64, qint64);
