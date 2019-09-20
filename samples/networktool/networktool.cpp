@@ -22,6 +22,7 @@
 #include "networkmanager.h"
 #include "networkreply.h"
 
+using namespace QMTNetwork;
 
 //#define TEST_PERFORMANCE_NO_TASK_LIST
 #define BATCH_REQUEST_EXEC_COUNT    1
@@ -293,7 +294,7 @@ void NetworkTool::onResetDefaultValue()
         {
             if (uiAddTask.cb_download->isChecked())
             {
-                const QString& strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.0.2.exe";
+                const QString& strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.1.0.exe";
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
             }
@@ -470,12 +471,12 @@ void NetworkTool::onDownload()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypeDownload;
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bReplaceFileIfExist = true;
     req.strReqArg = strSavePath;
-    req.bTryAgainIfFailed = true;
+    req.bTryAgainIfFailed = false;
     if (!uiAddTask.lineEdit_filename->text().isEmpty())
     {
         req.strSaveFileName = uiAddTask.lineEdit_filename->text().trimmed();
@@ -489,10 +490,8 @@ void NetworkTool::onDownload()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -525,7 +524,7 @@ void NetworkTool::onUpload()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypeUpload;
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
@@ -534,10 +533,8 @@ void NetworkTool::onUpload()
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -561,17 +558,15 @@ void NetworkTool::onGetRequest()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypeGet;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -604,7 +599,7 @@ void NetworkTool::onPostRequest()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypePost;
     req.strReqArg = strArg;
     req.bTryAgainIfFailed = true;
@@ -614,10 +609,8 @@ void NetworkTool::onPostRequest()
         NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
         if (nullptr != pReply)
         {
+            connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
             appendStartTaskMsg(req.uiId, strUrl);
-
-            connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-                this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
             m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -662,19 +655,17 @@ void NetworkTool::onPutRequest()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypePut;
     req.strReqArg = QString::fromUtf8(bytes);
     req.bTryAgainIfFailed = true;
-	req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
+    req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -698,17 +689,15 @@ void NetworkTool::onDeleteRequest()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypeDelete;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -732,17 +721,15 @@ void NetworkTool::onHeadRequest()
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
-    req.url = urlHost;
+    req.url = strUrl;
     req.eType = eTypeHead;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
     if (nullptr != pReply)
     {
+        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
         appendStartTaskMsg(req.uiId, strUrl);
-
-        connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-            this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
         m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
@@ -807,7 +794,7 @@ void NetworkTool::onBatchRequest()
 
         QUrl urlHost(strUrlStandard);
         Q_ASSERT(urlHost.isValid());
-        req.url = urlHost;
+        req.url = strUrlStandard;
         req.eType = RequestType(strlst[1].toInt());
         req.bAbortBatchWhenFailed = uiAddBatchTask.cb_abortBatch->isChecked();
         req.bTryAgainIfFailed = true;
@@ -863,11 +850,10 @@ void NetworkTool::onBatchRequest()
         NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(requests, batchId);
         if (nullptr != pReply)
         {
+            connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+
             appendStartBatchTasksMsg(batchId, requests.size());
             m_mapBatchTotalSize.insert(batchId, requests.size());
-
-            connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-                this, SLOT(onRequestFinished(const RequestTask &)));
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
             QVector<QVariant> vec;
@@ -895,7 +881,7 @@ void NetworkTool::onTestRequest()
 void NetworkTool::onRequestFinished(const RequestTask &request)
 {
     bool bBatch = (request.uiBatchId > 0);
-    appendTaskFinishMsg(request.uiId, bBatch, request.bSuccess, request.url.url(), request.bytesContent, request.strError);
+    appendTaskFinishMsg(request.uiId, bBatch, request.bSuccess, request.url, request.bytesContent, request.strError);
 
     if (bBatch)
     {
@@ -1249,10 +1235,10 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
             painter->setPen(Qt::white);
 
             QFontMetrics fm(font);
-            const QRect& boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url.toString());
-            painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url.toString());
+            const QRect& boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url);
+            painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url);
             painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("类型（%1）")
-                .arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+                .arg(getRequestTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 
             if (stTask.bCancel)
             {

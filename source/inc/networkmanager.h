@@ -47,10 +47,10 @@ public:
 public:
     // NetworkReply对象会在请求结束后自动销毁，用户不用主动销毁
     // 添加单个请求任务（若返回nullptr，表示url无效）
-    NetworkReply *addRequest(RequestTask& task);
+    NetworkReply *addRequest(QMTNetwork::RequestTask& task);
 
     // 添加批量请求任务
-    NetworkReply *addBatchRequest(BatchRequestTask& tasks, quint64 &uiBatchId);
+    NetworkReply *addBatchRequest(QMTNetwork::BatchRequestTask& tasks, quint64 &uiBatchId);
 
     // 停止所有的请求任务
     void stopAllRequest();
@@ -73,8 +73,8 @@ Q_SIGNALS:
     void batchDownloadProgress(quint64 uiBatchId, qint64 iBytesDownload);
     void batchUploadProgress(quint64 uiBatchId, qint64 iBytesUpload);
 
-private Q_SLOTS:
-    void onRequestFinished(const RequestTask &);
+public Q_SLOTS :
+    void onRequestFinished(const QMTNetwork::RequestTask &);
 
 public:
     bool event(QEvent *pEvent) Q_DECL_OVERRIDE;
@@ -88,7 +88,7 @@ private:
     void init();
     void fini();
 
-    bool startAsRunnable(const RequestTask &task);
+    bool startAsRunnable(const QMTNetwork::RequestTask &task);
 
     // bDownload(false: upload)
     void updateProgress(quint64 uiRequestId, quint64 uiBatchId,

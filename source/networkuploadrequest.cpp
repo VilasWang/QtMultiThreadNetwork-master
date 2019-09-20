@@ -5,7 +5,9 @@
 #include <QNetworkAccessManager>
 #include "Log4cplusWrapper.h"
 #include "networkmanager.h"
+#include "networkutility.h"
 
+using namespace QMTNetwork;
 
 NetworkUploadRequest::NetworkUploadRequest(QObject *parent /* = nullptr */)
     : NetworkRequest(parent)
@@ -16,46 +18,23 @@ NetworkUploadRequest::~NetworkUploadRequest()
 {
 }
 
-bool NetworkUploadRequest::readLocalFile(const QString& strFilePath, QByteArray& bytes)
-{
-    m_strError.clear();
-    if (QFile::exists(strFilePath))
-    {
-        QFile file(strFilePath);
-        if (file.open(QIODevice::ReadOnly))
-        {
-            bytes = file.readAll();
-            file.close();
-            return true;
-        }
-        m_strError = QStringLiteral("Error: QFile::open(%1) - %2").arg(strFilePath).arg(file.errorString());
-    }
-    else
-    {
-        m_strError = QStringLiteral("Error: File is not exists(%1)").arg(strFilePath);
-    }
-    LOG_INFO(m_strError.toStdWString());
-    qDebug() << "[QMultiThreadNetwork]" << m_strError;
-    return false;
-}
-
 void NetworkUploadRequest::start()
 {
     __super::start();
 
-    QByteArray bytes;
-    if (readLocalFile(m_request.strReqArg, bytes))
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    if (!url.isValid())
     {
-        QUrl url;
-        if (!redirected())
-        {
-            url = m_request.url;
-        }
-        else
-        {
-            url = m_redirectUrl;
-        }
+        m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
+        qWarning() << m_strError;
+        LOG_INFO(m_strError.toStdWString());
+        emit requestFinished(false, QByteArray(), m_strError);
+        return;
+    }
 
+    QByteArray bytes;
+    if (NetworkUtility::readFileContent(m_request.strReqArg, bytes, m_strError))
+    {
         if (nullptr == m_pNetworkManager)
         {
             m_pNetworkManager = new QNetworkAccessManager;
@@ -116,7 +95,10 @@ void NetworkUploadRequest::onFinished()
 {
     bool bSuccess = (m_pNetworkReply->error() == QNetworkReply::NoError);
     int statusCode = m_pNetworkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (isHttpProxy(m_request.url.scheme()) || isHttpsProxy(m_request.url.scheme()))
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    Q_ASSERT(url.isValid());
+
+    if (isHttpProxy(url.scheme()) || isHttpsProxy(url.scheme()))
     {
         bSuccess = bSuccess && (statusCode >= 200 && statusCode < 300);
     }
@@ -125,24 +107,20 @@ void NetworkUploadRequest::onFinished()
         if (statusCode == 301 || statusCode == 302)
         {//301,302重定向
             const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-            if (!redirectionTarget.isNull())
+            const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
+            if (redirectUrl.isValid())
             {
-                const QUrl& url = m_request.url;
-                const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
-                if (url != redirectUrl && m_redirectUrl != redirectUrl)
+                m_request.redirectUrl = redirectUrl.toString();
+                if (url != redirectUrl)
                 {
-                    m_redirectUrl = redirectUrl;
-                    if (m_redirectUrl.isValid())
-                    {
-                        LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
+                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
+                    qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
-                        m_pNetworkReply->deleteLater();
-                        m_pNetworkReply = nullptr;
+                    m_pNetworkReply->deleteLater();
+                    m_pNetworkReply = nullptr;
 
-                        start();
-                        return;
-                    }
+                    start();
+                    return;
                 }
             }
         }

@@ -39,7 +39,7 @@ private Q_SLOTS:
 
     void onTestRequest();
 
-    void onRequestFinished(const RequestTask &);
+    void onRequestFinished(const QMTNetwork::RequestTask &);
     void onErrorMessage(const QString& error);
     void onBatchDownloadProgress(quint64, qint64);
     void onBatchUploadProgress(quint64, qint64);
@@ -122,7 +122,7 @@ Q_SIGNALS:
     void taskFinished(const QVariant&);
 
     public Q_SLOTS:
-    void onTaskFinished(const RequestTask &request);
+    void onTaskFinished(const QMTNetwork::RequestTask &request);
     void onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qint64 bytesTotal);
 };
 
@@ -132,7 +132,7 @@ public:
     explicit TaskModel(QObject* parent = NULL);
     ~TaskModel() {}
 
-    QVariant onTaskFinished(const RequestTask &request);
+    QVariant onTaskFinished(const QMTNetwork::RequestTask &request);
 };
 
 class TaskDelegate : public ListItemDelegate

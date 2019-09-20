@@ -19,10 +19,10 @@ public:
     virtual bool event(QEvent *) Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
-    void requestFinished(const RequestTask &);
+    void requestFinished(const QMTNetwork::RequestTask &);
 
 protected:
-    void replyResult(const RequestTask& request, bool bDestroy = false);
+    void replyResult(const QMTNetwork::RequestTask& request, bool bDestroy = false);
     friend class NetworkManager;
     friend class NetworkManagerPrivate;
 

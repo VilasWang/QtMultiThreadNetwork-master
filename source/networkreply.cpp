@@ -3,6 +3,7 @@
 #include "Log4cplusWrapper.h"
 #include "classmemorytracer.h"
 
+using namespace QMTNetwork;
 
 NetworkReply::NetworkReply(bool bBatch, QObject *parent /* = nullptr */)
     : QObject(parent)

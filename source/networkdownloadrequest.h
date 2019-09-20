@@ -22,12 +22,6 @@ public Q_SLOTS:
     void onDownloadProgress(qint64 iReceived, qint64 iTotal);
 
 private:
-    //根据文件名创建本地文件，文件存在则删除
-    bool createLocalFile();
-    bool fileAccessible(QFile *pFile) const;
-    bool removeFile(QFile *file);
-
-private:
     std::unique_ptr<QFile> m_pFile;
 };
 

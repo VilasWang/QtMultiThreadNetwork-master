@@ -7,6 +7,7 @@
 #include "networkrequest.h"
 #include "networkmanager.h"
 
+using namespace QMTNetwork;
 
 NetworkRunnable::NetworkRunnable(const RequestTask &task, QObject *parent)
     : QObject(parent)
@@ -58,8 +59,8 @@ void NetworkRunnable::run()
             }
             else
             {
-                LOG_ERROR("Unsupported type(" << task.eType << ")  ---- " << task.url.url().toStdWString());
-                qWarning() << QString("Unsupported type(%1) ----").arg(task.eType) << task.url.url();
+                LOG_ERROR("Unsupported type(" << task.eType << ")  ---- " << task.url.toStdWString());
+                qWarning() << QString("Unsupported type(%1) ----").arg(task.eType) << task.url;
 
                 task.bSuccess = false;
                 task.strError = QString("Unsupported type(%1)").arg(task.eType);
@@ -98,7 +99,7 @@ quint64 NetworkRunnable::batchId() const
 
 void NetworkRunnable::quit()
 {
-    disconnect(this, SIGNAL(requestFinished(const RequestTask &)),
-        NetworkManager::globalInstance(), SLOT(onRequestFinished(const RequestTask &)));
+    disconnect(this, &NetworkRunnable::requestFinished,
+        NetworkManager::globalInstance(), &NetworkManager::onRequestFinished);
     emit exitEventLoop();
 }

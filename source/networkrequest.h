@@ -17,11 +17,9 @@ public:
     explicit NetworkRequest(QObject *parent = 0);
     virtual ~NetworkRequest();
 
-    void setRequestTask(const RequestTask &request) { m_request = request; }
-    //是否重定向
-    bool redirected() const { return (m_redirectUrl.isValid() && m_redirectUrl != m_request.url); }
+    void setRequestTask(const QMTNetwork::RequestTask &request) { m_request = request; }
 
-    QString error() const { return m_strError; }
+    QString errorString() const { return m_strError; }
 
 public Q_SLOTS:
     virtual void start();
@@ -35,9 +33,8 @@ Q_SIGNALS:
     void aboutToAbort();
 
 protected:
-    RequestTask m_request;
+    QMTNetwork::RequestTask m_request;
     bool m_bAbortManual;
-    QUrl m_redirectUrl;
     QString m_strError;
     QNetworkAccessManager *m_pNetworkManager;
     QNetworkReply *m_pNetworkReply;
@@ -48,7 +45,7 @@ class NetworkRequestFactory
 {
 public:
     ///根据类型创建request对象
-    static std::unique_ptr<NetworkRequest> create(const RequestType& type);
+    static std::unique_ptr<NetworkRequest> create(const QMTNetwork::RequestType& type);
 };
 
 inline bool isHttpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0); }

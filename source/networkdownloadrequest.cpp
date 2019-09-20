@@ -8,7 +8,9 @@
 #include <QCoreApplication>
 #include "Log4cplusWrapper.h"
 #include "networkmanager.h"
+#include "networkutility.h"
 
+using namespace QMTNetwork;
 
 NetworkDownloadRequest::NetworkDownloadRequest(QObject *parent /* = nullptr */)
     : NetworkRequest(parent)
@@ -25,209 +27,60 @@ NetworkDownloadRequest::~NetworkDownloadRequest()
     }
 }
 
-bool NetworkDownloadRequest::createLocalFile()
-{
-    m_strError.clear();
-    //取下载文件保存目录
-    QString strSaveDir = QDir::toNativeSeparators(m_request.strReqArg);
-    if (!strSaveDir.isEmpty())
-    {
-        QDir dir;
-        if (!dir.exists(strSaveDir))
-        {
-            if (!dir.mkpath(strSaveDir))
-            {
-                m_strError = QStringLiteral("Error: QDir::mkpath failed! Dir(%1)").arg(strSaveDir);
-                qWarning() << m_strError;
-                LOG_INFO(m_strError.toStdWString());
-                return false;
-            }
-        }
-    }
-    else
-    {
-        m_strError = QLatin1String("Error: RequestTask::strRequestArg is empty!");
-        qWarning() << m_strError;
-        LOG_INFO(m_strError.toStdWString());
-        return false;
-    }
-    if (!strSaveDir.endsWith("\\"))
-    {
-        strSaveDir.append("\\");
-    }
-
-    //取下载保存的文件名
-    QString strFileName;
-    if (!m_request.strSaveFileName.isEmpty())
-    {
-        strFileName = m_request.strSaveFileName;
-    }
-    else
-    {
-        QUrl url;
-        if (redirected())
-        {
-            url = m_redirectUrl;
-        }
-        else
-        {
-            url = m_request.url;
-        }
-        // url中提取文件名，格式如：response-content-disposition=attachment; filename=test.exe
-        QUrlQuery query(url.query(QUrl::FullyDecoded));
-        const QList<QPair<QString, QString>>& querys = query.queryItems();
-        foreach(auto pair, querys)
-        {
-            if (pair.first.compare("response-content-disposition", Qt::CaseInsensitive) == 0
-                || pair.first.compare("content-disposition", Qt::CaseInsensitive) == 0)
-            {
-                const QStringList& listString = pair.second.split(";", QString::SkipEmptyParts);
-                foreach(QString str, listString)
-                {
-                    str = str.trimmed();
-                    if (str.startsWith(QString("filename="), Qt::CaseInsensitive))
-                    {
-                        strFileName = str.right(str.size() - QString("filename=").size());
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-        if (strFileName.isEmpty())
-        {
-            strFileName = url.fileName();
-        }
-    }
-
-    if (strFileName.isEmpty())
-    {
-        m_strError = QLatin1String("Error: fileName is empty!");
-        qWarning() << m_strError;
-        LOG_INFO(m_strError.toStdWString());
-        return false;
-    }
-
-    //重定向等操作后需要关闭打开的文件
-    if (m_pFile.get())
-    {
-        if (m_pFile->exists())
-        {
-            m_pFile->close();
-            m_pFile->remove();
-        }
-        m_pFile.reset();
-    }
-
-    //如果文件存在，关闭文件并移除
-    const QString& strFilePath = QDir::toNativeSeparators(strSaveDir + strFileName);
-    if (QFile::exists(strFilePath))
-    {
-        if (m_request.bReplaceFileIfExist)
-        {
-            QFile file(strFilePath);
-            if (!removeFile(&file))
-            {
-                m_strError = QStringLiteral("Error: QFile::remove(%1) - %2").arg(strFilePath).arg(file.errorString());
-                qWarning() << m_strError;
-                LOG_INFO(m_strError.toStdWString());
-                return false;
-            }
-        }
-        else
-        {
-            m_strError = QStringLiteral("Error: File is already exist(%1)").arg(strFilePath);
-            qWarning() << m_strError;
-            LOG_INFO(m_strError.toStdWString());
-            return false;
-        }
-    }
-
-    //创建并打开文件
-#if _MSC_VER >= 1700
-    m_pFile = std::make_unique<QFile>(strFilePath);
-#else
-    m_pFile->reset(new QFile(strFilePath));
-#endif
-    if (!m_pFile->open(QIODevice::WriteOnly))
-    {
-        m_strError = QStringLiteral("Error: QFile::open(%1) - %2").arg(strFilePath).arg(m_pFile->errorString());
-        qWarning() << m_strError;
-        LOG_INFO(m_strError.toStdWString());
-        m_pFile.reset();
-        return false;
-    }
-    return true;
-}
-
 void NetworkDownloadRequest::start()
 {
     __super::start();
 
-    if (createLocalFile())
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    if (!url.isValid())
     {
-        QUrl url;
-        if (!redirected())
-        {
-            url = m_request.url;
-        }
-        else
-        {
-            url = m_redirectUrl;
-        }
-        QNetworkRequest request(url);
-        //request.setRawHeader("Accept-Charset", "utf-8");
-        //request.setRawHeader("Accept-Language", "zh-CN");
-        auto iter = m_request.mapRawHeader.cbegin();
-        for (; iter != m_request.mapRawHeader.cend(); ++iter)
-        {
-            request.setRawHeader(iter.key(), iter.value());
-        }
-
-#ifndef QT_NO_SSL
-        if (isHttpsProxy(url.scheme()))
-        {
-            // 发送https请求前准备工作;
-            QSslConfiguration conf = request.sslConfiguration();
-            conf.setPeerVerifyMode(QSslSocket::VerifyNone);
-            conf.setProtocol(QSsl::TlsV1SslV3);
-            request.setSslConfiguration(conf);
-        }
-#endif
-
-        if (nullptr == m_pNetworkManager)
-        {
-            m_pNetworkManager = new QNetworkAccessManager;
-        }
-        m_pNetworkReply = m_pNetworkManager->get(request);
-
-        connect(m_pNetworkReply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-        connect(m_pNetworkReply, SIGNAL(finished()), this, SLOT(onFinished()));
-        connect(m_pNetworkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
-        if (m_request.bShowProgress)
-        {
-            connect(m_pNetworkReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(onDownloadProgress(qint64, qint64)));
-        }
+        m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
+        qWarning() << m_strError;
+        LOG_INFO(m_strError.toStdWString());
+        emit requestFinished(false, QByteArray(), m_strError);
+        return;
     }
-    else
+
+    m_pFile = std::move(NetworkUtility::createAndOpenFile(m_request, m_strError));
+    if (!m_pFile.get())
     {
         emit requestFinished(false, QByteArray(), m_strError);
+        return;
     }
-}
 
-bool NetworkDownloadRequest::fileAccessible(QFile *pFile) const
-{
-    return (nullptr != pFile && pFile->exists());
-}
-
-bool NetworkDownloadRequest::removeFile(QFile *pFile)
-{
-    if (fileAccessible(pFile))
+    QNetworkRequest request(url);
+    //request.setRawHeader("Accept-Charset", "utf-8");
+    //request.setRawHeader("Accept-Language", "zh-CN");
+    auto iter = m_request.mapRawHeader.cbegin();
+    for (; iter != m_request.mapRawHeader.cend(); ++iter)
     {
-        pFile->close();
-        return pFile->remove();
+        request.setRawHeader(iter.key(), iter.value());
     }
-    return true;
+
+#ifndef QT_NO_SSL
+    if (isHttpsProxy(url.scheme()))
+    {
+        // 发送https请求前准备工作;
+        QSslConfiguration conf = request.sslConfiguration();
+        conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+        conf.setProtocol(QSsl::TlsV1SslV3);
+        request.setSslConfiguration(conf);
+    }
+#endif
+
+    if (nullptr == m_pNetworkManager)
+    {
+        m_pNetworkManager = new QNetworkAccessManager;
+    }
+    m_pNetworkReply = m_pNetworkManager->get(request);
+
+    connect(m_pNetworkReply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(m_pNetworkReply, SIGNAL(finished()), this, SLOT(onFinished()));
+    connect(m_pNetworkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    if (m_request.bShowProgress)
+    {
+        connect(m_pNetworkReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(onDownloadProgress(qint64, qint64)));
+    }
 }
 
 void NetworkDownloadRequest::onReadyRead()
@@ -236,7 +89,7 @@ void NetworkDownloadRequest::onReadyRead()
         && m_pNetworkReply->error() == QNetworkReply::NoError
         && m_pNetworkReply->isOpen())
     {
-        if (fileAccessible(m_pFile.get()) && m_pFile->isOpen())
+        if (NetworkUtility::fileOpened(m_pFile.get()))
         {
             const QByteArray& bytesRev = m_pNetworkReply->readAll();
             if (!bytesRev.isEmpty() && -1 == m_pFile->write(bytesRev))
@@ -252,7 +105,10 @@ void NetworkDownloadRequest::onFinished()
 {
     bool bSuccess = (m_pNetworkReply->error() == QNetworkReply::NoError);
     int statusCode = m_pNetworkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (isHttpProxy(m_request.url.scheme()) || isHttpsProxy(m_request.url.scheme()))
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    Q_ASSERT(url.isValid());
+
+    if (isHttpProxy(url.scheme()) || isHttpsProxy(url.scheme()))
     {
         bSuccess = bSuccess && (statusCode >= 200 && statusCode < 300);
     }
@@ -261,24 +117,28 @@ void NetworkDownloadRequest::onFinished()
         if (statusCode == 301 || statusCode == 302)
         {//301,302重定向
             const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-            if (!redirectionTarget.isNull())
+            const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
+            if (redirectUrl.isValid())
             {
-                const QUrl& url = m_request.url;
-                const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
-                if (url != redirectUrl && m_redirectUrl != redirectUrl)
+                m_request.redirectUrl = redirectUrl.toString();
+                if (url != redirectUrl)
                 {
-                    m_redirectUrl = redirectUrl;
-                    if (m_redirectUrl.isValid())
+                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
+                    qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
+
+                    m_pNetworkReply->deleteLater();
+                    m_pNetworkReply = nullptr;
+
+                    //重定向需要关闭之前打开的文件
+                    if (NetworkUtility::fileExists(m_pFile.get()))
                     {
-                        LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
-
-                        m_pNetworkReply->deleteLater();
-                        m_pNetworkReply = nullptr;
-
-                        start();
-                        return;
+                        m_pFile->close();
+                        m_pFile->remove();
                     }
+                    m_pFile.reset();
+
+                    start();
+                    return;
                 }
             }
         }
@@ -289,7 +149,7 @@ void NetworkDownloadRequest::onFinished()
         }
     }
 
-    if (fileAccessible(m_pFile.get()))
+    if (NetworkUtility::fileExists(m_pFile.get()))
     {
         m_pFile->close();
         if (!bSuccess)
@@ -297,6 +157,7 @@ void NetworkDownloadRequest::onFinished()
             m_pFile->remove();
         }
     }
+    m_pFile.reset();
 
     if (!m_bAbortManual)//非调用abort()结束
     {

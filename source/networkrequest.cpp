@@ -6,6 +6,7 @@
 #include "networkmtdownloadrequest.h"
 #include "Log4cplusWrapper.h"
 
+using namespace QMTNetwork;
 
 NetworkRequest::NetworkRequest(QObject *parent)
     : QObject(parent)
@@ -56,7 +57,7 @@ void NetworkRequest::onError(QNetworkReply::NetworkError code)
     LOG_ERROR("[url]" << m_request.url.toString().toStdWString()
         << "  [type]" << m_request.eType
         << "  [error]" << m_strError.toStdString());
-    qDebug() << "[QMultiThreadNetwork] onError" << QString("Type[%1]").arg(m_request.eType) << m_strError;
+    qDebug() << "[QMultiThreadNetwork] Error" << QString("[%1]").arg(getRequestTypeString(m_request.eType)) << m_strError;
 }
 
 void NetworkRequest::onAuthenticationRequired(QNetworkReply *r, QAuthenticator *a)

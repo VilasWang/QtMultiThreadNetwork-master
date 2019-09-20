@@ -2,7 +2,9 @@
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include "Log4cplusWrapper.h"
+#include "networkutility.h"
 
+using namespace QMTNetwork;
 
 NetworkCommonRequest::NetworkCommonRequest(QObject *parent /* = nullptr */)
     : NetworkRequest(parent)
@@ -17,14 +19,14 @@ void NetworkCommonRequest::start()
 {
     __super::start();
 
-    QUrl url;
-    if (!redirected())
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    if (!url.isValid())
     {
-        url = m_request.url;
-    }
-    else
-    {
-        url = m_redirectUrl;
+        m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
+        qWarning() << m_strError;
+        LOG_INFO(m_strError.toStdWString());
+        emit requestFinished(false, QByteArray(), m_strError);
+        return;
     }
 
     if (isFtpProxy(url.scheme()))
@@ -33,8 +35,8 @@ void NetworkCommonRequest::start()
             || m_request.eType == eTypeDelete
             || m_request.eType == eTypeHead)
         {
-            const QString& strType = getTypeString(m_request.eType);
-            m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(m_request.url.url());
+            const QString& strType = getRequestTypeString(m_request.eType);
+            m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(url.url());
             LOG_ERROR(m_strError.toStdWString());
             qDebug() << "[QMultiThreadNetwork]" << m_strError;
 
@@ -107,7 +109,10 @@ void NetworkCommonRequest::onFinished()
 {
     bool bSuccess = (m_pNetworkReply->error() == QNetworkReply::NoError);
     int statusCode = m_pNetworkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (isHttpProxy(m_request.url.scheme()) || isHttpsProxy(m_request.url.scheme()))
+    const QUrl& url = NetworkUtility::currentRequestUrl(m_request);
+    Q_ASSERT(url.isValid());
+
+    if (isHttpProxy(url.scheme()) || isHttpsProxy(url.scheme()))
     {
         bSuccess = bSuccess && (statusCode >= 200 && statusCode < 300);
     }
@@ -116,24 +121,20 @@ void NetworkCommonRequest::onFinished()
         if (statusCode == 301 || statusCode == 302)
         {//301,302重定向
             const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-            if (!redirectionTarget.isNull())
+            const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
+            if (redirectUrl.isValid())
             {
-                const QUrl& url = m_request.url;
-                const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
-                if (url != redirectUrl && m_redirectUrl != redirectUrl)
+                m_request.redirectUrl = redirectUrl.toString();
+                if (url != redirectUrl)
                 {
-                    m_redirectUrl = redirectUrl;
-                    if (m_redirectUrl.isValid())
-                    {
-                        LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_redirectUrl.toString().toStdWString());
-                        qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_redirectUrl.toString();
+                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
+                    qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
-                        m_pNetworkReply->deleteLater();
-                        m_pNetworkReply = nullptr;
+                    m_pNetworkReply->deleteLater();
+                    m_pNetworkReply = nullptr;
 
-                        start();
-                        return;
-                    }
+                    start();
+                    return;
                 }
             }
         }

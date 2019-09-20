@@ -259,6 +259,7 @@
     <ClCompile Include="networkrequest.cpp" />
     <ClCompile Include="networkrunnable.cpp" />
     <ClCompile Include="networkuploadrequest.cpp" />
+    <ClCompile Include="networkutility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\classmemorytracer.h" />
@@ -301,6 +302,7 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DNDEBUG -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DQT_MTNETWORK_LIB -DTRACE_CLASS_MEMORY_ENABLED -D%(PreprocessorDefinitions)  "-I." "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtNetwork" "-I.\inc" "-I$(SolutionDir)\log4cplus\include"</Command>
     </CustomBuild>
     <ClInclude Include="inc\network_global.h" />
+    <ClInclude Include="networkutility.h" />
     <ClInclude Include="resource.h" />
     <CustomBuild Include="networkuploadrequest.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

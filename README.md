@@ -85,8 +85,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -102,8 +101,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -117,8 +115,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -133,8 +130,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -148,8 +144,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -163,8 +158,7 @@ task.bTryAgainWhileFailed = true;
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 
@@ -198,8 +192,7 @@ NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(tasks, 
 qDebug() << "uiBatchId: " << uiBatchId;
 if (nullptr != pReply)
 {
-	connect(pReply, SIGNAL(requestFinished(const RequestTask &)),
-		this, SLOT(onRequestFinished(const RequestTask &)));
+	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
 }
 ```
 

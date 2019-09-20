@@ -26,11 +26,7 @@ public Q_SLOTS:
     void onSubPartDownloadProgress(int index, qint64 bytesReceived, qint64 bytesTotal);
 
 private:
-    bool requestFileSize(QUrl url);
-    //根据文件名创建本地文件
-    bool createLocalFile();
-    bool fileAccessible(QFile *pFile) const;
-    bool removeFile(QFile *file);
+    bool requestFileSize(const QUrl& url);
     void startMTDownload();
     void clearDownloaders();
     void clearProgress();
@@ -66,7 +62,7 @@ public:
     explicit Downloader(int index, QObject *parent = 0);
     virtual ~Downloader();
 
-    bool startDownload(const QUrl &url,
+    bool start(const QUrl &url,
         const QString& strDstFile,
         QNetworkAccessManager* pNetworkManager,
         qint64 startPoint = 0,

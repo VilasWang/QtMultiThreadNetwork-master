@@ -2,7 +2,7 @@
 #include <atomic>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QMap>
+#include <QUrl>
 #include <QQueue>
 #include <QThread>
 #include <QThreadPool>
@@ -13,7 +13,7 @@
 #include "classmemorytracer.h"
 #include "networkrunnable.h"
 
-
+using namespace QMTNetwork;
 #define DEFAULT_MAX_THREAD_COUNT 5
 
 class NetworkManagerPrivate
@@ -326,7 +326,7 @@ void NetworkManagerPrivate::stopAllRequest()
 {
     if (isStopAllState())
         return;
-    
+
     markStopAllFlag();
     std::shared_ptr<NetworkReply> reply = nullptr;
 
@@ -773,9 +773,8 @@ void NetworkManager::stopAllRequest()
 bool NetworkManager::startAsRunnable(const RequestTask &request)
 {
     std::shared_ptr<NetworkRunnable> r = std::make_shared<NetworkRunnable>(request);
-    qRegisterMetaType<RequestTask>("RequestTask");
-    connect(r.get(), SIGNAL(requestFinished(const RequestTask &)),
-        this, SLOT(onRequestFinished(const RequestTask &)));
+    qRegisterMetaType<RequestTask>("QMTNetwork::RequestTask");
+    connect(r.get(), &NetworkRunnable::requestFinished, this, &NetworkManager::onRequestFinished);
 
     Q_D(NetworkManager);
     if (!d->startRunnable(r))
