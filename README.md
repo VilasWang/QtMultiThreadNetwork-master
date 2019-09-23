@@ -199,21 +199,21 @@ if (nullptr != pReply)
 
 ### How to stop request?
 
->stop single request
+>Stop a request
 > 
 ```cpp
 quint64 uiTaskId = 1;
 NetworkManager::globalInstance()->stopRequest(uiTaskId);
 ```
 
->stop a batch of requests
+>Stop a batch of requests
 > 
 ```cpp
 quint64 uiTaskBatchId = 1;
 NetworkManager::globalInstance()->stopBatchRequests(uiTaskBatchId);
 ```
 
->stop a batch of requests
+>Stop all requests
 > 
 ```cpp
 NetworkManager::globalInstance()->stopAllRequest();
