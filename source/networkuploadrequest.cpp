@@ -44,6 +44,7 @@ void NetworkUploadRequest::start()
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
+        request.setRawHeader("Connection", "keep-alive");
         auto iter = m_request.mapRawHeader.cbegin();
         for (; iter != m_request.mapRawHeader.cend(); ++iter)
         {

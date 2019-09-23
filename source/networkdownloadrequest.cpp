@@ -49,8 +49,8 @@ void NetworkDownloadRequest::start()
     }
 
     QNetworkRequest request(url);
-    //request.setRawHeader("Accept-Charset", "utf-8");
-    //request.setRawHeader("Accept-Language", "zh-CN");
+    request.setRawHeader("Accept-Encoding", "gzip,deflate,sdch,br");
+    request.setRawHeader("Connection", "keep-alive");
     auto iter = m_request.mapRawHeader.cbegin();
     for (; iter != m_request.mapRawHeader.cend(); ++iter)
     {

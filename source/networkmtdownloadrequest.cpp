@@ -204,8 +204,11 @@ void NetworkMTDownloadRequest::onSubPartFinished(int index, bool bSuccess, const
     if (m_nSuccess == m_nThreadCount || m_nFailed > 0)
     {
         emit requestFinished((m_nFailed == 0), QByteArray(), m_strError);
-        LOG_INFO("MT download finished. [result] " << (m_nFailed == 0));
-        qDebug() << "[QMultiThreadNetwork] MT download finished. [result]" << (m_nFailed == 0);
+        if (m_nFailed == 0)
+        {
+            LOG_INFO("MT download success.");
+            qDebug() << "[QMultiThreadNetwork] MT download success.";
+        }
     }
 }
 
@@ -424,7 +427,8 @@ bool Downloader::start(const QUrl &url,
     range.sprintf("Bytes=%lld-%lld", m_nStartPoint, m_nEndPoint);
     request.setRawHeader("Range", range.toLocal8Bit());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-    request.setRawHeader("Accept-Encoding", "gzip");
+    request.setRawHeader("Accept-Encoding", "gzip,deflate,sdch,br");
+    request.setRawHeader("Connection", "keep-alive");
 
 #ifndef QT_NO_SSL
     if (isHttpsProxy(url.scheme()))
@@ -437,8 +441,8 @@ bool Downloader::start(const QUrl &url,
     }
 #endif
 
-    LOG_INFO("Part " << m_nIndex << " start, Range: " << range.toStdString());
-    qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "start, Range:" << range;
+    LOG_INFO("Part " << m_nIndex << " Range: " << range.toStdString());
+    qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "Range:" << range;
 
     m_pNetworkReply = m_pNetworkManager->get(request);
     if (m_pNetworkReply)
@@ -538,8 +542,11 @@ void Downloader::onFinished()
 #endif
         }
 
-        LOG_INFO("Part " << m_nIndex << " download " << bSuccess);
-        qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "download" << bSuccess;
+        if (!bSuccess)
+        {
+            LOG_INFO("Part " << m_nIndex << " download failed!");
+            qDebug() << "[QMultiThreadNetwork] Part" << m_nIndex << "download failed!";
+        }
 
         m_pNetworkReply->deleteLater();
         m_pNetworkReply = nullptr;
