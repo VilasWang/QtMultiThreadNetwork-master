@@ -55,8 +55,7 @@ bool NetworkMTDownloadRequest::requestFileSize(const QUrl& url)
         m_pNetworkManager = new QNetworkAccessManager;
     }
     QNetworkRequest request(url);
-    request.setRawHeader("Accept-Encoding", "identity");
-    //request.setRawHeader("Accept-Encoding", "gzip");
+    request.setRawHeader("Accept-Encoding", "gzip,deflate,compress,br");
 
 #ifndef QT_NO_SSL
     if (isHttpsProxy(url.scheme()))
@@ -247,12 +246,17 @@ void NetworkMTDownloadRequest::onSubPartDownloadProgress(int index, qint64 bytes
         {
             if (NetworkManager::isInstantiated())
             {
-                NetworkProgressEvent *event = new NetworkProgressEvent;
-                event->uiId = m_request.uiId;
-                event->uiBatchId = m_request.uiBatchId;
-                event->iBtyes = m_bytesReceived;
-                event->iTotalBtyes = m_bytesTotal;
-                QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+                int progress = m_bytesReceived * 100 / m_bytesTotal;
+                if (m_nProgress < progress)
+                {
+                    m_nProgress = progress;
+                    NetworkProgressEvent *event = new NetworkProgressEvent;
+                    event->uiId = m_request.uiId;
+                    event->uiBatchId = m_request.uiBatchId;
+                    event->iBtyes = m_bytesReceived;
+                    event->iTotalBtyes = m_bytesTotal;
+                    QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+                }
             }
         }
     }
@@ -427,7 +431,7 @@ bool Downloader::start(const QUrl &url,
     range.sprintf("Bytes=%lld-%lld", m_nStartPoint, m_nEndPoint);
     request.setRawHeader("Range", range.toLocal8Bit());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-    request.setRawHeader("Accept-Encoding", "gzip,deflate,sdch,br");
+    request.setRawHeader("Accept-Encoding", "gzip,deflate,compress,br");
     request.setRawHeader("Connection", "keep-alive");
 
 #ifndef QT_NO_SSL
@@ -529,7 +533,7 @@ void Downloader::onFinished()
 
             if (statusCode != 200 && statusCode != 0)
             {
-                qDebug() << "HttpStatusCode: " << statusCode;
+                qDebug() << "[QMultiThreadNetwork] HttpStatusCode: " << statusCode;
             }
         }
         else

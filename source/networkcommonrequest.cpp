@@ -23,7 +23,6 @@ void NetworkCommonRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        qWarning() << m_strError;
         LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;

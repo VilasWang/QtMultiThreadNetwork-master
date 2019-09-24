@@ -13,6 +13,7 @@ NetworkRequest::NetworkRequest(QObject *parent)
     , m_bAbortManual(false)
     , m_pNetworkManager(nullptr)
     , m_pNetworkReply(nullptr)
+    , m_nProgress(0)
 {
     TRACE_CLASS_CONSTRUCTOR(NetworkRequest);
 }
@@ -46,6 +47,7 @@ void NetworkRequest::abort()
 void NetworkRequest::start()
 {
     m_bAbortManual = false;
+    m_nProgress = 0;
 }
 
 void NetworkRequest::onError(QNetworkReply::NetworkError code)
@@ -64,7 +66,7 @@ void NetworkRequest::onAuthenticationRequired(QNetworkReply *r, QAuthenticator *
 {
     Q_UNUSED(a);
     LOG_FUN(__FUNCTION__ << r->readAll().toStdString());
-    qDebug() << __FUNCTION__ << r->readAll();
+    qDebug() << "[QMultiThreadNetwork] onAuthenticationRequired" << r->readAll();
 }
 
 

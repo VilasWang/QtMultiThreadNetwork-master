@@ -35,7 +35,6 @@ void NetworkDownloadRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        qWarning() << m_strError;
         LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;
@@ -49,7 +48,7 @@ void NetworkDownloadRequest::start()
     }
 
     QNetworkRequest request(url);
-    request.setRawHeader("Accept-Encoding", "gzip,deflate,sdch,br");
+    request.setRawHeader("Accept-Encoding", "gzip,deflate,compress,br");
     request.setRawHeader("Connection", "keep-alive");
     auto iter = m_request.mapRawHeader.cbegin();
     for (; iter != m_request.mapRawHeader.cend(); ++iter)
@@ -182,11 +181,16 @@ void NetworkDownloadRequest::onDownloadProgress(qint64 iReceived, qint64 iTotal)
 
     if (NetworkManager::isInstantiated())
     {
-        NetworkProgressEvent *event = new NetworkProgressEvent;
-        event->uiId = m_request.uiId;
-        event->uiBatchId = m_request.uiBatchId;
-        event->iBtyes = iReceived;
-        event->iTotalBtyes = iTotal;
-        QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+        int progress = iReceived * 100 / iTotal;
+        if (m_nProgress < progress)
+        {
+            m_nProgress = progress;
+            NetworkProgressEvent *event = new NetworkProgressEvent;
+            event->uiId = m_request.uiId;
+            event->uiBatchId = m_request.uiBatchId;
+            event->iBtyes = iReceived;
+            event->iTotalBtyes = iTotal;
+            QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+        }
     }
 }

@@ -36,6 +36,7 @@ protected:
     QMTNetwork::RequestTask m_request;
     bool m_bAbortManual;
     QString m_strError;
+    int m_nProgress;
     QNetworkAccessManager *m_pNetworkManager;
     QNetworkReply *m_pNetworkReply;
 };

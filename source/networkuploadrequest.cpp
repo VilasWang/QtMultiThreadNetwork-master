@@ -26,7 +26,6 @@ void NetworkUploadRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        qWarning() << m_strError;
         LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;
@@ -160,12 +159,17 @@ void NetworkUploadRequest::onUploadProgress(qint64 iSent, qint64 iTotal)
 
     if (NetworkManager::isInstantiated())
     {
-        NetworkProgressEvent *event = new NetworkProgressEvent;
-        event->bDownload = false;
-        event->uiId = m_request.uiId;
-        event->uiBatchId = m_request.uiBatchId;
-        event->iBtyes = iSent;
-        event->iTotalBtyes = iTotal;
-        QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+        int progress = iSent * 100 / iTotal;
+        if (m_nProgress < progress)
+        {
+            m_nProgress = progress;
+            NetworkProgressEvent *event = new NetworkProgressEvent;
+            event->bDownload = false;
+            event->uiId = m_request.uiId;
+            event->uiBatchId = m_request.uiBatchId;
+            event->iBtyes = iSent;
+            event->iTotalBtyes = iTotal;
+            QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
+        }
     }
 }
