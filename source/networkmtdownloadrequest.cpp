@@ -216,7 +216,7 @@ void NetworkMTDownloadRequest::onSubPartDownloadProgress(int index, qint64 bytes
     if (m_bAbortManual || bytesReceived <= 0 || bytesTotal <= 0)
         return;
 
-    if (m_mapBytes.contains(index))
+    if (NetworkManager::isInstantiated() && m_mapBytes.contains(index))
     {
         //qDebug() << "Part:" << index << " progress:" << bytesReceived << "/" << bytesTotal;
 
@@ -244,19 +244,16 @@ void NetworkMTDownloadRequest::onSubPartDownloadProgress(int index, qint64 bytes
 
         if (m_bytesTotal > 0 && m_bytesReceived > 0)
         {
-            if (NetworkManager::isInstantiated())
+            int progress = m_bytesReceived * 100 / m_bytesTotal;
+            if (m_nProgress < progress)
             {
-                int progress = m_bytesReceived * 100 / m_bytesTotal;
-                if (m_nProgress < progress)
-                {
-                    m_nProgress = progress;
-                    NetworkProgressEvent *event = new NetworkProgressEvent;
-                    event->uiId = m_request.uiId;
-                    event->uiBatchId = m_request.uiBatchId;
-                    event->iBtyes = m_bytesReceived;
-                    event->iTotalBtyes = m_bytesTotal;
-                    QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
-                }
+                m_nProgress = progress;
+                NetworkProgressEvent *event = new NetworkProgressEvent;
+                event->uiId = m_request.uiId;
+                event->uiBatchId = m_request.uiBatchId;
+                event->iBtyes = m_bytesReceived;
+                event->iTotalBtyes = m_bytesTotal;
+                QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
             }
         }
     }

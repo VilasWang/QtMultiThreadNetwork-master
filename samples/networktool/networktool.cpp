@@ -347,7 +347,7 @@ void NetworkTool::onResetDefaultValue()
         {
             if (uiAddTask.cb_download->isChecked())
             {
-                uiAddTask.lineEdit_url->setText("ftp://10.1.28.101/tools/Git-1.8.1.2-preview20130201.exe");
+                uiAddTask.lineEdit_url->setText("ftp://package-sh.gbmp.tech:8003/Installer/BIMMAKE_20190926_212221_zengzm_GIT_ab0cfa42.exe");
                 uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
             }
             else if (uiAddTask.cb_upload->isChecked())
