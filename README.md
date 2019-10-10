@@ -24,7 +24,7 @@ openssl x86 x64库下载地址：https://github.com/VilasWang/3rd_Dev_Library.gi
 The Qt multi-threaded network module is a wrapper of `Qt Network module`, and combine with `thread-pool` to realize multi-threaded networking.
 - Multitask concurrent(Each request task is executed in different threads).
 - Both single request and batch request mode are supported.
-- Big file `multi-thread downloading` supported. (The thread here refers to the download channel. Download speed is faster)
+- Large file `multi-thread downloading` supported. (The thread here refers to the download channel. Download speed is faster)
 - `HTTP(S)`/`FTP` protocol supported.
 - Multiple request methods supported. (`GET`/`POST`/`PUT`/`DELETE`/`HEAD`)
 - Asynchronous API.
