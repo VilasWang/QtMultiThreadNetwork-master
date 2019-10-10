@@ -1,10 +1,10 @@
 ﻿#include "networkrequest.h"
 #include <QDebug>
+#include "classmemorytracer.h"
 #include "networkdownloadrequest.h"
 #include "networkuploadrequest.h"
 #include "networkcommonrequest.h"
 #include "networkmtdownloadrequest.h"
-#include "Log4cplusWrapper.h"
 
 using namespace QMTNetwork;
 
@@ -53,20 +53,15 @@ void NetworkRequest::start()
 void NetworkRequest::onError(QNetworkReply::NetworkError code)
 {
     Q_UNUSED(code);
-    LOG_FUN("");
 
     m_strError = m_pNetworkReply->errorString();
-    LOG_ERROR("[url]" << m_request.url.toString().toStdWString()
-        << "  [type]" << m_request.eType
-        << "  [error]" << m_strError.toStdString());
     qDebug() << "[QMultiThreadNetwork] Error" << QString("[%1]").arg(getRequestTypeString(m_request.eType)) << m_strError;
 }
 
 void NetworkRequest::onAuthenticationRequired(QNetworkReply *r, QAuthenticator *a)
 {
     Q_UNUSED(a);
-    LOG_FUN(__FUNCTION__ << r->readAll().toStdString());
-    qDebug() << "[QMultiThreadNetwork] onAuthenticationRequired" << r->readAll();
+    qDebug() << "[QMultiThreadNetwork] Authentication Required." << r->readAll();
 }
 
 

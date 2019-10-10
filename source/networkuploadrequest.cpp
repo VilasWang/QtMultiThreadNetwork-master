@@ -3,7 +3,6 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QNetworkAccessManager>
-#include "Log4cplusWrapper.h"
 #include "networkmanager.h"
 #include "networkutility.h"
 
@@ -26,7 +25,6 @@ void NetworkUploadRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;
     }
@@ -113,7 +111,6 @@ void NetworkUploadRequest::onFinished()
                 m_request.redirectUrl = redirectUrl.toString();
                 if (url != redirectUrl)
                 {
-                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
                     qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
                     m_pNetworkReply->deleteLater();
@@ -126,7 +123,6 @@ void NetworkUploadRequest::onFinished()
         }
         else if (statusCode != 200 && statusCode != 0)
         {
-            LOG_INFO("HttpStatusCode: " << statusCode);
             qDebug() << "[QMultiThreadNetwork] HttpStatusCode: " << statusCode;
         }
     }

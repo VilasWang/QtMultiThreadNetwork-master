@@ -5,7 +5,6 @@
 #include <memory>
 #include <QNetworkReply>
 #include "networkdef.h"
-#include "classmemorytracer.h"
 
 
 class QNetworkAccessManager;

@@ -1,6 +1,5 @@
 ﻿#include "networkreply.h"
 #include <QDebug>
-#include "Log4cplusWrapper.h"
 #include "classmemorytracer.h"
 
 using namespace QMTNetwork;

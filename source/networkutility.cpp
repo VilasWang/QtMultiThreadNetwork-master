@@ -9,7 +9,6 @@
 #include <QDir>
 #include <QDebug>
 #include "networkdef.h"
-#include "Log4cplusWrapper.h"
 
 
 NetworkUtility::NetworkUtility()
@@ -38,7 +37,6 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
     {
         strError = QLatin1String("Error: fileName is empty!");
         qWarning() << strError;
-        LOG_INFO(strError.toStdWString());
         return pFile;
     }
 
@@ -53,7 +51,6 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
             {
                 strError = QStringLiteral("Error: QFile::remove(%1) - %2").arg(strFilePath).arg(strFileErr);
                 qWarning() << strError;
-                LOG_INFO(strError.toStdWString());
                 return pFile;
             }
         }
@@ -61,7 +58,6 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
         {
             strError = QStringLiteral("Error: File is already exist(%1)").arg(strFilePath);
             qWarning() << strError;
-            LOG_INFO(strError.toStdWString());
             return pFile;
         }
     }
@@ -76,7 +72,6 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
     {
         strError = QStringLiteral("Error: QFile::open(%1) - %2").arg(strFilePath).arg(pFile->errorString());
         qWarning() << strError;
-        LOG_INFO(strError.toStdWString());
         pFile.reset();
         return pFile;
     }
@@ -101,7 +96,6 @@ bool NetworkUtility::readFileContent(const QString& strFilePath, QByteArray& byt
     {
         strError = QStringLiteral("Error: File is not exists(%1)").arg(strFilePath);
     }
-    LOG_INFO(strError.toStdWString());
     qDebug() << "[QMultiThreadNetwork]" << strError;
     return false;
 }
@@ -125,7 +119,6 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
     {
         strError = QLatin1String("Error: fileName is empty!");
         qWarning() << strError;
-        LOG_INFO(strError.toStdWString());
         return strCreatedFile;
     }
 
@@ -140,7 +133,6 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
             {
                 strError = QStringLiteral("Error: QFile::remove(%1) - %2").arg(strFilePath).arg(strFileErr);
                 qWarning() << strError;
-                LOG_INFO(strError.toStdWString());
                 return strCreatedFile;
             }
         }
@@ -148,7 +140,6 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
         {
             strError = QStringLiteral("Error: File is already exist(%1)").arg(strFilePath);
             qWarning() << strError;
-            LOG_INFO(strError.toStdWString());
             return strCreatedFile;
         }
     }
@@ -166,7 +157,6 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
             {
                 strError = QStringLiteral("Error: SetFilePointerEx(%1)").arg(GetLastError());
                 qWarning() << strError;
-                LOG_INFO(strError.toStdWString());
                 return strCreatedFile;
             }
         }
@@ -177,7 +167,6 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
     {
         strError = QStringLiteral("Error: CreateFileW(%1)").arg(GetLastError());
         qWarning() << strError;
-        LOG_INFO(strError.toStdWString());
         return strCreatedFile;
     }
 
@@ -239,7 +228,6 @@ QString NetworkUtility::getDownloadFileSaveDir(const QMTNetwork::RequestTask& re
         {
             strError = QStringLiteral("Error: QDir::mkpath failed! Dir(%1)").arg(strSaveDir);
             qWarning() << strError;
-            LOG_INFO(strError.toStdWString());
             return QString();
         }
     }
@@ -247,7 +235,6 @@ QString NetworkUtility::getDownloadFileSaveDir(const QMTNetwork::RequestTask& re
     {
         strError = QLatin1String("Error: RequestTask::strRequestArg is empty!");
         qWarning() << strError;
-        LOG_INFO(strError.toStdWString());
         return QString();
     }
     if (!strSaveDir.endsWith("\\"))

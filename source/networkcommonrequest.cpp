@@ -1,7 +1,6 @@
 ﻿#include "networkcommonrequest.h"
 #include <QDebug>
 #include <QNetworkAccessManager>
-#include "Log4cplusWrapper.h"
 #include "networkutility.h"
 
 using namespace QMTNetwork;
@@ -23,7 +22,6 @@ void NetworkCommonRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;
     }
@@ -36,7 +34,6 @@ void NetworkCommonRequest::start()
         {
             const QString& strType = getRequestTypeString(m_request.eType);
             m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(url.url());
-            LOG_ERROR(m_strError.toStdWString());
             qDebug() << "[QMultiThreadNetwork]" << m_strError;
 
             emit requestFinished(false, QByteArray(), m_strError);
@@ -126,7 +123,6 @@ void NetworkCommonRequest::onFinished()
                 m_request.redirectUrl = redirectUrl.toString();
                 if (url != redirectUrl)
                 {
-                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
                     qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
                     m_pNetworkReply->deleteLater();

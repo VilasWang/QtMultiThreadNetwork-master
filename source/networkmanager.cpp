@@ -9,7 +9,6 @@
 #include <QEvent>
 #include <QDebug>
 #include <QCoreApplication>
-#include "Log4cplusWrapper.h"
 #include "classmemorytracer.h"
 #include "networkrunnable.h"
 
@@ -119,8 +118,6 @@ NetworkManagerPrivate::NetworkManagerPrivate()
 
 NetworkManagerPrivate::~NetworkManagerPrivate()
 {
-    LOG_FUN("");
-    LOG_INFO("Runnable size: " << m_mapRunnable.size());
     qDebug() << "[QMultiThreadNetwork] Runnable size: " << m_mapRunnable.size();
 
     unInitialize();
@@ -140,8 +137,6 @@ void NetworkManagerPrivate::initialize()
     {
         m_pThreadPool->setMaxThreadCount(DEFAULT_MAX_THREAD_COUNT);
     }
-    LOG_INFO("idealThreadCount: " << nIdeal);
-    LOG_INFO("maxThreadCount: " << m_pThreadPool->maxThreadCount());
 
     //To add something intialize...
 }
@@ -153,7 +148,6 @@ void NetworkManagerPrivate::unInitialize()
     m_pThreadPool->clear();
     if (!m_pThreadPool->waitForDone(3000))
     {
-        LOG_INFO("ThreadPool waitForDone failed!");
         qDebug() << "[QMultiThreadNetwork] ThreadPool waitForDone failed!";
     }
 }
@@ -438,13 +432,11 @@ bool NetworkManagerPrivate::startRunnable(std::shared_ptr<NetworkRunnable> r)
         }
         catch (std::exception* e)
         {
-            LOG_ERROR("startRunnable() exception: " << e->what());
-            qDebug() << "[QMultiThreadNetwork] startRunnable() exception:" << QString::fromUtf8(e->what());
+            qCritical() << "[QMultiThreadNetwork] startRunnable() exception:" << QString::fromUtf8(e->what());
         }
         catch (...)
         {
-            LOG_ERROR("startRunnable() unknown exception");
-            qDebug() << "[QMultiThreadNetwork] startRunnable() unknown exception";
+            qCritical() << "[QMultiThreadNetwork] startRunnable() unknown exception";
         }
     }
 
@@ -456,7 +448,6 @@ bool NetworkManagerPrivate::setMaxThreadCount(int nMax)
     bool bRet = false;
     if (nMax >= 1 && nMax <= 16 && m_pThreadPool)
     {
-        LOG_INFO("ThreadPool maxThreadCount: " << nMax);
         qDebug() << "[QMultiThreadNetwork] ThreadPool maxThreadCount: " << nMax;
         m_pThreadPool->setMaxThreadCount(nMax);
         bRet = true;
@@ -501,7 +492,6 @@ std::shared_ptr<NetworkReply> NetworkManagerPrivate::getReply(quint64 uiRequestI
             return m_mapReply.value(uiRequestId);
         }
     }
-    LOG_ERROR(__FUNCTION__ << " failed! Id: " << uiRequestId);
     qDebug() << QString("%1 failed! Id: ").arg(__FUNCTION__) << uiRequestId;
     return nullptr;
 }
@@ -630,7 +620,6 @@ NetworkManager::NetworkManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new NetworkManagerPrivate)
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->q_ptr = this;
     //qDebug() << "[QMultiThreadNetwork] Thread : " << QThread::currentThreadId();
@@ -638,7 +627,6 @@ NetworkManager::NetworkManager(QObject *parent)
 
 NetworkManager::~NetworkManager()
 {
-    LOG_FUN("");
     ms_pInstance = nullptr;
 }
 
@@ -667,7 +655,6 @@ bool NetworkManager::isInstantiated()
 
 void NetworkManager::initialize()
 {
-    LOG_FUN("");
     if (!ms_bIntialized)
     {
         NetworkManager::globalInstance()->init();
@@ -677,7 +664,6 @@ void NetworkManager::initialize()
 
 void NetworkManager::unInitialize()
 {
-    LOG_FUN("");
     if (ms_bIntialized)
     {
         if (isInstantiated())
@@ -696,14 +682,12 @@ bool NetworkManager::isInitialized()
 
 void NetworkManager::init()
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->initialize();
 }
 
 void NetworkManager::fini()
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->unInitialize();
 }
@@ -713,7 +697,6 @@ NetworkReply *NetworkManager::addRequest(RequestTask& request)
     if (!NetworkManager::isInitialized())
     {
         qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
-        LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
         return nullptr;
     }
 
@@ -733,7 +716,6 @@ NetworkReply *NetworkManager::addBatchRequest(BatchRequestTask& tasks, quint64 &
     if (!NetworkManager::isInitialized())
     {
         qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
-        LOG_INFO("[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.");
         return nullptr;
     }
 
@@ -751,21 +733,18 @@ NetworkReply *NetworkManager::addBatchRequest(BatchRequestTask& tasks, quint64 &
 
 void NetworkManager::stopRequest(quint64 uiTaskId)
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->stopRequest(uiTaskId);
 }
 
 void NetworkManager::stopBatchRequests(quint64 uiBatchId)
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->stopBatchRequests(uiBatchId);
 }
 
 void NetworkManager::stopAllRequest()
 {
-    LOG_FUN("");
     Q_D(NetworkManager);
     d->stopAllRequest();
 }
@@ -779,8 +758,7 @@ bool NetworkManager::startAsRunnable(const RequestTask &request)
     Q_D(NetworkManager);
     if (!d->startRunnable(r))
     {
-        LOG_ERROR("ThreadPool->start() failed!");
-        qDebug() << "[QMultiThreadNetwork] ThreadPool->start() failed!";
+        qDebug() << "[QMultiThreadNetwork] startRunnable() failed!";
 
         d->addToFailedQueue(request);
         r.reset();
@@ -932,7 +910,6 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
                 pReply->replyResult(task, bDestroyed);
                 if (task.uiBatchId > 0 && bDestroyed)
                 {
-                    LOG_INFO("[Batch request finished! Id：" << task.uiBatchId);
                     qDebug() << QStringLiteral("[QMultiThreadNetwork] Batch request finished! Id：%1").arg(task.uiBatchId);
                     emit batchRequestFinished(task.uiBatchId, task.bSuccess);
                 }
@@ -955,12 +932,10 @@ void NetworkManager::onRequestFinished(const RequestTask &request)
     }
     catch (std::exception* e)
     {
-        LOG_ERROR("NetworkManager::onRequestFinished() exception: " << e->what());
         qCritical() << "NetworkManager::onRequestFinished() exception:" << QString::fromUtf8(e->what());
     }
     catch (...)
     {
-        LOG_ERROR("NetworkManager::onRequestFinished() unknown exception");
         qCritical() << "NetworkManager::onRequestFinished() unknown exception";
     }
 }

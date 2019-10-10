@@ -6,7 +6,6 @@
 #include <QUrlQuery>
 #include <QNetworkAccessManager>
 #include <QCoreApplication>
-#include "Log4cplusWrapper.h"
 #include "networkmanager.h"
 #include "networkutility.h"
 
@@ -35,7 +34,6 @@ void NetworkDownloadRequest::start()
     if (!url.isValid())
     {
         m_strError = QStringLiteral("Error: Invaild Url -").arg(url.toString());
-        LOG_INFO(m_strError.toStdWString());
         emit requestFinished(false, QByteArray(), m_strError);
         return;
     }
@@ -93,7 +91,6 @@ void NetworkDownloadRequest::onReadyRead()
             const QByteArray& bytesRev = m_pNetworkReply->readAll();
             if (!bytesRev.isEmpty() && -1 == m_pFile->write(bytesRev))
             {
-                LOG_ERROR(m_pFile->errorString().toStdWString());
                 qDebug() << "[QMultiThreadNetwork]" << m_pFile->errorString();
             }
         }
@@ -122,7 +119,6 @@ void NetworkDownloadRequest::onFinished()
                 m_request.redirectUrl = redirectUrl.toString();
                 if (url != redirectUrl)
                 {
-                    LOG_INFO("url: " << url.toString().toStdWString() << "; redirectUrl:" << m_request.redirectUrl.toStdWString());
                     qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
                     m_pNetworkReply->deleteLater();
@@ -143,7 +139,6 @@ void NetworkDownloadRequest::onFinished()
         }
         else if ((statusCode >= 300 || statusCode < 200) && statusCode != 0)
         {
-            LOG_INFO("HttpStatusCode: " << statusCode);
             qDebug() << "[QMultiThreadNetwork] HttpStatusCode:" << statusCode;
         }
     }

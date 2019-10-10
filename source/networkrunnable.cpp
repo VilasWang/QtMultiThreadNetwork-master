@@ -2,7 +2,6 @@
 #include <QDebug>
 #include <QEventLoop>
 #include <QCoreApplication>
-#include "Log4cplusWrapper.h"
 #include "classmemorytracer.h"
 #include "networkrequest.h"
 #include "networkmanager.h"
@@ -59,11 +58,10 @@ void NetworkRunnable::run()
             }
             else
             {
-                LOG_ERROR("Unsupported type(" << task.eType << ")  ---- " << task.url.toStdWString());
-                qWarning() << QString("Unsupported type(%1) ----").arg(task.eType) << task.url;
+                qWarning() << QString("[QMultiThreadNetwork] Unsupported type(%1) ----").arg(task.eType) << task.url;
 
                 task.bSuccess = false;
-                task.strError = QString("Unsupported type(%1)").arg(task.eType);
+                task.strError = QString("[QMultiThreadNetwork] Unsupported type(%1)").arg(task.eType);
                 emit requestFinished(task);
             }
             loop.exec();
@@ -71,13 +69,11 @@ void NetworkRunnable::run()
     }
     catch (std::exception* e)
     {
-        LOG_ERROR("NetworkRunnable::run() exception: " << e->what());
-        qCritical() << "NetworkRunnable::run() exception:" << QString::fromUtf8(e->what());
+        qCritical() << "[QMultiThreadNetwork] NetworkRunnable::run() exception:" << QString::fromUtf8(e->what());
     }
     catch (...)
     {
-        LOG_ERROR("NetworkRunnable::run() unknown exception");
-        qCritical() << "NetworkRunnable::run() unknown exception";
+        qCritical() << "[QMultiThreadNetwork] NetworkRunnable::run() unknown exception";
     }
 
     if (pRequest.get())
