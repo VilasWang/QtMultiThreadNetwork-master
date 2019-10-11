@@ -51,7 +51,7 @@ Qt多线程网络模块是对Qt Network的封装，并且结合线程池以实�
 ## How to use
 
 ```CPP
-#include "networkdef.h"
+#include "networkdefs.h"
 #include "networkmanager.h"
 #include "networkreply.h"
 ```

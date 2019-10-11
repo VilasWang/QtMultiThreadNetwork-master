@@ -19,8 +19,8 @@ staticlib: DEFINES += QT_MTNETWORK_STATIC
 # Input
 HEADERS += $$PWD/inc/classmemorytracer.h \
            $$PWD/inc/Log4cplusWrapper.h \
-           $$PWD/inc/network_global.h \
-           $$PWD/inc/networkdef.h \
+           $$PWD/inc/networkglobal.h \
+           $$PWD/inc/networkdefs.h \
            $$PWD/inc/networkmanager.h \
            $$PWD/inc/networkreply.h \
            networkrequest.h \

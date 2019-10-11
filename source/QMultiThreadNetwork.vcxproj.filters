@@ -124,12 +124,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\network_global.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\networkdef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\classmemorytracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -137,6 +131,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="networkutility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\networkdefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\networkglobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

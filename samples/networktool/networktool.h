@@ -6,7 +6,7 @@
 #include "ui_networktool.h"
 #include "ui_addBatchTask.h"
 #include "ui_addtask.h"
-#include "networkdef.h"
+#include "networkdefs.h"
 #include "listview.h"
 
 class QWidget;

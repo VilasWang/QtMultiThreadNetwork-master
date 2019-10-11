@@ -8,7 +8,7 @@
 #include <QPair>
 #include <QDir>
 #include <QDebug>
-#include "networkdef.h"
+#include "networkdefs.h"
 
 
 NetworkUtility::NetworkUtility()

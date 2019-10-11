@@ -22,8 +22,8 @@ That must be called in the main thread.
 #include <QObject>
 #include <atomic>
 #include "networkreply.h"
-#include "networkdef.h"
-#include "network_global.h"
+#include "networkdefs.h"
+#include "networkglobal.h"
 
 class QEvent;
 class NetworkManagerPrivate;

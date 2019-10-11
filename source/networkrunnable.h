@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QRunnable>
-#include "networkdef.h"
+#include "networkdefs.h"
 
 class NetworkRunnable : public QObject, public QRunnable
 {

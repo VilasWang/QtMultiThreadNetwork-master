@@ -4,7 +4,7 @@
 #include <QObject>
 #include <memory>
 #include <QNetworkReply>
-#include "networkdef.h"
+#include "networkdefs.h"
 
 
 class QNetworkAccessManager;
