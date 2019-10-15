@@ -118,19 +118,16 @@ void NetworkCommonRequest::onFinished()
         {//301,302重定向
             const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
             const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
-            if (redirectUrl.isValid())
+            if (redirectUrl.isValid() && url != redirectUrl && ++m_nRedirectionCount <= m_request.nMaxRedirectionCount)
             {
                 m_request.redirectUrl = redirectUrl.toString();
-                if (url != redirectUrl)
-                {
-                    qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
+                qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
 
-                    m_pNetworkReply->deleteLater();
-                    m_pNetworkReply = nullptr;
+                m_pNetworkReply->deleteLater();
+                m_pNetworkReply = nullptr;
 
-                    start();
-                    return;
-                }
+                start();
+                return;
             }
         }
         else if (statusCode != 200 && statusCode != 0)

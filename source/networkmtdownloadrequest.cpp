@@ -147,16 +147,15 @@ void NetworkMTDownloadRequest::startMTDownload()
         //分段下载该文件
         std::unique_ptr<Downloader> downloader;
 #if _MSC_VER >= 1700
-        downloader = std::make_unique<Downloader>(i, this);
+        downloader = std::make_unique<Downloader>(i, m_strDstFilePath, m_pNetworkManager, m_request.bShowProgress, m_request.nMaxRedirectionCount, this);
 #else
-        downloader.reset(new Downloader(i, this));
+        downloader.reset(new Downloader(i, m_strDstFilePath, m_pNetworkManager, m_request.bShowProgress, m_request.nMaxRedirectionCount, this));
 #endif
         connect(downloader.get(), SIGNAL(downloadFinished(int, bool, const QString&)),
             this, SLOT(onSubPartFinished(int, bool, const QString&)));
         connect(downloader.get(), SIGNAL(downloadProgress(int, qint64, qint64)),
             this, SLOT(onSubPartDownloadProgress(int, qint64, qint64)));
-        if (downloader->start(m_request.url, m_strDstFilePath, m_pNetworkManager,
-            start, end, m_request.bShowProgress))
+        if (downloader->start(m_request.url, start, end))
         {
             m_mapDownloader[i] = std::move(downloader);
             m_mapBytes.insert(i, ProgressData());
@@ -328,16 +327,19 @@ void NetworkMTDownloadRequest::clearProgress()
 }
 
 //////////////////////////////////////////////////////////////////////////
-Downloader::Downloader(int index, QObject *parent)
+Downloader::Downloader(int index, const QString& strDstFile, QNetworkAccessManager* pNetworkManager, bool bShowProgress, quint16 nMaxRedirectionCount, QObject *parent)
     : QObject(parent)
     , m_nIndex(index)
-    , m_pNetworkManager(nullptr)
     , m_pNetworkReply(nullptr)
     , m_bAbortManual(false)
-    , m_bShowProgress(false)
     , m_nStartPoint(0)
     , m_nEndPoint(0)
     , m_hFile(0)
+    , m_nRedirectionCount(0)
+    , m_pNetworkManager(QPointer<QNetworkAccessManager>(pNetworkManager))
+    , m_bShowProgress(bShowProgress)
+    , m_nMaxRedirectionCount(nMaxRedirectionCount)
+    , m_strDstFilePath(strDstFile)
 {
     TRACE_CLASS_CONSTRUCTOR(Downloader);
 }
@@ -368,27 +370,19 @@ void Downloader::abort()
     m_pNetworkManager = nullptr;
 }
 
-bool Downloader::start(const QUrl &url,
-    const QString& strDstFile,
-    QNetworkAccessManager* pNetworkManager,
-    qint64 startPoint,
-    qint64 endPoint,
-    bool bShowProgress)
+bool Downloader::start(const QUrl &url, qint64 startPoint, qint64 endPoint)
 {
-    if (nullptr == pNetworkManager || !url.isValid() || strDstFile.isEmpty())
+    if (nullptr == m_pNetworkManager || m_strDstFilePath.isEmpty() || !url.isValid())
         return false;
 
     m_bAbortManual = false;
 
     m_url = url;
-    m_pNetworkManager = QPointer<QNetworkAccessManager>(pNetworkManager);
     m_nStartPoint = startPoint;
     m_nEndPoint = endPoint;
-    m_bShowProgress = bShowProgress;
 
-    m_strDstFilePath = strDstFile;
 #ifdef WIN32
-    m_hFile = CreateFileW(strDstFile.toStdWString().c_str(), GENERIC_WRITE,
+    m_hFile = CreateFileW(m_strDstFilePath.toStdWString().c_str(), GENERIC_WRITE,
         FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (m_hFile != nullptr && m_hFile != INVALID_HANDLE_VALUE)
     {
@@ -439,7 +433,7 @@ bool Downloader::start(const QUrl &url,
         connect(m_pNetworkReply, SIGNAL(finished()), this, SLOT(onFinished()));
         connect(m_pNetworkReply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
         connect(m_pNetworkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
-        if (bShowProgress)
+        if (m_bShowProgress)
         {
             connect(m_pNetworkReply, &QNetworkReply::downloadProgress, this, [=](qint64 bytesReceived, qint64 bytesTotal) {
                 if (m_bAbortManual || bytesReceived < 0 || bytesTotal < 0)
@@ -494,7 +488,7 @@ void Downloader::onFinished()
             {//301,302重定向
                 const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
                 const QUrl& redirectUrl = m_url.resolved(redirectionTarget.toUrl());
-                if (redirectUrl.isValid() && redirectUrl != m_url)
+                if (redirectUrl.isValid() && redirectUrl != m_url && ++m_nRedirectionCount <= m_nMaxRedirectionCount)
                 {
                     qDebug() << "[QMultiThreadNetwork] url:" << m_url.toString() << "redirectUrl:" << redirectUrl.toString();
 
@@ -507,8 +501,7 @@ void Downloader::onFinished()
                         m_hFile = nullptr;
                     }
 #endif
-                    start(redirectUrl, m_strDstFilePath, m_pNetworkManager.data(),
-                        m_nStartPoint, m_nEndPoint, m_bShowProgress);
+                    start(redirectUrl, m_nStartPoint, m_nEndPoint);
                     return;
                 }
             }

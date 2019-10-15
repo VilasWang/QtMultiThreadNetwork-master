@@ -36,6 +36,7 @@ protected:
     bool m_bAbortManual;
     QString m_strError;
     int m_nProgress;
+    quint16 m_nRedirectionCount;
     QNetworkAccessManager *m_pNetworkManager;
     QNetworkReply *m_pNetworkReply;
 };

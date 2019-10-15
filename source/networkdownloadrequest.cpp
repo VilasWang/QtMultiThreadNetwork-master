@@ -114,27 +114,24 @@ void NetworkDownloadRequest::onFinished()
         {//301,302重定向
             const QVariant& redirectionTarget = m_pNetworkReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
             const QUrl& redirectUrl = url.resolved(redirectionTarget.toUrl());
-            if (redirectUrl.isValid())
+            if (redirectUrl.isValid() && url != redirectUrl && ++m_nRedirectionCount <= m_request.nMaxRedirectionCount)
             {
                 m_request.redirectUrl = redirectUrl.toString();
-                if (url != redirectUrl)
+                qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
+
+                m_pNetworkReply->deleteLater();
+                m_pNetworkReply = nullptr;
+
+                //重定向需要关闭之前打开的文件
+                if (NetworkUtility::fileExists(m_pFile.get()))
                 {
-                    qDebug() << "[QMultiThreadNetwork] url:" << url.toString() << "redirectUrl:" << m_request.redirectUrl;
-
-                    m_pNetworkReply->deleteLater();
-                    m_pNetworkReply = nullptr;
-
-                    //重定向需要关闭之前打开的文件
-                    if (NetworkUtility::fileExists(m_pFile.get()))
-                    {
-                        m_pFile->close();
-                        m_pFile->remove();
-                    }
-                    m_pFile.reset();
-
-                    start();
-                    return;
+                    m_pFile->close();
+                    m_pFile->remove();
                 }
+                m_pFile.reset();
+
+                start();
+                return;
             }
         }
         else if ((statusCode >= 300 || statusCode < 200) && statusCode != 0)

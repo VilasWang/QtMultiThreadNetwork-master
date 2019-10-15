@@ -56,11 +56,6 @@ namespace QMTNetwork {
     //请求结构
     struct RequestTask
     {
-        enum
-        {
-            ALL_TASK = (unsigned long)0xffffffff,
-        };
-
         // 请求的类型：上传/下载/其他请求
         RequestType eType;
 
@@ -103,12 +98,21 @@ namespace QMTNetwork {
         // n个下载通道(默认是5)(取值范围2-10)
         quint16 nDownloadThreadCount;
 
+        // 最大重定向次数
+        quint16 nMaxRedirectionCount;
+
         // 用户自定义内容（可用于回传）
         QVariant varArg1;
         // 用户自定义内容（可用于回传）
         QVariant varArg2;
         // 用户自定义内容（可用于回传）
         QVariant varArg3;
+
+        enum
+        {
+            ALL_TASK = (unsigned long)0xffffffff,
+        };
+
 
         //////////////////////返回结果的字段/////////////////////////////////////////////
         // 正常结束
@@ -142,6 +146,7 @@ namespace QMTNetwork {
             bAbortBatchWhenFailed = false;
             nDownloadThreadCount = 5;
             bUploadUsePut = true;
+            nMaxRedirectionCount = 5;
         }
     };
     Q_DECLARE_METATYPE(RequestTask);

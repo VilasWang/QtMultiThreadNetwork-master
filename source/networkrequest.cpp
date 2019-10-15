@@ -14,6 +14,7 @@ NetworkRequest::NetworkRequest(QObject *parent)
     , m_pNetworkManager(nullptr)
     , m_pNetworkReply(nullptr)
     , m_nProgress(0)
+    , m_nRedirectionCount(0)
 {
     TRACE_CLASS_CONSTRUCTOR(NetworkRequest);
 }

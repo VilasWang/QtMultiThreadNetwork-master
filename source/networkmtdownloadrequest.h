@@ -59,15 +59,16 @@ class Downloader : public QObject
     Q_OBJECT
 
 public:
-    explicit Downloader(int index, QObject *parent = 0);
+    explicit Downloader(int index, 
+        const QString& strDstFile, 
+        QNetworkAccessManager* pNetworkManager, 
+        bool bShowProgress = false, 
+        quint16 nMaxRedirectionCount = 5,
+        QObject *parent = 0);
+
     virtual ~Downloader();
 
-    bool start(const QUrl &url,
-        const QString& strDstFile,
-        QNetworkAccessManager* pNetworkManager,
-        qint64 startPoint = 0,
-        qint64 endPoint = -1,
-        bool bShowProgress = false);
+    bool start(const QUrl &url, qint64 startPoint = 0, qint64 endPoint = -1);
 
     void abort();
 
@@ -84,16 +85,18 @@ private:
     QPointer<QNetworkAccessManager> m_pNetworkManager;
     QNetworkReply *m_pNetworkReply;
     QUrl m_url;
-    typedef void * HANDLE;
-    HANDLE m_hFile;
-    QString m_strDstFilePath;
     bool m_bAbortManual;
     QString m_strError;
-
     const int m_nIndex;
     qint64 m_nStartPoint;
     qint64 m_nEndPoint;
     bool m_bShowProgress;
+    quint16 m_nRedirectionCount;
+    quint16 m_nMaxRedirectionCount;
+
+    typedef void * HANDLE;
+    HANDLE m_hFile;
+    QString m_strDstFilePath;
 };
 
 #endif // NETWORKBIGFLEDOWNLOADREQUEST_H
