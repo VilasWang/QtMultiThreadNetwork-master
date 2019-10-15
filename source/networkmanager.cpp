@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include "classmemorytracer.h"
 #include "networkrunnable.h"
+#include "networkreply.h"
 
 using namespace QMTNetwork;
 #define DEFAULT_MAX_THREAD_COUNT 5

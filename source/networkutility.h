@@ -2,8 +2,9 @@
 
 #include <memory>
 #include <QString>
-#include <QFile>
 
+class QFile;
+class QUrl;
 namespace QMTNetwork {
     struct RequestTask;
 }

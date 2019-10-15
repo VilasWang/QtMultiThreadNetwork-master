@@ -21,12 +21,12 @@ That must be called in the main thread.
 
 #include <QObject>
 #include <atomic>
-#include "networkreply.h"
 #include "networkdefs.h"
 #include "networkglobal.h"
 
 class QEvent;
 class NetworkManagerPrivate;
+class NetworkReply;
 class NETWORK_EXPORT NetworkManager : public QObject
 {
     Q_OBJECT;

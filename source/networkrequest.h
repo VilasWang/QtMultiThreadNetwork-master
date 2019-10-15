@@ -18,7 +18,7 @@ public:
 
     void setRequestTask(const QMTNetwork::RequestTask &request) { m_request = request; }
 
-    QString errorString() const { return m_strError; }
+    const QString errorString() const { return m_strError; }
 
 public Q_SLOTS:
     virtual void start();

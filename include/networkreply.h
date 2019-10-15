@@ -5,6 +5,7 @@
 #include "networkdefs.h"
 #include "networkglobal.h"
 
+class QEvent;
 // 对象会自动销毁，不要主动销毁
 class NETWORK_EXPORT NetworkReply : public QObject
 {

@@ -8,6 +8,7 @@
 #include <QPair>
 #include <QDir>
 #include <QDebug>
+#include <QFile>
 #include "networkdefs.h"
 
 
