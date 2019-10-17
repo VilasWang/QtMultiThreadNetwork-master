@@ -77,7 +77,7 @@ NetworkManager::unInitialize();
 RequestTask task;
 task.eType = eTypeDownload;
 task.url = QString("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
-task.strReqArg = "D:/Download";
+task.strReqArg = QString("D:/Download");
 task.bShowProgress = true;
 task.bReplaceFileIfExist = true;
 task.bTryAgainIfFailed = true;
@@ -95,7 +95,7 @@ if (nullptr != pReply)
 RequestTask task;
 task.url = QString("http://127.0.0.1:80/_php/upload.php?filename=upload/test.png");
 task.eType = eTypeUpload;
-task.strReqArg = "resources/1.png"; //local file path
+task.strReqArg = QString("resources/1.png"); //local file path
 task.bShowProgress = true;
 task.bTryAgainIfFailed = true;
 task.nMaxRedirectionCount = 5;
@@ -183,7 +183,7 @@ foreach (const QString& strUrl, strlstUrl)
 {
 	task.url = QDir::fromNativeSeparators(strUrl);
 	task.eType = eTypeDownload;
-	task.strReqArg = "your save dir";
+	task.strReqArg = QString("save file dir");
 	task.bShowProgress = true;
 	tasks.append(std::move(task));
 }
