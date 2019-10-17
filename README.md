@@ -76,89 +76,94 @@ NetworkManager::unInitialize();
 ```CPP
 RequestTask task;
 task.eType = eTypeDownload;
-task.url = QUrl("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
+task.url = QString("http://pic2.52pk.com/files/131112/2255194_1405292P.png");
 task.strReqArg = "D:/Download";
 task.bShowProgress = true;
-task.bRemoveFileWhileExist = true;
-task.bTryAgainWhileFailed = true;
+task.bReplaceFileIfExist = true;
+task.bTryAgainIfFailed = true;
+task.nMaxRedirectionCount = 5;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
 >Upload file:
 ```CPP
 RequestTask task;
-task.url = QUrl("http://127.0.0.1:80/_php/upload.php?filename=upload/test.txt");
+task.url = QString("http://127.0.0.1:80/_php/upload.php?filename=upload/test.png");
 task.eType = eTypeUpload;
-task.strReqArg = "resources/checkbox.png"; //local file path
+task.strReqArg = "resources/1.png"; //local file path
 task.bShowProgress = true;
-task.bTryAgainWhileFailed = true;
+task.bTryAgainIfFailed = true;
+task.nMaxRedirectionCount = 5;
+task.bUploadUsePut = true;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
 >GET method:
 ```CPP
 RequestTask task;
-task.url = QUrl("http://m.kugou.com/singer/list/88?json=true");
+task.url = QString("http://m.kugou.com/singer/list/88?json=true");
 task.eType = eTypeGet;
-task.bTryAgainWhileFailed = true;
+task.bTryAgainIfFailed = true;
+task.nMaxRedirectionCount = 5;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
 >POST method:
 ```CPP
 RequestTask task;
-task.url = QUrl("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
+task.url = QString("https://passportservice.7fgame.com/HttpService/PlatService.ashx");
 task.eType = eTypePost;
 task.strReqArg = "userId=121892674&userName=33CxghNmt1FhAA==&st=QQBnAEEAQQBBAEUATAB2AFEAdwBjAEEAQQBBAEEAQQBBAEEAQQBBAEEATAB2AFAANwBoAE4AcwBJAC8AbwBWAFMAQQArAEQAVgBIADIAdgAyAHcARgBRAGYANABJAHkAOQA3AFAAYQBkAFMARwBoAEoAKwBUAEoAcAAzADkAVgBYAFYAMwBDAE4AVABiAHEAZQB3AE4AMAANAAoAOABlAHUANQBBAHMAUwBYAFEAbQAyAFUAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMQB0AGwARwBIADYAdAB1AGYAYQBxAEoAMwBnAFUARwA4AGoAdQA5AGsAOQBzAFoAYQB1AHAARwBjAE8ANABnADIAegBnADIANgB1AEcANwBoAHAAUwBHADIAVQANAAoAWQBmAHEAMgA1ADkAcQBvAG4AZQBCAFEAYgB5AE8ANwAyAFQAMAA9AA==";
-task.bTryAgainWhileFailed = true;
+task.bTryAgainIfFailed = true;
+task.nMaxRedirectionCount = 5;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
 >DELETE method:
 ```CPP
 RequestTask task;
-task.url = QUrl("http://127.0.0.1:80/_php/delete.php?filename=upload/test.txt");
+task.url = QString("http://127.0.0.1:80/_php/delete.php?filename=upload/test.txt");
 task.eType = eTypeDelete;
-task.bTryAgainWhileFailed = true;
+task.bTryAgainIfFailed = true;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
 >HEAD method:
 ```CPP
 RequestTask task;
-task.url = QUrl("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
+task.url = QString("http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.zip");
 task.eType = eTypeHead;
-task.bTryAgainWhileFailed = true;
+task.bTryAgainIfFailed = true;
 
 NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(task);
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
@@ -167,17 +172,17 @@ if (nullptr != pReply)
 
 ```cpp
 connect(NetworkManager::globalInstance(), &NetworkManager::batchDownloadProgress,
-	this, &NetworkTool::onBatchDownloadProgress);
+	this, &T::onBatchDownloadProgress);
 	
 connect(NetworkManager::globalInstance(), &NetworkManager::batchUploadProgress,
-	this, &NetworkTool::onBatchUploadProgress);
+	this, &T::onBatchUploadProgress);
 
 BatchRequestTask tasks;
 RequestTask task;
 foreach (const QString& strUrl, strlstUrl)
 {
-	task.url = QUrl(QDir::fromNativeSeparators(strUrl));
-	task.eTaskType = eTypeDownload;
+	task.url = QDir::fromNativeSeparators(strUrl);
+	task.eType = eTypeDownload;
 	task.strReqArg = "your save dir";
 	task.bShowProgress = true;
 	tasks.append(std::move(task));
@@ -192,7 +197,7 @@ NetworkReply *pReply = NetworkManager::globalInstance()->addBatchRequest(tasks, 
 qDebug() << "uiBatchId: " << uiBatchId;
 if (nullptr != pReply)
 {
-	connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+	connect(pReply, &NetworkReply::requestFinished, this, &T::onRequestFinished);
 }
 ```
 
