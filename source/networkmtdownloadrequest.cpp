@@ -1,6 +1,6 @@
 ﻿#include "networkmtdownloadrequest.h"
 #ifdef WIN32
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 #include <QDebug>
@@ -146,10 +146,10 @@ void NetworkMTDownloadRequest::startMTDownload()
 
         //分段下载该文件
         std::unique_ptr<Downloader> downloader;
-#if _MSC_VER >= 1700
-        downloader = std::make_unique<Downloader>(i, m_strDstFilePath, m_pNetworkManager, m_request.bShowProgress, m_request.nMaxRedirectionCount, this);
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
         downloader.reset(new Downloader(i, m_strDstFilePath, m_pNetworkManager, m_request.bShowProgress, m_request.nMaxRedirectionCount, this));
+#else
+        downloader = std::make_unique<Downloader>(i, m_strDstFilePath, m_pNetworkManager, m_request.bShowProgress, m_request.nMaxRedirectionCount, this);
 #endif
         connect(downloader.get(), SIGNAL(downloadFinished(int, bool, const QString&)),
             this, SLOT(onSubPartFinished(int, bool, const QString&)));
@@ -209,7 +209,7 @@ void NetworkMTDownloadRequest::onSubPartDownloadProgress(int index, qint64 bytes
     if (m_bAbortManual || bytesReceived <= 0 || bytesTotal <= 0)
         return;
 
-    if (NetworkManager::isInstantiated() && m_mapBytes.contains(index))
+    if (m_mapBytes.contains(index))
     {
         //qDebug() << "Part:" << index << " progress:" << bytesReceived << "/" << bytesTotal;
 

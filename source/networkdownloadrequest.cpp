@@ -171,18 +171,15 @@ void NetworkDownloadRequest::onDownloadProgress(qint64 iReceived, qint64 iTotal)
     if (m_bAbortManual || iReceived <= 0 || iTotal <= 0)
         return;
 
-    if (NetworkManager::isInstantiated())
+    int progress = iReceived * 100 / iTotal;
+    if (m_nProgress < progress)
     {
-        int progress = iReceived * 100 / iTotal;
-        if (m_nProgress < progress)
-        {
-            m_nProgress = progress;
-            NetworkProgressEvent *event = new NetworkProgressEvent;
-            event->uiId = m_request.uiId;
-            event->uiBatchId = m_request.uiBatchId;
-            event->iBtyes = iReceived;
-            event->iTotalBtyes = iTotal;
-            QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
-        }
+        m_nProgress = progress;
+        NetworkProgressEvent *event = new NetworkProgressEvent;
+        event->uiId = m_request.uiId;
+        event->uiBatchId = m_request.uiBatchId;
+        event->iBtyes = iReceived;
+        event->iTotalBtyes = iTotal;
+        QCoreApplication::postEvent(NetworkManager::globalInstance(), event);
     }
 }

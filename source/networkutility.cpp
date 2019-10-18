@@ -1,6 +1,6 @@
 #include "networkutility.h"
 #ifdef WIN32
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 #include <QUrlQuery>
@@ -64,10 +64,10 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
     }
 
     //创建并打开文件
-#if _MSC_VER >= 1700
-    pFile = std::make_unique<QFile>(strFilePath);
+#if defined(_MSC_VER) && _MSC_VER < 1700
+    pFile.reset(new QFile(strFilePath));
 #else
-    pFile->reset(new QFile(strFilePath));
+    pFile = std::make_unique<QFile>(strFilePath);
 #endif
     if (!pFile->open(QIODevice::WriteOnly))
     {
@@ -104,8 +104,9 @@ bool NetworkUtility::readFileContent(const QString& strFilePath, QByteArray& byt
 QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& request, QString& strError, qint64 nDefaultFileSize)
 {
     QString strCreatedFile;
-#ifdef WIN32
     strError.clear();
+
+#ifdef WIN32
 
     //取下载文件保存目录
     const QString& strSaveDir = getDownloadFileSaveDir(request, strError);
@@ -171,6 +172,8 @@ QString NetworkUtility::createSharedRWFileWin32(const QMTNetwork::RequestTask& r
         return strCreatedFile;
     }
 
+#else
+    strError = QStringLiteral("Error: createSharedRWFileWin32() only support win32 platform.");
 #endif
     return strFilePath;
 }

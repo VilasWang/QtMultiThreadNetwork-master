@@ -1828,9 +1828,8 @@ compiling with Microsoft Visual C++ 6
 #ifndef WIN32_LEAN_AND_MEAN 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif 
-#include <time.h>
 #include <windows.h>
-///#include <winsock.h>
+#include <time.h>
 
 
 /// 生成和使用dll时使用
@@ -5991,7 +5990,6 @@ char *sd_strdup(const char *string)
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif 
 #include <windows.h>
-///#include <winsock.h>
 #include <process.h>
 #endif
 

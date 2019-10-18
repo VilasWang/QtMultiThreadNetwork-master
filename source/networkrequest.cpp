@@ -73,28 +73,28 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
     {
     case eTypeDownload:
     {
-#if _MSC_VER >= 1700
-        pRequest = std::make_unique<NetworkDownloadRequest>();
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkDownloadRequest());
+#else
+        pRequest = std::make_unique<NetworkDownloadRequest>();
 #endif
     }
     break;
     case eTypeMTDownload:
     {
-#if _MSC_VER >= 1700
-        pRequest = std::make_unique<NetworkMTDownloadRequest>();
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkMTDownloadRequest());
+#else
+        pRequest = std::make_unique<NetworkMTDownloadRequest>();
 #endif
     }
     break;
     case eTypeUpload:
     {
-#if _MSC_VER >= 1700
-        pRequest = std::make_unique<NetworkUploadRequest>();
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkUploadRequest());
+#else
+        pRequest = std::make_unique<NetworkUploadRequest>();
 #endif
     }
     break;
@@ -104,10 +104,10 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
     case eTypeDelete:
     case eTypeHead:
     {
-#if _MSC_VER >= 1700
-        pRequest = std::make_unique<NetworkCommonRequest>();
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkCommonRequest());
+#else
+        pRequest = std::make_unique<NetworkCommonRequest>();
 #endif
     }
     break;

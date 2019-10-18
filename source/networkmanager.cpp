@@ -63,15 +63,14 @@ private:
     NetworkManager *q_ptr;
 
 private:
-#if _MSC_VER >= 1700
+#if defined(_MSC_VER) && _MSC_VER < 1700
+    static quint64 ms_uiRequestId;
+    static quint64 ms_uiBatchId;
+    bool m_bStopAllFlag;
+#else
     static std::atomic<quint64> ms_uiRequestId;
     static std::atomic<quint64> ms_uiBatchId;
     std::atomic<bool> m_bStopAllFlag;
-#else
-    static quint64 ms_uiRequestId;
-    static quint64 ms_uiBatchId;
-    // 停止所有请求标记
-    bool m_bStopAllFlag;
 #endif
 
     mutable QMutex m_mutex;
@@ -100,12 +99,12 @@ private:
     // (batchId <---> 总上传字节数)
     QMap<quint64, qint64> m_mapBatchUTotalBytes;
 };
-#if _MSC_VER >= 1700
-std::atomic<quint64> NetworkManagerPrivate::ms_uiRequestId = 0;
-std::atomic<quint64> NetworkManagerPrivate::ms_uiBatchId = 0;
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
 quint64 NetworkManagerPrivate::ms_uiRequestId = 0;
 quint64 NetworkManagerPrivate::ms_uiBatchId = 0;
+#else
+std::atomic<quint64> NetworkManagerPrivate::ms_uiRequestId = 0;
+std::atomic<quint64> NetworkManagerPrivate::ms_uiBatchId = 0;
 #endif
 
 
@@ -610,11 +609,10 @@ bool NetworkManagerPrivate::releaseRequestThread(quint64 uiRequestId)
 
 
 //////////////////////////////////////////////////////////////////////////
-NetworkManager *NetworkManager::ms_pInstance = nullptr;
-#if _MSC_VER >= 1700
-std::atomic<bool> NetworkManager::ms_bIntialized = false;
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
 bool NetworkManager::ms_bIntialized = false;
+#else
+std::atomic<bool> NetworkManager::ms_bIntialized = false;
 #endif
 
 NetworkManager::NetworkManager(QObject *parent)
@@ -628,30 +626,12 @@ NetworkManager::NetworkManager(QObject *parent)
 
 NetworkManager::~NetworkManager()
 {
-    ms_pInstance = nullptr;
 }
 
 NetworkManager* NetworkManager::globalInstance()
 {
-    if (!ms_pInstance)
-    {
-        ms_pInstance = new NetworkManager;
-    }
-    return ms_pInstance;
-}
-
-void NetworkManager::deleteInstance()
-{
-    if (ms_pInstance)
-    {
-        delete ms_pInstance;
-        ms_pInstance = nullptr;
-    }
-}
-
-bool NetworkManager::isInstantiated()
-{
-    return (ms_pInstance != nullptr);
+    static NetworkManager s_instance;
+    return &s_instance;
 }
 
 void NetworkManager::initialize()
@@ -667,11 +647,7 @@ void NetworkManager::unInitialize()
 {
     if (ms_bIntialized)
     {
-        if (isInstantiated())
-        {
-            NetworkManager::globalInstance()->fini();
-            NetworkManager::deleteInstance();
-        }
+        NetworkManager::globalInstance()->fini();
         ms_bIntialized = false;
     }
 }

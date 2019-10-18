@@ -40,9 +40,6 @@ public:
     static bool isInitialized();
 
     static NetworkManager* globalInstance();
-    static void deleteInstance();
-    // 是否已经实例化
-    static bool isInstantiated();
 
 public:
     // NetworkReply对象会在请求结束后自动销毁，用户不用主动销毁
@@ -96,11 +93,10 @@ private:
 
 private:
     QScopedPointer<NetworkManagerPrivate> d_ptr;
-    static NetworkManager* ms_pInstance;
-#if _MSC_VER >= 1700
-    static std::atomic<bool> ms_bIntialized;
-#else
+#if defined(_MSC_VER) && _MSC_VER < 1700
     static bool ms_bIntialized;
+#else
+    static std::atomic<bool> ms_bIntialized;
 #endif
 };
 
