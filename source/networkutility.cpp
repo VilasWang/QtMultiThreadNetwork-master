@@ -34,7 +34,7 @@ std::unique_ptr<QFile> NetworkUtility::createAndOpenFile(const QMTNetwork::Reque
 
     //取下载保存的文件名
     const QString& strFileName = getDownloadFileSaveName(request);
-    if (strSaveDir.isEmpty())
+    if (strFileName.isEmpty())
     {
         strError = QLatin1String("Error: fileName is empty!");
         qWarning() << strError;
