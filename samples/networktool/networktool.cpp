@@ -43,6 +43,59 @@ using namespace QMTNetwork;
 #define HTTP_SERVER_IP				"127.0.0.1"
 #define HTTP_SERVER_PORT			"80"
 
+namespace {
+    const QString getTypeString(const RequestType eType)
+    {
+        QString strType;
+        switch (eType)
+        {
+        case eTypeDownload:
+        {
+            strType = QStringLiteral("下载");
+        }
+        break;
+        case eTypeMTDownload:
+        {
+            strType = QStringLiteral("MT下载");
+        }
+        break;
+        case eTypeUpload:
+        {
+            strType = QStringLiteral("上传");
+        }
+        break;
+        case eTypeGet:
+        {
+            strType = QStringLiteral("GET");
+        }
+        break;
+        case eTypePost:
+        {
+            strType = QStringLiteral("POST");
+        }
+        break;
+        case eTypePut:
+        {
+            strType = QStringLiteral("PUT");
+        }
+        break;
+        case eTypeDelete:
+        {
+            strType = QStringLiteral("DELETE");
+        }
+        break;
+        case eTypeHead:
+        {
+            strType = QStringLiteral("HEAD");
+        }
+        break;
+        default:
+            break;
+        }
+        return strType;
+    }
+}
+
 
 NetworkTool::NetworkTool(QWidget *parent)
     : QMainWindow(parent)
@@ -1238,7 +1291,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
             const QRect& boundingRect = fm.boundingRect(QRect(rect.left() + 10, rect.top() + 16, 300, 0), Qt::TextWordWrap, stTask.url);
             painter->drawText(boundingRect, Qt::TextWordWrap, stTask.url);
             painter->drawText(QRect(rect.left() + 10, rect.top(), 100, 14), QStringLiteral("类型（%1）")
-                .arg(getRequestTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
+                .arg(getTypeString(stTask.eType)), QTextOption(Qt::AlignLeft | Qt::AlignVCenter));
 
             if (stTask.bCancel)
             {

@@ -19,7 +19,6 @@ That must be called in the main thread.
 #ifndef NETWORKDEF_H
 #define NETWORKDEF_H
 
-#include <QEvent>
 #include <QMap>
 #include <QByteArray>
 #include <QVariant>
@@ -151,130 +150,6 @@ namespace QMTNetwork {
     };
     Q_DECLARE_METATYPE(RequestTask);
     typedef QVector<RequestTask> BatchRequestTask;
-
-
-    inline const QString getRequestTypeString(const RequestType eType)
-    {
-        QString strType;
-        switch (eType)
-        {
-        case eTypeDownload:
-        {
-            strType = QStringLiteral("下载");
-        }
-        break;
-        case eTypeMTDownload:
-        {
-            strType = QStringLiteral("MT下载");
-        }
-        break;
-        case eTypeUpload:
-        {
-            strType = QStringLiteral("上传");
-        }
-        break;
-        case eTypeGet:
-        {
-            strType = QStringLiteral("GET");
-        }
-        break;
-        case eTypePost:
-        {
-            strType = QStringLiteral("POST");
-        }
-        break;
-        case eTypePut:
-        {
-            strType = QStringLiteral("PUT");
-        }
-        break;
-        case eTypeDelete:
-        {
-            strType = QStringLiteral("DELETE");
-        }
-        break;
-        case eTypeHead:
-        {
-            strType = QStringLiteral("HEAD");
-        }
-        break;
-        default:
-            break;
-        }
-        return strType;
-    }
-
-
-    ////////////////// Event ////////////////////////////////////////////////////
-    namespace QEventRegister
-    {
-        template <typename T>
-        int regiesterEvent(const T& eventName)
-        {
-            static_assert(std::is_integral<T>::value
-                || std::is_base_of<std::string, T>::value
-                || std::is_base_of<std::wstring, T>::value
-                || std::is_base_of<QString, T>::value
-                || std::is_base_of<QLatin1String, T>::value, "T is a unsupported Type.");
-
-            typedef std::map<T, int> UserEventMap;
-            static UserEventMap s_mapUserEvent;
-
-            UserEventMap::const_iterator iter = s_mapUserEvent.find(eventName);
-            if (iter != s_mapUserEvent.cend())
-            {
-                return iter->second;
-            }
-
-            int nEventType = QEvent::registerEventType();
-            s_mapUserEvent[eventName] = nEventType;
-            return nEventType;
-        }
-    }
-
-    namespace NetworkEvent
-    {
-        const QEvent::Type WaitForIdleThread = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("WaitForIdleThread"));
-        const QEvent::Type ReplyResult = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("ReplyResult"));
-        const QEvent::Type NetworkProgress = (QEvent::Type)QEventRegister::regiesterEvent(QLatin1String("NetworkProgress"));
-    }
-
-    //等待空闲线程事件
-    class WaitForIdleThreadEvent : public QEvent
-    {
-    public:
-        WaitForIdleThreadEvent() : QEvent(QEvent::Type(NetworkEvent::WaitForIdleThread)) {}
-    };
-
-    //通知结果事件
-    class ReplyResultEvent : public QEvent
-    {
-    public:
-        ReplyResultEvent() : QEvent(QEvent::Type(NetworkEvent::ReplyResult)), bDestroyed(true) {}
-
-        RequestTask request;
-        bool bDestroyed;
-    };
-
-    //下载/上传进度事件
-    class NetworkProgressEvent : public QEvent
-    {
-    public:
-        NetworkProgressEvent() : QEvent(QEvent::Type(NetworkEvent::NetworkProgress))
-            , bDownload(true)
-            , uiId(0)
-            , uiBatchId(0)
-            , iBtyes(0)
-            , iTotalBtyes(0)
-        {
-        }
-
-        bool bDownload;
-        quint64 uiId;
-        quint64 uiBatchId;
-        qint64 iBtyes;
-        qint64 iTotalBtyes;
-    };
 }
 
 #pragma pack(pop)

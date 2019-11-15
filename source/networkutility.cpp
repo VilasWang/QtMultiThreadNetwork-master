@@ -11,6 +11,7 @@
 #include <QFile>
 #include "networkdefs.h"
 
+using namespace QMTNetwork;
 
 NetworkUtility::NetworkUtility()
 {
@@ -285,4 +286,55 @@ QUrl NetworkUtility::currentRequestUrl(const QMTNetwork::RequestTask& request)
         url = QUrl(request.url);
     }
     return url;
+}
+
+const QString NetworkUtility::getTypeString(const RequestType eType)
+{
+    QString strType;
+    switch (eType)
+    {
+    case eTypeDownload:
+    {
+        strType = QStringLiteral("下载");
+    }
+    break;
+    case eTypeMTDownload:
+    {
+        strType = QStringLiteral("MT下载");
+    }
+    break;
+    case eTypeUpload:
+    {
+        strType = QStringLiteral("上传");
+    }
+    break;
+    case eTypeGet:
+    {
+        strType = QStringLiteral("GET");
+    }
+    break;
+    case eTypePost:
+    {
+        strType = QStringLiteral("POST");
+    }
+    break;
+    case eTypePut:
+    {
+        strType = QStringLiteral("PUT");
+    }
+    break;
+    case eTypeDelete:
+    {
+        strType = QStringLiteral("DELETE");
+    }
+    break;
+    case eTypeHead:
+    {
+        strType = QStringLiteral("HEAD");
+    }
+    break;
+    default:
+        break;
+    }
+    return strType;
 }

@@ -32,7 +32,7 @@ void NetworkCommonRequest::start()
             || m_request.eType == eTypeDelete
             || m_request.eType == eTypeHead)
         {
-            const QString& strType = getRequestTypeString(m_request.eType);
+            const QString& strType = NetworkUtility::getTypeString(m_request.eType);
             m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(url.url());
             qDebug() << "[QMultiThreadNetwork]" << m_strError;
 

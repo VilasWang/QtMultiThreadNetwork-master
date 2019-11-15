@@ -49,8 +49,4 @@ public:
     static std::unique_ptr<NetworkRequest> create(const QMTNetwork::RequestType& type);
 };
 
-inline bool isHttpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("http"), Qt::CaseInsensitive) == 0); }
-inline bool isHttpsProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("https"), Qt::CaseInsensitive) == 0); }
-inline bool isFtpProxy(const QString& strScheme) { return (strScheme.compare(QLatin1String("ftp"), Qt::CaseInsensitive) == 0); }
-
 #endif // NETWORKREQUEST_H

@@ -139,6 +139,9 @@
     <ClInclude Include="inc\networkglobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="networkevent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="networkcommonrequest.h">

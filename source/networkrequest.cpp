@@ -5,6 +5,7 @@
 #include "networkuploadrequest.h"
 #include "networkcommonrequest.h"
 #include "networkmtdownloadrequest.h"
+#include "networkutility.h"
 
 using namespace QMTNetwork;
 
@@ -56,7 +57,7 @@ void NetworkRequest::onError(QNetworkReply::NetworkError code)
     Q_UNUSED(code);
 
     m_strError = m_pNetworkReply->errorString();
-    qDebug() << "[QMultiThreadNetwork] Error" << QString("[%1]").arg(getRequestTypeString(m_request.eType)) << m_strError;
+    qDebug() << "[QMultiThreadNetwork] Error" << QString("[%1]").arg(NetworkUtility::getTypeString(m_request.eType)) << m_strError;
 }
 
 void NetworkRequest::onAuthenticationRequired(QNetworkReply *r, QAuthenticator *a)

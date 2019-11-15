@@ -13,6 +13,7 @@
 #include "classmemorytracer.h"
 #include "networkmanager.h"
 #include "networkutility.h"
+#include "networkevent.h"
 
 using namespace QMTNetwork;
 
