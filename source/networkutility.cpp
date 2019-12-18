@@ -208,6 +208,19 @@ QString NetworkUtility::getDownloadFileSaveName(const QMTNetwork::RequestTask& r
                 if (str.startsWith(QString("filename="), Qt::CaseInsensitive))
                 {
                     strFileName = str.right(str.size() - QString("filename=").size());
+
+                    //文件名不能带 \/|":<>符号
+                    QStringList strlst;
+                    strlst << "\"" << ":" << "<" << ">" << "|" << "/" << "\\";
+                    for (auto& str : strlst)
+                    {
+                        int index = strFileName.indexOf(str);
+                        while (-1 != index)
+                        {
+                            strFileName.remove(index, str.length());
+                            index = strFileName.indexOf(str);
+                        }
+                    }
                     break;
                 }
             }

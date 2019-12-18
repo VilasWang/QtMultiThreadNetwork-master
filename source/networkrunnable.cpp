@@ -23,49 +23,37 @@ NetworkRunnable::~NetworkRunnable()
 
 void NetworkRunnable::run()
 {
-    RequestTask task = m_task;
     std::unique_ptr<NetworkRequest> pRequest = nullptr;
-
-    bool bQuit = false;
     QEventLoop loop;
 
     try
     {
-        connect(this, &NetworkRunnable::exitEventLoop, &loop, [&bQuit, &loop, &pRequest]() {
+        connect(this, &NetworkRunnable::exitEventLoop, &loop, [&loop]() {
             loop.quit();
-            bQuit = true;
-            if (pRequest.get())
-            {
-                pRequest->disconnect();
-            }
         }, Qt::QueuedConnection);
 
-        if (!bQuit)
+        pRequest = std::move(NetworkRequestFactory::create(m_task.eType));
+        if (pRequest.get())
         {
-            pRequest = std::move(NetworkRequestFactory::create(task.eType));
-
-            if (pRequest.get())
-            {
-                connect(pRequest.get(), &NetworkRequest::requestFinished,
-                    [this, &task](bool bSuccess, const QByteArray& bytesContent, const QString& strError) {
-                    task.bSuccess = bSuccess;
-                    task.bytesContent = bytesContent;
-                    task.strError = strError;
-                    emit requestFinished(task);
-                });
-                pRequest->setRequestTask(task);
-                pRequest->start();
-            }
-            else
-            {
-                qWarning() << QString("[QMultiThreadNetwork] Unsupported type(%1) ----").arg(task.eType) << task.url;
-
-                task.bSuccess = false;
-                task.strError = QString("[QMultiThreadNetwork] Unsupported type(%1)").arg(task.eType);
-                emit requestFinished(task);
-            }
-            loop.exec();
+            m_connect = connect(pRequest.get(), &NetworkRequest::requestFinished, this,
+                [=](bool bSuccess, const QByteArray& bytesContent, const QString& strError) {
+                m_task.bSuccess = bSuccess;
+                m_task.bytesContent = bytesContent;
+                m_task.strError = strError;
+                emit requestFinished(m_task);
+            });
+            pRequest->setRequestTask(m_task);
+            pRequest->start();
         }
+        else
+        {
+            qWarning() << QString("[QMultiThreadNetwork] Unsupported type(%1) ----").arg(m_task.eType) << m_task.url;
+
+            m_task.bSuccess = false;
+            m_task.strError = QString("[QMultiThreadNetwork] Unsupported type(%1)").arg(m_task.eType);
+            emit requestFinished(m_task);
+        }
+        loop.exec();
     }
     catch (std::exception* e)
     {
@@ -95,7 +83,6 @@ quint64 NetworkRunnable::batchId() const
 
 void NetworkRunnable::quit()
 {
-    disconnect(this, &NetworkRunnable::requestFinished,
-        NetworkManager::globalInstance(), &NetworkManager::onRequestFinished);
+    this->disconnect(m_connect);
     emit exitEventLoop();
 }

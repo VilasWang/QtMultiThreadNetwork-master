@@ -50,44 +50,28 @@ namespace {
         switch (eType)
         {
         case eTypeDownload:
-        {
             strType = QStringLiteral("下载");
-        }
         break;
         case eTypeMTDownload:
-        {
             strType = QStringLiteral("MT下载");
-        }
         break;
         case eTypeUpload:
-        {
             strType = QStringLiteral("上传");
-        }
         break;
         case eTypeGet:
-        {
             strType = QStringLiteral("GET");
-        }
         break;
         case eTypePost:
-        {
             strType = QStringLiteral("POST");
-        }
         break;
         case eTypePut:
-        {
             strType = QStringLiteral("PUT");
-        }
         break;
         case eTypeDelete:
-        {
             strType = QStringLiteral("DELETE");
-        }
         break;
         case eTypeHead:
-        {
             strType = QStringLiteral("HEAD");
-        }
         break;
         default:
             break;
@@ -498,6 +482,14 @@ void NetworkTool::onAbortAllTask()
 {
     NetworkManager::globalInstance()->stopAllRequest();
     reset();
+
+    const QString& str = QString(" - All tasks cancelled!");
+    appendMsg(QTime::currentTime().toString() + str, false);
+
+    if (m_pListViewDoing)
+    {
+        m_pListViewDoing->clear();
+    }
 }
 
 void NetworkTool::onDownload()
@@ -1093,23 +1085,15 @@ void NetworkTool::appendStartBatchTasksMsg(quint64 uiBatchid, int nTotalSize)
 
 void NetworkTool::appendTaskFinishMsg(quint64 uiTaskid, bool isBatch, bool bSuccess, const QString& strUrl, const QString& strBody, const QString& strError)
 {
-    if (RequestTask::ALL_TASK == uiTaskid)
+    if (bSuccess)
     {
-        const QString& str = QString(" - All tasks cancelled!");
+        const QString& str = QString(" - Task[Success][id:%1][%2]").arg(uiTaskid).arg(strUrl);
         appendMsg(QTime::currentTime().toString() + str, !isBatch);
     }
     else
     {
-        if (bSuccess)
-        {
-            const QString& str = QString(" - Task[Success][id:%1][%2]").arg(uiTaskid).arg(strUrl);
-            appendMsg(QTime::currentTime().toString() + str, !isBatch);
-        }
-        else
-        {
-            const QString& str = QString(" - Task[Failed][id:%1][%2]").arg(uiTaskid).arg(strUrl);
-            appendMsg(QTime::currentTime().toString() + str, !isBatch);
-        }
+        const QString& str = QString(" - Task[Failed][id:%1][%2]").arg(uiTaskid).arg(strUrl);
+        appendMsg(QTime::currentTime().toString() + str, !isBatch);
     }
 
     if (!strBody.isEmpty())
@@ -1186,8 +1170,7 @@ void TaskListView::onUpdateTaskProgress(quint64 taskId, qint64 bytesReceived, qi
 }
 
 //////////////////////////////////////////////////////////////////////////
-TaskModel::TaskModel(QObject* parent)
-    : ListModel(parent)
+TaskModel::TaskModel(QObject* parent) : ListModel(parent)
 {
 }
 
@@ -1195,11 +1178,7 @@ QVariant TaskModel::onTaskFinished(const RequestTask &request)
 {
     QVariant variant;
     RequestTask task;
-    if (request.uiId == RequestTask::ALL_TASK && request.bCancel)
-    {
-        clear();
-    }
-    else if (request.bCancel && request.uiBatchId > 0)
+    if (request.bCancel && request.uiBatchId > 0)
     {
         int nSizePre = m_vecVariant.size();
         auto iter = m_vecVariant.begin();

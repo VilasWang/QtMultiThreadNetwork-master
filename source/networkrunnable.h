@@ -3,8 +3,10 @@
 
 #include <QObject>
 #include <QRunnable>
+#include <memory>
 #include "networkdefs.h"
 
+class NetworkRequest;
 class NetworkRunnable : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -30,6 +32,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(NetworkRunnable);
     QMTNetwork::RequestTask m_task;
+    QMetaObject::Connection m_connect;
 };
 
 #endif //NETWORKRUNNABLE_H

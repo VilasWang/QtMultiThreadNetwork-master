@@ -107,11 +107,6 @@ namespace QMTNetwork {
         // 用户自定义内容（可用于回传）
         QVariant varArg3;
 
-        enum
-        {
-            ALL_TASK = (unsigned long)0xffffffff,
-        };
-
 
         //////////////////////返回结果的字段/////////////////////////////////////////////
         // 正常结束

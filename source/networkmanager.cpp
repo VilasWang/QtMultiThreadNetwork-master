@@ -147,6 +147,7 @@ void NetworkManagerPrivate::unInitialize()
     stopAllRequest();
     reset();
     m_pThreadPool->clear();
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     if (!m_pThreadPool->waitForDone(3000))
     {
         qDebug() << "[QMultiThreadNetwork] ThreadPool waitForDone failed!";
@@ -323,18 +324,9 @@ void NetworkManagerPrivate::stopAllRequest()
         return;
 
     markStopAllFlag();
-    std::shared_ptr<NetworkReply> reply = nullptr;
 
     {
         QMutexLocker locker(&m_mutex);
-        if (!m_mapReply.isEmpty())
-        {
-            reply = m_mapReply.last();
-        }
-        else if (!m_mapBatchReply.isEmpty())
-        {
-            reply = m_mapBatchReply.last();
-        }
 
         std::shared_ptr<NetworkRunnable> r = nullptr;
         for (auto iter = m_mapRunnable.cbegin(); iter != m_mapRunnable.cend(); ++iter)
@@ -353,20 +345,8 @@ void NetworkManagerPrivate::stopAllRequest()
 #endif
             }
         }
-        m_mapRunnable.clear();
     }
     reset();
-
-    if (reply.get())
-    {
-        RequestTask t;
-        t.uiId = RequestTask::ALL_TASK;
-        t.bSuccess = false;
-        t.bCancel = true;
-        t.bytesContent = QString("Operation cancelled (All Request)").toUtf8();
-
-        reply->replyResult(t, true);
-    }
 }
 
 std::shared_ptr<NetworkReply> NetworkManagerPrivate::addRequest(const QUrl& url, quint64& uiId)
