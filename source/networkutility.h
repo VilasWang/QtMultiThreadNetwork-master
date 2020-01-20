@@ -8,7 +8,7 @@ class QUrl;
 namespace QMTNetwork {
 
     struct RequestTask;
-    enum RequestType;
+    enum class RequestType;
     class NetworkUtility
     {
     public:

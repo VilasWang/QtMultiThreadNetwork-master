@@ -47,10 +47,10 @@ void NetworkRunnable::run()
         }
         else
         {
-            qWarning() << QString("[QMultiThreadNetwork] Unsupported type(%1) ----").arg(m_task.eType) << m_task.url;
+            qWarning() << QString("[QMultiThreadNetwork] Unsupported type(%1) ----").arg((int)m_task.eType) << m_task.url;
 
             m_task.bSuccess = false;
-            m_task.strError = QString("[QMultiThreadNetwork] Unsupported type(%1)").arg(m_task.eType);
+            m_task.strError = QString("[QMultiThreadNetwork] Unsupported type(%1)").arg((int)m_task.eType);
             emit requestFinished(m_task);
         }
         loop.exec();

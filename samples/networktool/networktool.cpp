@@ -49,28 +49,28 @@ namespace {
         QString strType;
         switch (eType)
         {
-        case eTypeDownload:
+        case RequestType::Download:
             strType = QStringLiteral("下载");
         break;
-        case eTypeMTDownload:
-            strType = QStringLiteral("MT下载");
+        case RequestType::MTDownload:
+            strType = QStringLiteral("多线程下载");
         break;
-        case eTypeUpload:
+        case RequestType::Upload:
             strType = QStringLiteral("上传");
         break;
-        case eTypeGet:
+        case RequestType::Get:
             strType = QStringLiteral("GET");
         break;
-        case eTypePost:
+        case RequestType::Post:
             strType = QStringLiteral("POST");
         break;
-        case eTypePut:
+        case RequestType::Put:
             strType = QStringLiteral("PUT");
         break;
-        case eTypeDelete:
+        case RequestType::Delete:
             strType = QStringLiteral("DELETE");
         break;
-        case eTypeHead:
+        case RequestType::Head:
             strType = QStringLiteral("HEAD");
         break;
         default:
@@ -517,7 +517,7 @@ void NetworkTool::onDownload()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypeDownload;
+    req.eType = RequestType::Download;
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bReplaceFileIfExist = true;
     req.strReqArg = strSavePath;
@@ -528,7 +528,7 @@ void NetworkTool::onDownload()
     }
     if (uiAddTask.cb_multiDownload->isChecked())
     {
-        req.eType = eTypeMTDownload;
+        req.eType = RequestType::MTDownload;
         req.nDownloadThreadCount = uiAddTask.cmb_multiDownload->currentText().toInt();
     }
 
@@ -570,7 +570,7 @@ void NetworkTool::onUpload()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypeUpload;
+    req.eType = RequestType::Upload;
     req.strReqArg = strUploadFilePath; //本地文件路径
     req.bShowProgress = uiAddTask.cb_showProgress->isChecked();
     req.bTryAgainIfFailed = true;
@@ -604,7 +604,7 @@ void NetworkTool::onGetRequest()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypeGet;
+    req.eType = RequestType::Get;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -645,7 +645,7 @@ void NetworkTool::onPostRequest()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypePost;
+    req.eType = RequestType::Post;
     req.strReqArg = strArg;
     req.bTryAgainIfFailed = true;
 
@@ -701,7 +701,7 @@ void NetworkTool::onPutRequest()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypePut;
+    req.eType = RequestType::Put;
     req.strReqArg = QString::fromUtf8(bytes);
     req.bTryAgainIfFailed = true;
     req.mapRawHeader.insert("Content-Length", QString::number(bytes.size()).toUtf8());
@@ -735,7 +735,7 @@ void NetworkTool::onDeleteRequest()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypeDelete;
+    req.eType = RequestType::Delete;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -767,7 +767,7 @@ void NetworkTool::onHeadRequest()
 
     RequestTask req;
     req.url = strUrl;
-    req.eType = eTypeHead;
+    req.eType = RequestType::Head;
     req.bTryAgainIfFailed = true;
 
     NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
@@ -845,8 +845,8 @@ void NetworkTool::onBatchRequest()
         req.bTryAgainIfFailed = true;
         switch (req.eType)
         {
-        case eTypeDownload:
-        case eTypeMTDownload:
+        case RequestType::Download:
+        case RequestType::MTDownload:
         {
             QString strSaveDir = strArg;
             if (strSaveDir.isEmpty())
@@ -866,21 +866,21 @@ void NetworkTool::onBatchRequest()
             req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
             req.bReplaceFileIfExist = true;
         }
-        case eTypeUpload:
+        case RequestType::Upload:
         {
             req.strReqArg = strArg;
             req.bShowProgress = uiAddBatchTask.cb_showProgress->isChecked();
         }
         break;
-        case eTypePost:
-        case eTypePut:
+        case RequestType::Post:
+        case RequestType::Put:
         {
             req.strReqArg = strArg;
         }
         break;
-        case eTypeGet:
-        case eTypeDelete:
-        case eTypeHead:
+        case RequestType::Get:
+        case RequestType::Delete:
+        case RequestType::Head:
             break;
         default:
             break;
@@ -940,10 +940,10 @@ void NetworkTool::onRequestFinished(const RequestTask &request)
         }
 
         qDebug() << "Batch[" + QString::number(request.uiBatchId)
-            + "] Total["
-            + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + "] Success["
-            + QString::number(m_mapBatchSuccessSize.value(request.uiBatchId))
-            + "] Failed[" + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + "]";
+            + "] Total("
+            + QString::number(m_mapBatchTotalSize.value(request.uiBatchId)) + ") Success("
+            + QString::number(m_mapBatchSuccessSize.value(request.uiBatchId)) + ") Failed(" 
+            + QString::number(m_mapBatchFailedSize.value(request.uiBatchId)) + ")";
 
         if (m_mapBatchSuccessSize.value(request.uiBatchId) + m_mapBatchFailedSize.value(request.uiBatchId) == m_mapBatchTotalSize.value(request.uiBatchId)
             || (request.bAbortBatchWhenFailed && m_mapBatchFailedSize.value(request.uiBatchId) > 0))
@@ -1296,7 +1296,7 @@ void TaskDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option
             }
 
             if (!stTask.bFinished && !stTask.bCancel && stTask.bShowProgress
-                && (stTask.eType == eTypeDownload || stTask.eType == eTypeUpload || stTask.eType == eTypeMTDownload))
+                && (stTask.eType == RequestType::Download || stTask.eType == RequestType::Upload || stTask.eType == RequestType::MTDownload))
             {
                 int p = m_mapProgress.value(stTask.uiId);
                 painter->fillRect(rect.left() + 180, rect.top() + 1, 102, 12, QBrush("#191919"));

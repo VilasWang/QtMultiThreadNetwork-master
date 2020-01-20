@@ -28,9 +28,9 @@ void NetworkCommonRequest::start()
 
     if (isFtpProxy(url.scheme()))
     {
-        if (m_request.eType == eTypePost
-            || m_request.eType == eTypeDelete
-            || m_request.eType == eTypeHead)
+        if (m_request.eType == RequestType::Post
+            || m_request.eType == RequestType::Delete
+            || m_request.eType == RequestType::Head)
         {
             const QString& strType = NetworkUtility::getTypeString(m_request.eType);
             m_strError = QStringLiteral("Unsupported FTP request type[%1], url: %2").arg(strType).arg(url.url());
@@ -66,11 +66,11 @@ void NetworkCommonRequest::start()
     }
 #endif
 
-    if (m_request.eType == eTypeGet)
+    if (m_request.eType == RequestType::Get)
     {
         m_pNetworkReply = m_pNetworkManager->get(request);
     }
-    else if (m_request.eType == eTypePost)
+    else if (m_request.eType == RequestType::Post)
     {
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded;");
 
@@ -79,18 +79,18 @@ void NetworkCommonRequest::start()
 
         m_pNetworkReply = m_pNetworkManager->post(request, bytes);
     }
-    else if (m_request.eType == eTypePut)
+    else if (m_request.eType == RequestType::Put)
     {
         const QByteArray& bytes = m_request.strReqArg.toUtf8();
         request.setHeader(QNetworkRequest::ContentLengthHeader, bytes.length());
 
         m_pNetworkReply = m_pNetworkManager->put(request, bytes);
     }
-    else if (m_request.eType == eTypeDelete)
+    else if (m_request.eType == RequestType::Delete)
     {
         m_pNetworkReply = m_pNetworkManager->deleteResource(request);
     }
-    else if (m_request.eType == eTypeHead)
+    else if (m_request.eType == RequestType::Head)
     {
         m_pNetworkReply = m_pNetworkManager->head(request);
     }
@@ -139,7 +139,7 @@ void NetworkCommonRequest::onFinished()
     QByteArray bytes;
     if (!m_bAbortManual)//非调用abort()结束
     {
-        if (bSuccess && m_request.eType == eTypeHead)
+        if (bSuccess && m_request.eType == RequestType::Head)
         {
             QString headers;
             foreach(const QByteArray& header, m_pNetworkReply->rawHeaderList())

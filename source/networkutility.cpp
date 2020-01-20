@@ -306,42 +306,42 @@ const QString NetworkUtility::getTypeString(const RequestType eType)
     QString strType;
     switch (eType)
     {
-    case eTypeDownload:
+    case RequestType::Download:
     {
         strType = QStringLiteral("下载");
     }
     break;
-    case eTypeMTDownload:
+    case RequestType::MTDownload:
     {
-        strType = QStringLiteral("MT下载");
+        strType = QStringLiteral("多线程下载");
     }
     break;
-    case eTypeUpload:
+    case RequestType::Upload:
     {
         strType = QStringLiteral("上传");
     }
     break;
-    case eTypeGet:
+    case RequestType::Get:
     {
         strType = QStringLiteral("GET");
     }
     break;
-    case eTypePost:
+    case RequestType::Post:
     {
         strType = QStringLiteral("POST");
     }
     break;
-    case eTypePut:
+    case RequestType::Put:
     {
         strType = QStringLiteral("PUT");
     }
     break;
-    case eTypeDelete:
+    case RequestType::Delete:
     {
         strType = QStringLiteral("DELETE");
     }
     break;
-    case eTypeHead:
+    case RequestType::Head:
     {
         strType = QStringLiteral("HEAD");
     }

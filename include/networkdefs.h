@@ -30,26 +30,26 @@ namespace QMTNetwork {
     // 本模块支持的协议：HTTP(S)/FTP
     // 本模块支持的HTTP(s)协议请求方法：GET/POST/PUT/DELETE/HEAD
 
-    enum RequestType
+    enum class RequestType : int32_t
     {
         // Download（支持http(s)和ftp）
-        eTypeDownload = 0,
+        Download = 0,
         // Multi-Thread Download（支持http(s)）
-        eTypeMTDownload = 1,
+        MTDownload,
         // Upload（支持http(s)和ftp）
-        eTypeUpload = 2,
+        Upload,
         // GET方式请求（支持http(s)和ftp）
-        eTypeGet = 3,
+        Get,
         // POST方式请求（支持http(s)）
-        eTypePost = 4,
+        Post,
         // PUT方式请求（支持http(s)和ftp）
-        eTypePut = 5,
+        Put,
         // DELETE方式请求（支持http(s)）
-        eTypeDelete = 6,
+        Delete,
         // HEAD方式请求（支持http(s)）
-        eTypeHead = 7,
+        Head,
 
-        eTypeUnknown = -1,
+        Unknown = -1,
     };
 
     //请求结构
@@ -63,13 +63,13 @@ namespace QMTNetwork {
         QString url;
         QString redirectUrl;
 
-        // case eTypeDownload:	下载的文件存放的本地目录. (绝对路径 or 相对路径)
-        // case eTypeUpload：	待上传的文件路径. (绝对路径 or 相对路径)
-        // case eTypePost：		post的参数. 如："a=b&c=d".
-        // case eTypePut：		put的数据流.
+        // case RequestType::Download:	下载的文件存放的本地目录. (绝对路径 or 相对路径)
+        // case RequestType::Upload：	待上传的文件路径. (绝对路径 or 相对路径)
+        // case RequestType::Post：		post的参数. 如："a=b&c=d".
+        // case RequestType::Put：		put的数据流.
         QString strReqArg;
 
-        // case eTypeDownload: 若指定了strSaveFileName，则保存的文件名是strSaveFileName;否则，根据url.
+        // case RequestType::Download: 若指定了strSaveFileName，则保存的文件名是strSaveFileName;否则，根据url.
         QString strSaveFileName;
 
         // 请求的header信息
@@ -91,7 +91,7 @@ namespace QMTNetwork {
         // 上传文件使用PUT方式，否则POST方式，仅HTTP(s)有效，默认为true.
         bool bUploadUsePut;
 
-        // 单文件多线程下载模式(需服务器支持) 注：eType为eTypeMTDownload时有效
+        // 单文件多线程下载模式(需服务器支持) 注：eType为RequestType::MTDownload时有效
         //	 多线程下载模式下，一个文件由多个下载通道同时下载.
         //	 需要先获取http head的Content-Length，所以需要服务器的支持.
         // n个下载通道(默认是5)(取值范围2-10)
@@ -130,7 +130,7 @@ namespace QMTNetwork {
         {
             uiId = 0;
             uiBatchId = 0;
-            eType = eTypeUnknown;
+            eType = RequestType::Unknown;
             bFinished = false;
             bCancel = false;
             bSuccess = false;

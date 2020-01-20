@@ -72,7 +72,7 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
     std::unique_ptr<NetworkRequest> pRequest;
     switch (eType)
     {
-    case eTypeDownload:
+    case RequestType::Download:
     {
 #if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkDownloadRequest());
@@ -81,7 +81,7 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
 #endif
     }
     break;
-    case eTypeMTDownload:
+    case RequestType::MTDownload:
     {
 #if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkMTDownloadRequest());
@@ -90,7 +90,7 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
 #endif
     }
     break;
-    case eTypeUpload:
+    case RequestType::Upload:
     {
 #if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkUploadRequest());
@@ -99,11 +99,11 @@ std::unique_ptr<NetworkRequest> NetworkRequestFactory::create(const RequestType&
 #endif
     }
     break;
-    case eTypePost:
-    case eTypeGet:
-    case eTypePut:
-    case eTypeDelete:
-    case eTypeHead:
+    case RequestType::Post:
+    case RequestType::Get:
+    case RequestType::Put:
+    case RequestType::Delete:
+    case RequestType::Head:
     {
 #if defined(_MSC_VER) && _MSC_VER < 1700
         pRequest.reset(new NetworkCommonRequest());
