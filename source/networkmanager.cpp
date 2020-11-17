@@ -28,8 +28,9 @@ public:
 private:
     std::shared_ptr<NetworkReply> addRequest(const QUrl& url, quint64& uiTaskId);
     std::shared_ptr<NetworkReply> addBatchRequest(BatchRequestTask& tasks, quint64& uiBatchId);
+    bool sendRequest(RequestTask& task, RequestCallBack callback);
 
-    bool startRunnable(std::shared_ptr<NetworkRunnable> r);
+    bool startRunnable(std::shared_ptr<NetworkRunnable> r, bool bAddToWaitQueueIfNotStart = true);
     void stopRequest(quint64 uiTaskId);
     void stopBatchRequests(quint64 uiBatchId);
     void stopAllRequest();
@@ -382,6 +383,33 @@ std::shared_ptr<NetworkReply> NetworkManagerPrivate::addBatchRequest(BatchReques
     return pReply;
 }
 
+bool NetworkManagerPrivate::sendRequest(RequestTask& task, RequestCallBack callback)
+{
+    if (!isRequestValid(task.url))
+        return false;
+
+    task.uiId = nextRequestId();
+
+    QEventLoop eventloop;
+
+    std::shared_ptr<NetworkRunnable> r = std::make_shared<NetworkRunnable>(task);
+    qRegisterMetaType<RequestTask>("RequestTask");
+    QObject::connect(r.get(), &NetworkRunnable::requestFinished, &eventloop, [&](const RequestTask &task) {
+        if (callback)
+            callback(task);
+
+        eventloop.quit();
+    });
+
+    if (!startRunnable(r, false))
+    {
+        r.reset();
+        return false;
+    }
+    eventloop.exec();
+    return true;
+}
+
 quint64 NetworkManagerPrivate::nextRequestId() const
 {
 #if _MSC_VER < 1700
@@ -398,13 +426,19 @@ quint64 NetworkManagerPrivate::nextBatchId() const
     return ++ms_uiBatchId;
 }
 
-bool NetworkManagerPrivate::startRunnable(std::shared_ptr<NetworkRunnable> r)
+bool NetworkManagerPrivate::startRunnable(std::shared_ptr<NetworkRunnable> r, bool bAddToWaitQueueIfNotStart)
 {
     if (r.get())
     {
         try
         {
-            m_pThreadPool->start(r.get());
+            if (bAddToWaitQueueIfNotStart)
+                m_pThreadPool->start(r.get());
+            else
+            {
+                if (!m_pThreadPool->tryStart(r.get()))
+                    return false;
+            }
             {
                 QMutexLocker locker(&m_mutex);
                 m_mapRunnable.insert(r->requsetId(), r);
@@ -592,8 +626,10 @@ bool NetworkManagerPrivate::releaseRequestThread(quint64 uiRequestId)
 //////////////////////////////////////////////////////////////////////////
 #if defined(_MSC_VER) && _MSC_VER < 1700
 bool NetworkManager::ms_bIntialized = false;
+bool NetworkManager::ms_bUnIntializing = false;
 #else
 std::atomic<bool> NetworkManager::ms_bIntialized = false;
+std::atomic<bool> NetworkManager::ms_bUnIntializing = false;
 #endif
 
 NetworkManager::NetworkManager(QObject *parent)
@@ -607,6 +643,7 @@ NetworkManager::NetworkManager(QObject *parent)
 
 NetworkManager::~NetworkManager()
 {
+    d_ptr.reset();
 }
 
 NetworkManager* NetworkManager::globalInstance()
@@ -628,14 +665,19 @@ void NetworkManager::unInitialize()
 {
     if (ms_bIntialized)
     {
+        ms_bUnIntializing = true;
         NetworkManager::globalInstance()->fini();
         ms_bIntialized = false;
+        ms_bUnIntializing = false;
     }
 }
 
 bool NetworkManager::isInitialized()
 {
-    return ms_bIntialized;
+    //NetworkManager::unInitialize()过程中，由于此时ms_bIntialized还没置成false，
+    //若在非主线程中调用NetworkManager::addRequest()，会导致新的任务线程不能正常退出，导致内存泄漏。
+    //所以需要加上一个是否正在反初始化中的flag，正在反初始化过程中不能添加任务
+    return ms_bIntialized && !ms_bUnIntializing;
 }
 
 void NetworkManager::init()
@@ -648,6 +690,20 @@ void NetworkManager::fini()
 {
     Q_D(NetworkManager);
     d->unInitialize();
+}
+
+bool NetworkManager::sendRequest(RequestTask& task, RequestCallBack callback)
+{
+    if (!NetworkManager::isInitialized())
+    {
+        qDebug() << "[QMultiThreadNetwork] You must call NetworkManager::initialize() before any request.";
+        return false;
+    }
+
+    Q_D(NetworkManager);
+
+    d->resetStopAllFlag();
+    return d->sendRequest(task, callback);
 }
 
 NetworkReply *NetworkManager::addRequest(RequestTask& request)

@@ -21,12 +21,15 @@ That must be called in the main thread.
 
 #include <QObject>
 #include <atomic>
+#include <functional>
 #include "networkdefs.h"
 #include "networkglobal.h"
 
 class QEvent;
 class NetworkManagerPrivate;
 class NetworkReply;
+using RequestCallBack = std::function<void(QMTNetwork::RequestTask task)>;
+
 class NETWORK_EXPORT NetworkManager : public QObject
 {
     Q_OBJECT;
@@ -42,21 +45,29 @@ public:
     static NetworkManager* globalInstance();
 
 public:
+    // 添加单个异步请求任务（若返回nullptr，表示url无效）
     // NetworkReply对象会在请求结束后自动销毁，用户不用主动销毁
-    // 添加单个请求任务（若返回nullptr，表示url无效）
     NetworkReply *addRequest(QMTNetwork::RequestTask& task);
 
-    // 添加批量请求任务
+    // 添加批量异步请求任务
+    // NetworkReply对象会在请求结束后自动销毁，用户不用主动销毁
     NetworkReply *addBatchRequest(QMTNetwork::BatchRequestTask& tasks, quint64 &uiBatchId);
 
-    // 停止所有的请求任务
+    // 停止所有的请求任务(仅异步任务有效)
     void stopAllRequest();
-    // 停止指定batchid的批次请求任务
+
+    // 停止指定batchid的批次请求任务(仅异步任务有效)
     void stopBatchRequests(quint64 uiBatchId);
-    // 停止某个请求任务
+
+    // 停止某个请求任务(仅异步任务有效)
     void stopRequest(quint64 uiTaskId);
 
-    // 设置线程池最大线程数（从1-16个, 默认5线程）
+public:
+    // 同步执行单个请求任务（若返回false，表示url无效）
+    bool sendRequest(QMTNetwork::RequestTask& task, RequestCallBack callback);
+
+public:
+    // 设置线程池最大线程数（从1-16个, 默认线程数是QThread::idealThreadCount）
     bool setMaxThreadCount(int iMax);
     int maxThreadCount();
 
@@ -95,8 +106,10 @@ private:
     QScopedPointer<NetworkManagerPrivate> d_ptr;
 #if defined(_MSC_VER) && _MSC_VER < 1700
     static bool ms_bIntialized;
+    static bool ms_bUnIntializing;
 #else
     static std::atomic<bool> ms_bIntialized;
+    static std::atomic<bool> ms_bUnIntializing;
 #endif
 };
 
