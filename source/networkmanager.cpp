@@ -394,10 +394,11 @@ bool NetworkManagerPrivate::sendRequest(RequestTask& task, RequestCallBack callb
 
     std::shared_ptr<NetworkRunnable> r = std::make_shared<NetworkRunnable>(task);
     qRegisterMetaType<RequestTask>("RequestTask");
-    QObject::connect(r.get(), &NetworkRunnable::requestFinished, &eventloop, [&](const RequestTask &task) {
+    QObject::connect(r.get(), &NetworkRunnable::requestFinished, &eventloop, [&](const RequestTask &reqTask) {
         if (callback)
-            callback(task);
+            callback(reqTask);
 
+        releaseRequestThread(reqTask.uiId);
         eventloop.quit();
     });
 

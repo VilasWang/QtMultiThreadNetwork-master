@@ -331,7 +331,7 @@ void NetworkTool::onResetDefaultValue()
         {
             if (uiAddTask.cb_download->isChecked())
             {
-                const QString& strUrl = "https://1.as.dl.wireshark.org/win64/Wireshark-win64-3.1.0.exe";
+                const QString& strUrl = "https://download.sysinternals.com/files/ProcessExplorer.zip";
                 uiAddTask.lineEdit_url->setText(strUrl);
                 uiAddTask.lineEdit_saveDir->setText(getDefaultDownloadDir());
             }
@@ -532,16 +532,23 @@ void NetworkTool::onDownload()
         req.nDownloadThreadCount = uiAddTask.cmb_multiDownload->currentText().toInt();
     }
 
-    NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
-    if (nullptr != pReply)
+    if (uiAddTask.cb_sync->isChecked())
     {
-        connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
-        appendStartTaskMsg(req.uiId, strUrl);
+        bool ret = NetworkManager::globalInstance()->sendRequest(req, std::bind(&NetworkTool::onRequestFinished, this, std::placeholders::_1));
+    }
+    else
+    {
+        NetworkReply *pReply = NetworkManager::globalInstance()->addRequest(req);
+        if (nullptr != pReply)
+        {
+            connect(pReply, &NetworkReply::requestFinished, this, &NetworkTool::onRequestFinished);
+            appendStartTaskMsg(req.uiId, strUrl);
 
 #ifndef TEST_PERFORMANCE_NO_TASK_LIST
-        m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
-        switchTaskView(true);
+            m_pListViewDoing->insert(QVariant::fromValue<RequestTask>(req));
+            switchTaskView(true);
 #endif
+        }
     }
 }
 
@@ -631,22 +638,13 @@ void NetworkTool::onPostRequest()
         return;
     }
 
-    const QString& strArg = uiAddTask.lineEdit_arg->text().trimmed();
-    if (strArg.isEmpty())
-    {
-        QMessageBox::information(nullptr, "Tips",
-            QStringLiteral("参数不能为空，详情请参考使用说明"), QMessageBox::Ok);
-        reset();
-        return;
-    }
-
     QUrl urlHost(strUrl);
     Q_ASSERT(urlHost.isValid());
 
     RequestTask req;
     req.url = strUrl;
     req.eType = RequestType::Post;
-    req.strReqArg = strArg;
+    req.strReqArg = uiAddTask.lineEdit_arg->text().trimmed();;
     req.bTryAgainIfFailed = true;
 
     for (int i = 0; i < POST_REQUEST_EXEC_COUNT; ++i)
